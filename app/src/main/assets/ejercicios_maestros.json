@@ -1,0 +1,1236 @@
+[
+    {
+        "exerciseId": "ex_barbell_bench_press___medium_grip",
+        "name": "Press de banca plano con barra",
+        "localImagePath": "chest_barbell_bench_press.webp",
+        "mainMuscleGroup": "Pecho",
+        "mechanic": "Compuesto",
+        "targetMuscles": [
+            "pecho"
+        ],
+        "secondaryMuscles": [
+            "espalda",
+            "tríceps"
+        ],
+        "equipments": [
+            "barra con pesas"
+        ],
+        "instructions": [
+            "Recuéstese en un banco plano. Usando un agarre de ancho medio (un agarre que crea un ángulo de 90 grados en el medio del movimiento entre los antebrazos y la parte superior de los brazos), levante la barra del soporte y manténgala recta sobre usted con los brazos bloqueados. Esta será tu posición inicial.",
+            "Desde la posición inicial, inhale y comience a bajar lentamente hasta que la barra toque la mitad del pecho.",
+            "Después de una breve pausa, empuja la barra hacia la posición inicial mientras exhalas. Concéntrate en empujar la barra usando los músculos del pecho. Bloquea los brazos y aprieta el pecho en la posición contraída en la parte superior del movimiento, mantén la posición durante un segundo y luego comienza a bajar lentamente nuevamente. Consejo: Lo ideal es bajar el peso y tomar aproximadamente el doble de tiempo que subirlo.",
+            "Repita el movimiento durante la cantidad prescrita de repeticiones.",
+            "Cuando haya terminado, coloque la barra nuevamente en la rejilla."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Bench_Press_-_Medium_Grip/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Bench_Press_-_Medium_Grip/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_barbell_incline_bench_press___medium_grip",
+        "name": "Press de banca inclinado con barra",
+        "localImagePath": "chest_barbell_incline_press.webp",
+        "mainMuscleGroup": "Pecho",
+        "mechanic": "Compuesto",
+        "targetMuscles": [
+            "pecho"
+        ],
+        "secondaryMuscles": [
+            "espalda",
+            "tríceps"
+        ],
+        "equipments": [
+            "barra con pesas"
+        ],
+        "instructions": [
+            "Recuéstese en un banco inclinado. Usando un agarre de ancho medio (un agarre que crea un ángulo de 90 grados en el medio del movimiento entre los antebrazos y la parte superior de los brazos), levante la barra del soporte y manténgala recta sobre usted con los brazos bloqueados. Esta será tu posición inicial.",
+            "Mientras inhala, baje lentamente hasta que sienta la barra en la parte superior del pecho.",
+            "Después de una segunda pausa, lleve la barra a la posición inicial mientras exhala y empuja la barra con los músculos del pecho. Bloquea los brazos en la posición contraída, aprieta el pecho, mantén la posición durante un segundo y luego comienza a bajar lentamente de nuevo. Consejo: debería tardar al menos el doble en bajar que en subir.",
+            "Repita el movimiento durante la cantidad prescrita de repeticiones.",
+            "Cuando haya terminado, coloque la barra nuevamente en la rejilla."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Incline_Bench_Press_-_Medium_Grip/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Incline_Bench_Press_-_Medium_Grip/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_dumbbell_bench_press",
+        "name": "Press con mancuernas en banco plano",
+        "localImagePath": "chest_dumbbell_bench_press.webp",
+        "mainMuscleGroup": "Pecho",
+        "mechanic": "Compuesto",
+        "targetMuscles": [
+            "pecho"
+        ],
+        "secondaryMuscles": [
+            "espalda",
+            "tríceps"
+        ],
+        "equipments": [
+            "pesa"
+        ],
+        "instructions": [
+            "Acuéstate en un banco plano con una mancuerna en cada mano apoyada sobre tus muslos. Las palmas de tus manos estarán una frente a la otra.",
+            "Luego, usando los muslos para ayudar a levantar las mancuernas, levántelas una a la vez para poder sostenerlas frente a usted al ancho de los hombros.",
+            "Una vez que esté al ancho de los hombros, gire las muñecas hacia adelante de modo que las palmas de las manos queden en dirección opuesta a usted. Las mancuernas deben estar justo a los lados de tu pecho, con la parte superior del brazo y el antebrazo formando un ángulo de 90 grados. Asegúrate de mantener el control total de las mancuernas en todo momento. Esta será tu posición inicial.",
+            "Luego, mientras exhalas, usa tu pecho para empujar las mancuernas hacia arriba. Bloquee los brazos en la parte superior del levantamiento y apriete el pecho, sostenga por un segundo y luego comience a bajar lentamente. Consejo: Lo ideal es bajar el peso y tomar aproximadamente el doble de tiempo que subirlo.",
+            "Repita el movimiento durante la cantidad prescrita de repeticiones de su programa de entrenamiento."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Bench_Press/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Bench_Press/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_incline_dumbbell_press",
+        "name": "Press con mancuernas en banco inclinado",
+        "localImagePath": "chest_dumbbell_incline_press.webp",
+        "mainMuscleGroup": "Pecho",
+        "mechanic": "Compuesto",
+        "targetMuscles": [
+            "pecho"
+        ],
+        "secondaryMuscles": [
+            "espalda",
+            "tríceps"
+        ],
+        "equipments": [
+            "pesa"
+        ],
+        "instructions": [
+            "Recuéstese en un banco inclinado con una mancuerna en cada mano sobre los muslos. Las palmas de tus manos estarán una frente a la otra.",
+            "Luego, usando los muslos para ayudar a empujar las mancuernas hacia arriba, levántelas una a la vez para poder sostenerlas al ancho de los hombros.",
+            "Una vez que haya levantado las mancuernas al ancho de los hombros, gire las muñecas hacia adelante de modo que las palmas de las manos queden en dirección opuesta a usted. Esta será tu posición inicial.",
+            "Asegúrate de mantener el control total de las mancuernas en todo momento. Luego exhala y empuja las mancuernas hacia arriba con el pecho.",
+            "Bloquee los brazos en la parte superior, manténgalos así por un segundo y luego comience a bajar lentamente el peso. Consejo Idealmente, bajar las pesas debería llevar aproximadamente el doble de tiempo que levantarlas.",
+            "Repita el movimiento durante la cantidad prescrita de repeticiones.",
+            "Cuando hayas terminado, coloca las mancuernas nuevamente sobre tus muslos y luego en el suelo. Esta es la forma más segura de soltar las mancuernas."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Incline_Dumbbell_Press/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Incline_Dumbbell_Press/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_decline_dumbbell_bench_press",
+        "name": "Press con mancuernas en banco declinado",
+        "localImagePath": "chest_dumbbell_decline_press.webp",
+        "mainMuscleGroup": "Pecho",
+        "mechanic": "Compuesto",
+        "targetMuscles": [
+            "pecho"
+        ],
+        "secondaryMuscles": [
+            "espalda",
+            "tríceps"
+        ],
+        "equipments": [
+            "pesa"
+        ],
+        "instructions": [
+            "Asegure sus piernas al final del banco de descenso y acuéstese con una mancuerna en cada mano encima de sus muslos. Las palmas de tu mano estarán una frente a la otra.",
+            "Una vez que esté acostado, mueva las mancuernas frente a usted al ancho de los hombros.",
+            "Una vez que esté al ancho de los hombros, gire las muñecas hacia adelante de modo que las palmas de las manos queden en dirección opuesta a usted. Esta será tu posición inicial.",
+            "Baje las pesas lentamente hacia su costado mientras exhala. Mantén el control total de las mancuernas en todo momento. Consejo: Durante todo el movimiento, los antebrazos siempre deben estar perpendiculares al suelo.",
+            "Mientras exhala, empuje las mancuernas hacia arriba usando los músculos pectorales. Bloquea los brazos en posición contraída, aprieta el pecho, mantén la posición durante un segundo y luego comienza a bajar lentamente. Consejo: Debería tomar al menos el doble de tiempo bajar que subir.",
+            "Repita el movimiento durante la cantidad prescrita de repeticiones de su programa de entrenamiento."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Decline_Dumbbell_Bench_Press/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Decline_Dumbbell_Bench_Press/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_machine_bench_press",
+        "name": "Press plano en maquina",
+        "localImagePath": "chest_machine_flat_press.webp",
+        "mainMuscleGroup": "Pecho",
+        "mechanic": "Compuesto",
+        "targetMuscles": [
+            "pecho"
+        ],
+        "secondaryMuscles": [
+            "espalda",
+            "tríceps"
+        ],
+        "equipments": [
+            "máquina"
+        ],
+        "instructions": [
+            "Siéntate en la máquina de prensa de pecho y selecciona el peso.",
+            "Pisa la palanca que te proporciona la máquina ya que te ayudará a llevar las manijas hacia adelante para que puedas agarrar las manijas y extender completamente los brazos.",
+            "Agarre las manijas con las palmas hacia abajo y levante los codos para que la parte superior de los brazos quede paralela al piso a los lados del torso. Consejo: Tus antebrazos apuntarán hacia adelante mientras agarras las manijas. Una vez que lleves las manijas hacia adelante y extiendas los brazos estarás en la posición inicial.",
+            "Ahora lleva las manijas hacia ti mientras inhalas.",
+            "Aleje las manijas de usted mientras flexiona los pectorales y exhala. Mantén la contracción por un segundo antes de volver a la posición inicial.",
+            "Repita para la cantidad recomendada de repeticiones.",
+            "Cuando termine, vuelva a pisar la palanca y lentamente lleve las manijas a su lugar original."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Machine_Bench_Press/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Machine_Bench_Press/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_butterfly",
+        "name": "Aperturas en maquina",
+        "localImagePath": "chest_pec_deck.webp",
+        "mainMuscleGroup": "Pecho",
+        "mechanic": "Aislamiento",
+        "targetMuscles": [
+            "pecho"
+        ],
+        "secondaryMuscles": [],
+        "equipments": [
+            "máquina"
+        ],
+        "instructions": [
+            "Siéntese en la máquina con la espalda apoyada sobre la almohadilla.",
+            "Agarre las asas. Consejo: la parte superior de tus brazos debe estar colocada paralela al suelo; ajuste la máquina en consecuencia. Esta será tu posición inicial.",
+            "Junte las manijas lentamente mientras aprieta el pecho en el medio. Exhale durante esta parte del movimiento y mantenga la contracción por un segundo.",
+            "Regrese lentamente a la posición inicial mientras inhala hasta que los músculos del pecho estén completamente estirados.",
+            "Repita hasta la cantidad recomendada de repeticiones."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Butterfly/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Butterfly/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_dumbbell_flyes",
+        "name": "Aperturas con mancuernas (Flyes)",
+        "localImagePath": "chest_dumbbell_fly.webp",
+        "mainMuscleGroup": "Pecho",
+        "mechanic": "Aislamiento",
+        "targetMuscles": [
+            "pecho"
+        ],
+        "secondaryMuscles": [],
+        "equipments": [
+            "pesa"
+        ],
+        "instructions": [
+            "Acuéstate en un banco plano con una mancuerna en cada mano apoyada sobre tus muslos. Las palmas de tu mano estarán una frente a la otra.",
+            "Luego, usando los muslos para ayudar a levantar las mancuernas, levántelas una a la vez para poder sostenerlas frente a usted al ancho de los hombros con las palmas de las manos una frente a la otra. Levanta las mancuernas como si las estuvieras presionando, pero detente y mantenlas justo antes de bloquearlas. Esta será tu posición inicial.",
+            "Con una ligera flexión de los codos para evitar la tensión en el tendón del bíceps, baje los brazos a ambos lados formando un arco amplio hasta que sienta un estiramiento en el pecho. Inhale mientras realiza esta parte del movimiento. Consejo: Tenga en cuenta que durante todo el movimiento, los brazos deben permanecer estacionarios; el movimiento sólo debe ocurrir en la articulación del hombro.",
+            "Regrese los brazos a la posición inicial mientras aprieta los músculos del pecho y exhala. Consejo: asegúrese de utilizar el mismo arco de movimiento utilizado para bajar las pesas.",
+            "Mantenga durante un segundo en la posición contraída y repita el movimiento durante la cantidad prescrita de repeticiones."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Flyes/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Flyes/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_dips___chest_version",
+        "name": "Fondos en paralelas (Enfoque pectoral)",
+        "localImagePath": "chest_dips.webp",
+        "mainMuscleGroup": "Pecho",
+        "mechanic": "Compuesto",
+        "targetMuscles": [
+            "pecho"
+        ],
+        "secondaryMuscles": [
+            "espalda",
+            "tríceps"
+        ],
+        "equipments": [
+            "otro"
+        ],
+        "instructions": [
+            "Para este ejercicio necesitarás acceso a barras paralelas. Para llegar a la posición inicial, sostenga el cuerpo con los brazos extendidos (brazos bloqueados) por encima de las barras.",
+            "Mientras inhala, bájese lentamente con el torso inclinado hacia adelante unos 30 grados aproximadamente y los codos ligeramente abiertos hasta que sienta un ligero estiramiento en el pecho.",
+            "Una vez que sienta el estiramiento, use su pecho para llevar su cuerpo a la posición inicial mientras exhala. Consejo: recuerda apretar el pecho en la parte superior del movimiento durante un segundo.",
+            "Repita el movimiento durante la cantidad prescrita de repeticiones."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dips_-_Chest_Version/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dips_-_Chest_Version/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_pullups",
+        "name": "Dominadas (Pull-ups)",
+        "localImagePath": "back_pullups.webp",
+        "mainMuscleGroup": "Espalda",
+        "mechanic": "Compuesto",
+        "targetMuscles": [
+            "dorsales"
+        ],
+        "secondaryMuscles": [
+            "bíceps",
+            "espalda media"
+        ],
+        "equipments": [
+            "solo cuerpo"
+        ],
+        "instructions": [
+            "Agarre la barra de dominadas con las palmas hacia adelante usando el agarre prescrito. Nota sobre los agarres: para un agarre amplio, las manos deben estar espaciadas a una distancia mayor que el ancho de los hombros. Para un agarre medio, las manos deben estar espaciadas a una distancia igual al ancho de los hombros y para un agarre cercano a una distancia menor que el ancho de los hombros.",
+            "Mientras tiene ambos brazos extendidos frente a usted sosteniendo la barra con el ancho de agarre elegido, lleve el torso hacia atrás unos 30 grados aproximadamente mientras crea una curvatura en la parte baja de la espalda y saca el pecho. Esta es tu posición inicial.",
+            "Levante el torso hasta que la barra toque la parte superior del pecho llevando los hombros y la parte superior de los brazos hacia abajo y hacia atrás. Exhala mientras realizas esta parte del movimiento. Consejo: concéntrate en apretar los músculos de la espalda una vez que alcances la posición completamente contraída. La parte superior del torso debe permanecer estacionaria mientras se mueve por el espacio y solo deben moverse los brazos. Los antebrazos no deben realizar ningún otro trabajo más que sujetar la barra.",
+            "Después de un segundo en la posición contraída, comience a inhalar y baje lentamente el torso hasta la posición inicial cuando los brazos estén completamente extendidos y los dorsales completamente estirados.",
+            "Repita este movimiento durante la cantidad prescrita de repeticiones."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Pullups/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Pullups/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_wide_grip_lat_pulldown",
+        "name": "Jalón al pecho con agarre ancho",
+        "localImagePath": "back_lat_pulldown.webp",
+        "mainMuscleGroup": "Espalda",
+        "mechanic": "Compuesto",
+        "targetMuscles": [
+            "dorsales"
+        ],
+        "secondaryMuscles": [
+            "bíceps",
+            "espalda media",
+            "espalda"
+        ],
+        "equipments": [
+            "cable"
+        ],
+        "instructions": [
+            "Siéntate en una máquina desplegable con una barra ancha unida a la polea superior. Asegúrese de ajustar la rodillera de la máquina a su altura. Estas almohadillas evitarán que tu cuerpo se eleve por la resistencia adherida a la barra.",
+            "Agarre la barra con las palmas hacia adelante utilizando el agarre prescrito. Nota sobre los agarres: para un agarre amplio, las manos deben estar espaciadas a una distancia mayor que el ancho de los hombros. Para un agarre medio, las manos deben estar espaciadas a una distancia igual al ancho de los hombros y para un agarre cercano a una distancia menor que el ancho de los hombros.",
+            "Mientras tiene ambos brazos extendidos frente a usted sosteniendo la barra con el ancho de agarre elegido, lleve el torso hacia atrás unos 30 grados aproximadamente mientras crea una curvatura en la parte baja de la espalda y saca el pecho. Esta es tu posición inicial.",
+            "Mientras exhala, baje la barra hasta que toque la parte superior del pecho tirando de los hombros y la parte superior de los brazos hacia abajo y hacia atrás. Consejo: concéntrate en apretar los músculos de la espalda una vez que alcances la posición completamente contraída. La parte superior del torso debe permanecer inmóvil y sólo deben moverse los brazos. Los antebrazos no deben realizar ningún otro trabajo excepto sostener la barra; por lo tanto, no intentes bajar la barra usando los antebrazos.",
+            "Después de un segundo en la posición contraída apretando los omóplatos, levante lentamente la barra de regreso a la posición inicial cuando los brazos estén completamente extendidos y los dorsales completamente estirados. Inhala durante esta parte del movimiento.",
+            "Repita este movimiento durante la cantidad prescrita de repeticiones."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Wide-Grip_Lat_Pulldown/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Wide-Grip_Lat_Pulldown/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_leverage_high_row",
+        "name": "Remo vertical en máquina",
+        "localImagePath": "back_machine_vertical_row.webp",
+        "mainMuscleGroup": "Espalda",
+        "mechanic": "Compuesto",
+        "targetMuscles": [
+            "espalda media"
+        ],
+        "secondaryMuscles": [
+            "dorsales"
+        ],
+        "equipments": [
+            "máquina"
+        ],
+        "instructions": [
+            "Cargue un peso adecuado en los pasadores y ajuste la altura del asiento para que pueda alcanzar las manijas que están encima de usted. Ajuste la rodillera para ayudarle a mantenerse en el suelo. Sujete las manijas con un agarre en pronación. Esta será tu posición inicial.",
+            "Tire de las manijas hacia su torso, retrayendo los omóplatos mientras flexiona el codo.",
+            "Haga una pausa en la parte inferior del movimiento y luego regrese lentamente las manijas a la posición inicial.",
+            "Para repeticiones múltiples, evite devolver completamente el peso a los topes para mantener la tensión en los músculos que se trabajan."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leverage_High_Row/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leverage_High_Row/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_bent_arm_barbell_pullover",
+        "name": "Pullover con barra",
+        "localImagePath": "back_barbell_pullover.webp",
+        "mainMuscleGroup": "Espalda",
+        "mechanic": "Compuesto",
+        "targetMuscles": [
+            "dorsales"
+        ],
+        "secondaryMuscles": [
+            "pecho",
+            "dorsales",
+            "espalda",
+            "tríceps"
+        ],
+        "equipments": [
+            "barra con pesas"
+        ],
+        "instructions": [
+            "Acuéstese en un banco plano con una barra usando el ancho de agarre de los hombros.",
+            "Sostenga la barra recta sobre su pecho con los brazos doblados. Esta será tu posición inicial.",
+            "Mientras mantiene los brazos en la posición doblada, baje el peso lentamente formando un arco detrás de la cabeza mientras respira hasta que sienta un estiramiento en el pecho.",
+            "En ese punto, lleva la barra de regreso a la posición inicial usando el arco a través del cual se bajó el peso y exhala mientras realizas este movimiento.",
+            "Mantenga el peso en la posición inicial durante un segundo y repita el movimiento durante el número prescrito de repeticiones."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bent-Arm_Barbell_Pullover/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bent-Arm_Barbell_Pullover/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_rope_straight_arm_pulldown",
+        "name": "Pullover polea alta",
+        "localImagePath": "back_rope_pulldown.webp",
+        "mainMuscleGroup": "Espalda",
+        "mechanic": "Aislamiento",
+        "targetMuscles": [
+            "dorsales"
+        ],
+        "secondaryMuscles": [],
+        "equipments": [
+            "cable"
+        ],
+        "instructions": [
+            "Conecte una cuerda a una polea alta y seleccione su peso. Párate a un par de pies de la polea con los pies escalonados y toma la cuerda con ambas manos. Inclínese hacia adelante desde la cadera, manteniendo la espalda recta y los brazos extendidos frente a usted. Esta será tu posición inicial.",
+            "Manteniendo los brazos rectos, extienda el hombro para tirar de la cuerda hasta los muslos.",
+            "Haga una pausa en la parte inferior del movimiento, apretando los dorsales.",
+            "Regrese a la posición inicial sin permitir que el peso descanse completamente sobre la pila."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Rope_Straight-Arm_Pulldown/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Rope_Straight-Arm_Pulldown/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_bent_over_barbell_row",
+        "name": "Remo inclinado con barra",
+        "localImagePath": "back_barbell_row.webp",
+        "mainMuscleGroup": "Espalda",
+        "mechanic": "Compuesto",
+        "targetMuscles": [
+            "espalda media"
+        ],
+        "secondaryMuscles": [
+            "bíceps",
+            "dorsales",
+            "espalda"
+        ],
+        "equipments": [
+            "barra con pesas"
+        ],
+        "instructions": [
+            "Sosteniendo una barra con un agarre en pronación (con las palmas hacia abajo), doble ligeramente las rodillas y lleve el torso hacia adelante, doblando la cintura, mientras mantiene la espalda recta hasta que quede casi paralela al suelo. Consejo: asegúrese de mantener la cabeza erguida. La barra debe colgar directamente frente a usted mientras sus brazos cuelgan perpendiculares al suelo y a su torso. Esta es tu posición inicial.",
+            "Ahora, mientras mantienes el torso inmóvil, exhala y levanta la barra hacia ti. Mantenga los codos cerca del cuerpo y utilice únicamente los antebrazos para sostener el peso. En la posición más contraída, contraiga los músculos de la espalda y manténgalos así durante una breve pausa.",
+            "Luego inhala y baja lentamente la barra hasta la posición inicial.",
+            "Repita hasta la cantidad recomendada de repeticiones."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bent_Over_Barbell_Row/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bent_Over_Barbell_Row/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_seated_cable_rows",
+        "name": "Remo en polea baja con agarre",
+        "localImagePath": "back_cable_seated_row.webp",
+        "mainMuscleGroup": "Espalda",
+        "mechanic": "Compuesto",
+        "targetMuscles": [
+            "espalda media"
+        ],
+        "secondaryMuscles": [
+            "bíceps",
+            "dorsales",
+            "espalda"
+        ],
+        "equipments": [
+            "cable"
+        ],
+        "instructions": [
+            "Para este ejercicio necesitarás acceso a una máquina de remo en polea baja con barra en V. Nota: La barra en V le permitirá tener un agarre neutral donde las palmas de sus manos estén enfrentadas. Para llegar a la posición inicial, primero siéntese en la máquina y coloque los pies en la plataforma delantera o en la barra transversal proporcionada, asegurándose de que las rodillas estén ligeramente dobladas y no bloqueadas.",
+            "Inclínese mientras mantiene la alineación natural de su espalda y agarre las manijas de la barra en V.",
+            "Con los brazos extendidos, tire hacia atrás hasta que el torso forme un ángulo de 90 grados con respecto a las piernas. Tu espalda debe estar ligeramente arqueada y tu pecho debe sobresalir. Deberías sentir un buen estiramiento en tus dorsales mientras sostienes la barra frente a ti. Esta es la posición inicial del ejercicio.",
+            "Manteniendo el torso inmóvil, tire de las manijas hacia su torso mientras mantiene los brazos cerca hasta tocar los abdominales. Exhale mientras realiza ese movimiento. En ese punto deberías estar apretando con fuerza los músculos de la espalda. Mantén esa contracción por un segundo y regresa lentamente a la posición original mientras inhalas.",
+            "Repita hasta la cantidad recomendada de repeticiones."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Cable_Rows/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Cable_Rows/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_leverage_iso_row",
+        "name": "Remo en horizontal en maquina",
+        "localImagePath": "back_machine_horizontal_row.webp",
+        "mainMuscleGroup": "Espalda",
+        "mechanic": "Compuesto",
+        "targetMuscles": [
+            "dorsales"
+        ],
+        "secondaryMuscles": [
+            "bíceps",
+            "espalda media"
+        ],
+        "equipments": [
+            "máquina"
+        ],
+        "instructions": [
+            "Cargue un peso adecuado en los pasadores y ajuste la altura del asiento para que las manijas queden al nivel del pecho. Sujete las manijas con un agarre neutral o en pronación. Esta será tu posición inicial.",
+            "Tire de las manijas hacia su torso, retrayendo los omóplatos mientras flexiona el codo.",
+            "Haga una pausa en la parte inferior del movimiento y luego regrese lentamente las manijas a la posición inicial. Para repeticiones múltiples, evite devolver completamente el peso a los topes para mantener la tensión en los músculos que se trabajan."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leverage_Iso_Row/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leverage_Iso_Row/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_lying_t_bar_row",
+        "name": "Remo en barra T",
+        "localImagePath": "back_t_bar_row.webp",
+        "mainMuscleGroup": "Espalda",
+        "mechanic": "Compuesto",
+        "targetMuscles": [
+            "espalda media"
+        ],
+        "secondaryMuscles": [
+            "bíceps",
+            "dorsales"
+        ],
+        "equipments": [
+            "máquina"
+        ],
+        "instructions": [
+            "Cargue la máquina de remo con barra en T con el peso deseado y ajuste la altura de las piernas para que la parte superior del pecho quede en la parte superior de la almohadilla. Consejo: En algunas máquinas lo único que puedes hacer es pararte en el escalón adecuado que te permita estar a una altura que tenga la parte superior del pecho en la parte superior de la almohadilla.",
+            "Acuéstese boca abajo sobre la almohadilla y agarre las asas. Puede usar las palmas hacia abajo, las palmas hacia arriba o las palmas en posición dependiendo de qué parte de su espalda desee enfatizar.",
+            "Levanta la barra del soporte y extiende los brazos frente a ti. Esta será tu posición inicial.",
+            "Mientras exhalas, levanta lentamente el peso y aprieta la espalda en la parte superior del movimiento. Consejo: Mantenga la parte superior de los brazos lo más cerca posible del torso durante todo el movimiento para activar mejor los músculos de la espalda. Además, no levante su cuerpo de la almohadilla en ningún momento y absténgase de utilizar los bíceps para levantar el peso.",
+            "Después de una segunda contracción en la parte superior del movimiento, mientras inhala, regrese lentamente a la posición inicial.",
+            "Repita hasta la cantidad recomendada de repeticiones."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Lying_T-Bar_Row/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Lying_T-Bar_Row/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_seated_barbell_military_press",
+        "name": "Press militar con barra",
+        "localImagePath": "shoulder_barbell_military_press.webp",
+        "mainMuscleGroup": "Hombros",
+        "mechanic": "Compuesto",
+        "targetMuscles": [
+            "espalda"
+        ],
+        "secondaryMuscles": [
+            "tríceps"
+        ],
+        "equipments": [
+            "barra con pesas"
+        ],
+        "instructions": [
+            "Siéntese en un banco de press militar con una barra detrás de la cabeza y pídale a un observador que le dé la barra (mejor en el manguito rotador de esta manera) o levántela usted mismo con cuidado con un agarre en pronación (con las palmas hacia adelante). Consejo: el agarre debe ser más ancho que el ancho de los hombros y debe crear un ángulo de 90 grados entre el antebrazo y la parte superior del brazo a medida que la barra desciende.",
+            "Una vez que levante la barra con la longitud de agarre correcta, levante la barra por encima de su cabeza bloqueando los brazos. Sosténgalo aproximadamente al nivel de los hombros y ligeramente por delante de su cabeza. Esta es tu posición inicial.",
+            "Baje la barra lentamente hasta la clavícula mientras inhala.",
+            "Levanta la barra hasta la posición inicial mientras exhalas.",
+            "Repita hasta la cantidad recomendada de repeticiones."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Barbell_Military_Press/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Barbell_Military_Press/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_dumbbell_shoulder_press",
+        "name": "Press de hombros con mancuernas",
+        "localImagePath": "shoulder_dumbbell_press.webp",
+        "mainMuscleGroup": "Hombros",
+        "mechanic": "Compuesto",
+        "targetMuscles": [
+            "espalda"
+        ],
+        "secondaryMuscles": [
+            "tríceps"
+        ],
+        "equipments": [
+            "pesa"
+        ],
+        "instructions": [
+            "Mientras sostiene una mancuerna en cada mano, siéntese en un banco de press militar o en un banco utilitario que tenga respaldo para la espalda. Coloque las mancuernas en posición vertical sobre sus muslos.",
+            "Ahora levante las mancuernas hasta la altura de los hombros, una a la vez, usando los muslos para ayudar a impulsarlas a su posición.",
+            "Asegúrese de rotar las muñecas de modo que las palmas de las manos miren hacia adelante. Esta es tu posición inicial.",
+            "Ahora, exhala y empuja las mancuernas hacia arriba hasta que se toquen en la parte superior.",
+            "Luego, después de una breve pausa en la posición superior contraída, baje lentamente las pesas hasta la posición inicial mientras inhala.",
+            "Repita hasta la cantidad recomendada de repeticiones."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Shoulder_Press/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Shoulder_Press/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_machine_shoulder_(military)_press",
+        "name": "Press de hombros en máquina",
+        "localImagePath": "shoulder_machine_press.webp",
+        "mainMuscleGroup": "Hombros",
+        "mechanic": "Compuesto",
+        "targetMuscles": [
+            "espalda"
+        ],
+        "secondaryMuscles": [
+            "tríceps"
+        ],
+        "equipments": [
+            "máquina"
+        ],
+        "instructions": [
+            "Siéntate en la máquina de press de hombros y selecciona el peso.",
+            "Agarre las manijas a los lados mientras mantiene los codos doblados y alineados con su torso. Esta será tu posición inicial.",
+            "Ahora levanta las manijas mientras exhalas y extiendes los brazos completamente. En la parte superior de la posición, asegúrate de mantener la contracción por un segundo.",
+            "Baje las manijas lentamente hasta la posición inicial mientras inhala.",
+            "Repita hasta la cantidad recomendada de repeticiones."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Machine_Shoulder_Military_Press/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Machine_Shoulder_Military_Press/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_side_lateral_raise",
+        "name": "Elevaciones laterales con mancuernas",
+        "localImagePath": "shoulder_dumbbell_lateral_raise.webp",
+        "mainMuscleGroup": "Hombros",
+        "mechanic": "Aislamiento",
+        "targetMuscles": [
+            "espalda"
+        ],
+        "secondaryMuscles": [],
+        "equipments": [
+            "pesa"
+        ],
+        "instructions": [
+            "Elija un par de mancuernas y párese con el torso recto y las mancuernas a su lado con los brazos extendidos y las palmas de la mano hacia usted. Esta será tu posición inicial.",
+            "Mientras mantiene el torso en una posición estacionaria (sin balancearse), levante las mancuernas hacia su costado con una ligera flexión del codo y las manos ligeramente inclinadas hacia adelante, como si estuviera vertiendo agua en un vaso. Continúe subiendo hasta que sus brazos queden paralelos al suelo. Exhala mientras ejecutas este movimiento y haz una pausa de un segundo en la parte superior.",
+            "Baje las mancuernas lentamente hasta la posición inicial mientras inhala.",
+            "Repita hasta la cantidad recomendada de repeticiones."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Side_Lateral_Raise/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Side_Lateral_Raise/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_front_dumbbell_raise",
+        "name": "Elevaciones frontales con mancuernas",
+        "localImagePath": "shoulder_dumbbell_front_raise.webp",
+        "mainMuscleGroup": "Hombros",
+        "mechanic": "Aislamiento",
+        "targetMuscles": [
+            "espalda"
+        ],
+        "secondaryMuscles": [],
+        "equipments": [
+            "pesa"
+        ],
+        "instructions": [
+            "Elija un par de mancuernas y párese con el torso recto y las mancuernas frente a los muslos con los brazos extendidos y las palmas de las manos hacia los muslos. Esta será tu posición inicial.",
+            "Mientras mantiene el torso inmóvil (sin balancearse), levante la mancuerna izquierda hacia el frente con una ligera flexión del codo y las palmas de las manos siempre hacia abajo. Continúe subiendo hasta que su brazo esté ligeramente por encima del paralelo al suelo. Exhala mientras ejecutas esta parte del movimiento y haz una pausa por un segundo en la parte superior. Inhala después de la segunda pausa.",
+            "Ahora baje la mancuerna lentamente hasta la posición inicial mientras levanta simultáneamente la mancuerna derecha.",
+            "Continúe alternando de esta manera hasta que se haya realizado toda la cantidad recomendada de repeticiones para cada brazo."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Front_Dumbbell_Raise/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Front_Dumbbell_Raise/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_cable_rear_delt_fly",
+        "name": "Face Pull en polea alta",
+        "localImagePath": "shoulder_cable_face_pull.webp",
+        "mainMuscleGroup": "Hombros",
+        "mechanic": "Aislamiento",
+        "targetMuscles": [
+            "espalda"
+        ],
+        "secondaryMuscles": [],
+        "equipments": [
+            "cable"
+        ],
+        "instructions": [
+            "Ajuste las poleas a la altura adecuada y ajuste el peso. Las poleas deben estar por encima de tu cabeza.",
+            "Agarra la polea izquierda con la mano derecha y la polea derecha con la mano izquierda, cruzándolas frente a ti. Esta será tu posición inicial.",
+            "Inicie el movimiento moviendo los brazos hacia atrás y hacia afuera, manteniendo los brazos rectos mientras ejecuta el movimiento.",
+            "Haga una pausa al final del movimiento antes de devolver las manijas a la posición inicial."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cable_Rear_Delt_Fly/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cable_Rear_Delt_Fly/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_barbell_full_squat",
+        "name": "Sentadilla con barra trasera (Back Squat)",
+        "localImagePath": "legs_barbell_squat.webp",
+        "mainMuscleGroup": "Pierna",
+        "mechanic": "Compuesto",
+        "targetMuscles": [
+            "cuadríceps"
+        ],
+        "secondaryMuscles": [
+            "terneros",
+            "glúteos",
+            "isquiotibiales",
+            "espalda baja"
+        ],
+        "equipments": [
+            "barra con pesas"
+        ],
+        "instructions": [
+            "Este ejercicio se realiza mejor dentro de una rejilla para sentadillas por motivos de seguridad. Para comenzar, primero coloque la barra sobre una rejilla justo por encima del nivel de los hombros. Una vez elegida la altura correcta y cargada la barra, colóquese debajo de la barra y coloque la parte posterior de los hombros (ligeramente debajo del cuello) sobre ella.",
+            "Sujétate de la barra con ambos brazos a cada lado y levántala del rack empujando primero con las piernas y al mismo tiempo enderezando el torso.",
+            "Aléjese de la rejilla y coloque las piernas en una postura media al ancho de los hombros con los dedos de los pies ligeramente apuntados. Mantén la cabeza erguida en todo momento y mantén la espalda recta. Esta será tu posición inicial.",
+            "Comienza a bajar lentamente la barra doblando las rodillas y sentándote hacia atrás con las caderas mientras mantienes una postura recta con la cabeza en alto. Continúe hacia abajo hasta que los isquiotibiales estén en las pantorrillas. Inhala mientras realizas esta parte del movimiento.",
+            "Comienza a elevar la barra mientras exhalas empujando el suelo con el talón o la mitad del pie mientras estiras las piernas y extiendes las caderas para volver a la posición inicial.",
+            "Repita hasta la cantidad recomendada de repeticiones."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Full_Squat/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Full_Squat/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_split_squat_with_dumbbells",
+        "name": "Sentadilla búlgara con mancuernas",
+        "localImagePath": "legs_bulgarian_split_squat.webp",
+        "mainMuscleGroup": "Pierna",
+        "mechanic": "Compuesto",
+        "targetMuscles": [
+            "cuadríceps"
+        ],
+        "secondaryMuscles": [
+            "glúteos",
+            "isquiotibiales"
+        ],
+        "equipments": [
+            "pesa"
+        ],
+        "instructions": [
+            "Colóquese en una postura escalonada con el pie trasero elevado y el pie delantero hacia adelante.",
+            "Sostenga una mancuerna en cada mano, dejándolas colgar a los lados. Esta será tu posición inicial.",
+            "Comienza descendiendo, flexionando la rodilla y la cadera para bajar el cuerpo. Mantener una buena postura durante todo el movimiento. Mantenga la rodilla delantera alineada con el pie mientras realiza el ejercicio.",
+            "En la parte inferior del movimiento, impulsa el talón para extender la rodilla y la cadera para volver a la posición inicial."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Split_Squat_with_Dumbbells/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Split_Squat_with_Dumbbells/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_leg_press",
+        "name": "Prensa de piernas inclinada (45°)",
+        "localImagePath": "legs_leg_press_45.webp",
+        "mainMuscleGroup": "Pierna",
+        "mechanic": "Compuesto",
+        "targetMuscles": [
+            "cuadríceps"
+        ],
+        "secondaryMuscles": [
+            "terneros",
+            "glúteos",
+            "isquiotibiales"
+        ],
+        "equipments": [
+            "máquina"
+        ],
+        "instructions": [
+            "Usando una máquina de prensa de piernas, siéntese en la máquina y coloque las piernas en la plataforma directamente frente a usted en una postura de pie media (al ancho de los hombros). (Nota: para los propósitos de esta discusión, usaremos la postura media descrita anteriormente, que apunta al desarrollo general; sin embargo, puede elegir cualquiera de las tres posturas descritas en la sección de posicionamiento de los pies).",
+            "Baje las barras de seguridad que sujetan la plataforma con peso en su lugar y presione la plataforma hacia arriba hasta que sus piernas estén completamente extendidas frente a usted. Consejo: asegúrese de no bloquear las rodillas. Tu torso y tus piernas deben formar un ángulo perfecto de 90 grados. Esta será tu posición inicial.",
+            "Mientras inhala, baje lentamente la plataforma hasta que la parte superior e inferior de las piernas formen un ángulo de 90 grados.",
+            "Empujando principalmente con los talones de los pies y utilizando los cuádriceps vuelve a la posición inicial mientras exhalas.",
+            "Repita la cantidad recomendada de repeticiones y asegúrese de bloquear los imperdibles correctamente una vez que haya terminado. No querrás que esa plataforma te caiga encima completamente cargada."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Press/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Press/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_barbell_deadlift",
+        "name": "Peso muerto convencional con barra",
+        "localImagePath": "legs_barbell_deadlift.webp",
+        "mainMuscleGroup": "Pierna",
+        "mechanic": "Compuesto",
+        "targetMuscles": [
+            "espalda baja"
+        ],
+        "secondaryMuscles": [
+            "terneros",
+            "antebrazos",
+            "glúteos",
+            "isquiotibiales",
+            "dorsales",
+            "espalda media",
+            "cuadríceps",
+            "trampas"
+        ],
+        "equipments": [
+            "barra con pesas"
+        ],
+        "instructions": [
+            "Párate frente a una barra cargada.",
+            "Mientras mantiene la espalda lo más recta posible, doble las rodillas, inclínese hacia adelante y agarre la barra con un agarre por encima de la cabeza medio (al ancho de los hombros). Esta será la posición inicial del ejercicio. Consejo: si le resulta difícil sujetarse a la barra con este agarre, alterne el agarre o utilice muñequeras.",
+            "Mientras sostiene la barra, comience el levantamiento empujando con las piernas y al mismo tiempo coloque el torso en posición vertical mientras exhala. En posición erguida, saca el pecho y contrae la espalda llevando los omóplatos hacia atrás. Piense en cómo se ven los soldados en el ejército cuando están en posición de firmes.",
+            "Vuelva a la posición inicial doblando las rodillas y simultáneamente inclinando el torso hacia adelante a la altura de la cintura manteniendo la espalda recta. Cuando las pesas en la barra tocan el suelo, volverás a la posición inicial y estarás listo para realizar otra repetición.",
+            "Realizar la cantidad de repeticiones prescritas en el programa."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Deadlift/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Deadlift/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_romanian_deadlift",
+        "name": "Peso muerto rumano",
+        "localImagePath": "legs_barbell_rdl.webp",
+        "mainMuscleGroup": "Pierna",
+        "mechanic": "Compuesto",
+        "targetMuscles": [
+            "isquiotibiales"
+        ],
+        "secondaryMuscles": [
+            "terneros",
+            "glúteos",
+            "espalda baja"
+        ],
+        "equipments": [
+            "barra con pesas"
+        ],
+        "instructions": [
+            "Coloque una barra frente a usted en el suelo y agárela usando un agarre en pronación (con las palmas hacia abajo) un poco más ancho que el ancho de los hombros. Consejo: Dependiendo del peso utilizado, es posible que necesites muñequeras para realizar el ejercicio y también una plataforma elevada para permitir un mejor rango de movimiento.",
+            "Doble ligeramente las rodillas y mantenga las espinillas verticales, las caderas hacia atrás y la espalda recta. Esta será tu posición inicial.",
+            "Manteniendo la espalda y los brazos completamente rectos en todo momento, use las caderas para levantar la barra mientras exhala. Consejo: El movimiento no debe ser rápido sino constante y bajo control.",
+            "Una vez que esté completamente erguido, baje la barra empujando las caderas hacia atrás, doblando solo ligeramente las rodillas, a diferencia de cuando está en cuclillas. Consejo: respira profundamente al inicio del movimiento y mantén el pecho erguido. Aguanta la respiración mientras bajas y exhala mientras completas el movimiento.",
+            "Repita hasta la cantidad recomendada de repeticiones."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Romanian_Deadlift/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Romanian_Deadlift/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_barbell_hip_thrust",
+        "name": "Hip Thrust (Empuje de cadera) con barra",
+        "localImagePath": "legs_barbell_hip_thrust.webp",
+        "mainMuscleGroup": "Pierna",
+        "mechanic": "Compuesto",
+        "targetMuscles": [
+            "glúteos"
+        ],
+        "secondaryMuscles": [
+            "terneros",
+            "isquiotibiales"
+        ],
+        "equipments": [
+            "barra con pesas"
+        ],
+        "instructions": [
+            "Comience sentado en el suelo con un banco directamente detrás de usted. Coloque una barra cargada sobre sus piernas. Usar una barra de grasa o tener una almohadilla en la barra puede reducir en gran medida las molestias causadas por este ejercicio.",
+            "Gire la barra para que quede directamente encima de sus caderas e inclínese hacia atrás contra el banco de modo que sus omóplatos queden cerca de la parte superior.",
+            "Comience el movimiento impulsando los pies, extendiendo las caderas verticalmente a través de la barra. Tu peso debe estar soportado por tus omóplatos y tus pies. Extiende lo más que puedas y luego invierte el movimiento para volver a la posición inicial."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Hip_Thrust/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Hip_Thrust/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_leg_extensions",
+        "name": "Extensiones de cuádriceps en máquina",
+        "localImagePath": "legs_machine_extensions.webp",
+        "mainMuscleGroup": "Pierna",
+        "mechanic": "Aislamiento",
+        "targetMuscles": [
+            "cuadríceps"
+        ],
+        "secondaryMuscles": [],
+        "equipments": [
+            "máquina"
+        ],
+        "instructions": [
+            "Para este ejercicio necesitarás utilizar una máquina de extensión de piernas. Primero elige tu peso y siéntate en la máquina con las piernas debajo de la almohadilla (los pies apuntando hacia adelante) y las manos sujetando las barras laterales. Esta será tu posición inicial. Consejo: deberá ajustar la almohadilla para que caiga sobre la parte inferior de la pierna (justo encima de los pies). Además, asegúrese de que sus piernas formen un ángulo de 90 grados entre la parte inferior y superior de la pierna. Si el ángulo es inferior a 90 grados, significa que la rodilla está sobre los dedos del pie, lo que a su vez crea una tensión indebida en la articulación de la rodilla. Si la máquina está diseñada de esa manera, busca otra máquina o simplemente asegúrate de que cuando comiences a ejecutar el ejercicio dejes de bajar una vez que alcances el ángulo de 90 grados.",
+            "Usando tus cuádriceps, extiende las piernas al máximo mientras exhalas. Asegúrese de que el resto del cuerpo permanezca estacionario en el asiento. Pausa un segundo en la posición contraída.",
+            "Baje lentamente el peso a la posición original mientras inhala, asegurándose de no superar el límite del ángulo de 90 grados.",
+            "Repita la cantidad de veces recomendada."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Extensions/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Extensions/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_lying_leg_curls",
+        "name": "Curl femoral en máquina",
+        "localImagePath": "legs_machine_leg_curl.webp",
+        "mainMuscleGroup": "Pierna",
+        "mechanic": "Aislamiento",
+        "targetMuscles": [
+            "isquiotibiales"
+        ],
+        "secondaryMuscles": [],
+        "equipments": [
+            "máquina"
+        ],
+        "instructions": [
+            "Ajuste la palanca de la máquina para que se ajuste a su altura y acuéstese boca abajo en la máquina de curl de piernas con la almohadilla de la palanca en la parte posterior de las piernas (solo unos centímetros debajo de las pantorrillas). Consejo: Utilice preferentemente una máquina de curl de piernas que esté en ángulo en lugar de plana, ya que una posición en ángulo es más favorable para el reclutamiento de los isquiotibiales.",
+            "Manteniendo el torso plano sobre el banco, asegúrese de que las piernas estén completamente estiradas y agarre las manijas laterales de la máquina. Coloque los dedos de los pies rectos (o también puede utilizar cualquiera de las otras dos posturas descritas en la sección de posicionamiento de los pies). Esta será tu posición inicial.",
+            "Mientras exhala, doble las piernas hacia arriba lo más que pueda sin levantar la parte superior de las piernas de la almohadilla. Una vez que llegues a la posición completamente contraída, mantenla por un segundo.",
+            "Mientras inhalas, lleva las piernas a la posición inicial. Repita hasta la cantidad recomendada de repeticiones."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Lying_Leg_Curls/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Lying_Leg_Curls/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_thigh_adductor",
+        "name": "Aductor interno en maquina",
+        "localImagePath": "legs_machine_adductor.webp",
+        "mainMuscleGroup": "Pierna",
+        "mechanic": "Aislamiento",
+        "targetMuscles": [
+            "aductores"
+        ],
+        "secondaryMuscles": [
+            "glúteos",
+            "isquiotibiales"
+        ],
+        "equipments": [
+            "máquina"
+        ],
+        "instructions": [
+            "Para comenzar, siéntese en la máquina de aductores y seleccione un peso con el que se sienta cómodo. Cuando sus piernas estén colocadas correctamente sobre las almohadillas de la máquina, agarre las manijas de cada lado. Toda la parte superior de tu cuerpo (desde la cintura hacia arriba) debe estar estacionaria. Esta es la posición inicial.",
+            "Presione lentamente contra la máquina con las piernas para acercarlas mientras exhala.",
+            "Sienta la contracción por un segundo y comience a mover las piernas hacia la posición inicial mientras inhala. Nota: Recuerde mantener la parte superior del cuerpo inmóvil y evitar movimientos bruscos rápidos para evitar que se produzcan lesiones.",
+            "Repita hasta la cantidad recomendada de repeticiones."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Thigh_Adductor/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Thigh_Adductor/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_thigh_abductor",
+        "name": "Aductor externo en maquina",
+        "localImagePath": "legs_machine_abductor.webp",
+        "mainMuscleGroup": "Pierna",
+        "mechanic": "Aislamiento",
+        "targetMuscles": [
+            "secuestradores"
+        ],
+        "secondaryMuscles": [
+            "glúteos"
+        ],
+        "equipments": [
+            "máquina"
+        ],
+        "instructions": [
+            "Para comenzar, siéntese en la máquina abductora y seleccione un peso con el que se sienta cómodo. Cuando sus piernas estén colocadas correctamente, agarre las manijas de cada lado. Toda la parte superior de tu cuerpo (desde la cintura hacia arriba) debe estar estacionaria. Esta es la posición inicial.",
+            "Presione lentamente contra la máquina con las piernas para alejarlas mientras exhala.",
+            "Siente la contracción por un segundo y comienza a mover las piernas hacia la posición inicial mientras inhalas. Nota: Recuerda mantener la parte superior del cuerpo inmóvil para evitar que se produzcan lesiones.",
+            "Repita hasta la cantidad recomendada de repeticiones."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Thigh_Abductor/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Thigh_Abductor/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_standing_calf_raises",
+        "name": "Elevación de talones en máquina (De pie)",
+        "localImagePath": "legs_machine_calf_raise.webp",
+        "mainMuscleGroup": "Pierna",
+        "mechanic": "Aislamiento",
+        "targetMuscles": [
+            "terneros"
+        ],
+        "secondaryMuscles": [],
+        "equipments": [
+            "máquina"
+        ],
+        "instructions": [
+            "Ajuste la palanca acolchada de la máquina de elevación de pantorrillas para adaptarla a su altura.",
+            "Coloque los hombros debajo de las almohadillas provistas y coloque los dedos de los pies mirando hacia adelante (o usando cualquiera de las otras dos posiciones descritas al comienzo del capítulo). Las puntas de los pies deben estar aseguradas encima del bloque de pantorrilla con los talones extendiéndose fuera de él. Empuje la palanca hacia arriba extendiendo las caderas y las rodillas hasta que el torso quede erguido. Las rodillas deben mantenerse ligeramente flexionadas; nunca bloqueado. Los dedos de los pies deben mirar hacia adelante, hacia afuera o hacia adentro como se describe al comienzo del capítulo. Esta será tu posición inicial.",
+            "Levante los talones mientras exhala extendiendo los tobillos lo más alto posible y flexionando la pantorrilla. Asegúrese de que la rodilla se mantenga fija en todo momento. No debe haber flexión en ningún momento. Mantén la posición contraída por un segundo antes de comenzar a bajar.",
+            "Vuelva lentamente a la posición inicial mientras inhala bajando los talones mientras dobla los tobillos hasta estirar las pantorrillas.",
+            "Repita hasta la cantidad recomendada de repeticiones."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Standing_Calf_Raises/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Standing_Calf_Raises/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_dumbbell_alternate_bicep_curl",
+        "name": "Curl de bíceps con mancuernas (Alterno)",
+        "localImagePath": "biceps_dumbbell_alternate_curl.webp",
+        "mainMuscleGroup": "Bíceps",
+        "mechanic": "Aislamiento",
+        "targetMuscles": [
+            "bíceps"
+        ],
+        "secondaryMuscles": [
+            "antebrazos"
+        ],
+        "equipments": [
+            "pesa"
+        ],
+        "instructions": [
+            "Párese (torso erguido) con una mancuerna en cada mano sostenida con los brazos extendidos. Los codos deben estar cerca del torso y las palmas de las manos deben mirar hacia los muslos.",
+            "Mientras sostiene la parte superior del brazo inmóvil, doble el peso correcto mientras gira la palma de las manos hasta que queden mirando hacia adelante. En este punto, continúa contrayendo el bíceps mientras exhalas hasta que esté completamente contraído y las mancuernas estén al nivel de los hombros. Mantén la posición contraída por un segundo mientras aprietas el bíceps. Consejo: Sólo deben moverse los antebrazos.",
+            "Comience lentamente a llevar la mancuerna a la posición inicial mientras inhala. Consejo: recuerde girar las palmas hacia la posición inicial (mirando hacia los muslos) a medida que baja.",
+            "Repite el movimiento con la mano izquierda. Esto equivale a una repetición.",
+            "Continúe alternando de esta manera durante la cantidad recomendada de repeticiones."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Alternate_Bicep_Curl/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Alternate_Bicep_Curl/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_barbell_curl",
+        "name": "Curl de bíceps con barra",
+        "localImagePath": "biceps_barbell_curl.webp",
+        "mainMuscleGroup": "Bíceps",
+        "mechanic": "Aislamiento",
+        "targetMuscles": [
+            "bíceps"
+        ],
+        "secondaryMuscles": [
+            "antebrazos"
+        ],
+        "equipments": [
+            "barra con pesas"
+        ],
+        "instructions": [
+            "Párese con el torso erguido mientras sostiene una barra con un agarre a la altura de los hombros. Las palmas de las manos deben mirar hacia adelante y los codos deben estar cerca del torso. Esta será tu posición inicial.",
+            "Mientras mantiene inmóvil la parte superior de los brazos, doble las pesas hacia adelante mientras contrae los bíceps mientras exhala. Consejo: Sólo deben moverse los antebrazos.",
+            "Continúa el movimiento hasta que tus bíceps estén completamente contraídos y la barra esté a la altura de los hombros. Mantén la posición contraída durante un segundo y aprieta con fuerza el bíceps.",
+            "Lentamente comience a llevar la barra a la posición inicial mientras inhala.",
+            "Repita hasta la cantidad recomendada de repeticiones."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Curl/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Curl/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_spider_curl",
+        "name": "Spider Curl con barra Z (Curl araña)",
+        "localImagePath": "biceps_ez_bar_spider_curl.webp",
+        "mainMuscleGroup": "Bíceps",
+        "mechanic": "Aislamiento",
+        "targetMuscles": [
+            "bíceps"
+        ],
+        "secondaryMuscles": [],
+        "equipments": [
+            "barra de curl ez"
+        ],
+        "instructions": [
+            "Comience colocando la barra en la parte del banco del predicador en la que normalmente se sentaría. Asegúrese de alinear la barra correctamente para que esté equilibrada y no se caiga.",
+            "Muévase hacia la parte delantera del banco del predicador (la parte donde generalmente se encuentran los brazos) y colóquese en una inclinación de 45 grados con el torso y el estómago presionados contra el lado frontal del banco del predicador.",
+            "Asegúrese de que sus pies (especialmente los dedos de los pies) estén bien colocados en el piso y coloque la parte superior de sus brazos encima de la almohadilla ubicada en la parte interior del banco del predicador.",
+            "Use sus brazos para agarrar la barra con un agarre supino (con las palmas hacia arriba) aproximadamente al ancho de los hombros o ligeramente más cerca uno del otro.",
+            "Comience a levantar lentamente la barra hacia arriba y exhale. Mantén la posición contraída por un segundo mientras aprietas el bíceps.",
+            "Comience lentamente a llevar la barra a la posición inicial mientras inhala.",
+            "Repita hasta la cantidad recomendada de repeticiones."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Spider_Curl/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Spider_Curl/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_hammer_curls",
+        "name": "Curl martillo (Hammer Curl)",
+        "localImagePath": "biceps_dumbbell_hammer_curl.webp",
+        "mainMuscleGroup": "Bíceps",
+        "mechanic": "Aislamiento",
+        "targetMuscles": [
+            "bíceps"
+        ],
+        "secondaryMuscles": [],
+        "equipments": [
+            "pesa"
+        ],
+        "instructions": [
+            "Ponte de pie con el torso erguido y una mancuerna en cada mano sostenida con los brazos extendidos. Los codos deben estar cerca del torso.",
+            "Las palmas de las manos deben mirar hacia tu torso. Esta será tu posición inicial.",
+            "Ahora, mientras mantienes inmóvil la parte superior del brazo, exhala y flexiona el peso hacia adelante mientras contraes el bíceps. Continúe elevando el peso hasta que los bíceps estén completamente contraídos y la mancuerna esté al nivel de los hombros. Mantenga la posición contraída por un breve momento mientras aprieta el bíceps. Consejo: concéntrate en mantener el codo inmóvil y mover solo el antebrazo.",
+            "Después de la breve pausa, inhale y lentamente comience a bajar las mancuernas hasta la posición inicial.",
+            "Repita hasta la cantidad recomendada de repeticiones."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hammer_Curls/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hammer_Curls/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_incline_inner_biceps_curl",
+        "name": "Curl de bíceps en banco inclinado",
+        "localImagePath": "biceps_dumbbell_incline_curl.webp",
+        "mainMuscleGroup": "Bíceps",
+        "mechanic": "Aislamiento",
+        "targetMuscles": [
+            "bíceps"
+        ],
+        "secondaryMuscles": [],
+        "equipments": [
+            "pesa"
+        ],
+        "instructions": [
+            "Sostenga una mancuerna en cada mano y recuéstese en un banco inclinado.",
+            "Las mancuernas deben estar con los brazos extendidos colgando a los costados y las palmas de las manos deben mirar hacia afuera. Esta será tu posición inicial.",
+            "Ahora, mientras exhala, doble el peso hacia afuera y hacia arriba mientras mantiene los antebrazos alineados con los deltoides laterales. Continúe con el curl hasta que las mancuernas estén a la altura de los hombros y a los lados de los deltoides. Consejo: el final del movimiento debe parecerse a una postura de doble bíceps.",
+            "Después de una segunda contracción en la parte superior del movimiento, comience a inhalar y baje lentamente las pesas a la posición inicial siguiendo el mismo camino que usó para subirlas.",
+            "Repita hasta la cantidad recomendada de repeticiones."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Incline_Inner_Biceps_Curl/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Incline_Inner_Biceps_Curl/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_preacher_curl",
+        "name": "Curl de biceps en banco Scott",
+        "localImagePath": "biceps_preacher_curl.webp",
+        "mainMuscleGroup": "Bíceps",
+        "mechanic": "Aislamiento",
+        "targetMuscles": [
+            "bíceps"
+        ],
+        "secondaryMuscles": [],
+        "equipments": [
+            "barra con pesas"
+        ],
+        "instructions": [
+            "Para realizar este movimiento necesitarás un banco de predicador y una barra E-Z. Agarre la barra de curl E-Z por el mango interior cercano (pida a alguien que le entregue la barra, lo cual es preferible) o agarre la barra del soporte de la barra frontal proporcionado por la mayoría de los bancos de predicadores). Las palmas de tus manos deben mirar hacia adelante y deben estar ligeramente inclinadas hacia adentro debido a la forma de la barra.",
+            "Con la parte superior de los brazos colocada contra la almohadilla del banco del predicador y el pecho contra ella, sostenga la barra E-Z Curl a la altura de los hombros. Esta será tu posición inicial.",
+            "Mientras inhala, baje lentamente la barra hasta que la parte superior del brazo esté extendida y el bíceps esté completamente estirado.",
+            "Mientras exhala, use los bíceps para levantar el peso hasta que los bíceps estén completamente contraídos y la barra esté a la altura de los hombros. Aprieta con fuerza los bíceps y mantén esta posición durante un segundo.",
+            "Repita hasta la cantidad recomendada de repeticiones."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Preacher_Curl/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Preacher_Curl/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_lying_triceps_press",
+        "name": "Press francés con barra",
+        "localImagePath": "triceps_barbell_skullcrusher.webp",
+        "mainMuscleGroup": "Tríceps",
+        "mechanic": "Aislamiento",
+        "targetMuscles": [
+            "tríceps"
+        ],
+        "secondaryMuscles": [],
+        "equipments": [
+            "barra de curl ez"
+        ],
+        "instructions": [
+            "Acuéstese en un banco plano con una barra ez (mi preferencia) o una barra recta colocada en el suelo detrás de la cabeza y los pies en el suelo.",
+            "Agarre la barra detrás de usted, usando un agarre medio por encima de la cabeza (en pronación), y levante la barra frente a usted con los brazos extendidos. Consejo: Los brazos deben estar perpendiculares al torso y al suelo. Los codos deben estar metidos. Esta es la posición inicial.",
+            "Mientras inhala, baje lentamente el peso hasta que la barra toque ligeramente su frente mientras mantiene la parte superior de los brazos y los codos inmóviles.",
+            "En ese punto, use el tríceps para llevar el peso a la posición inicial mientras exhala.",
+            "Repita hasta la cantidad recomendada de repeticiones."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Lying_Triceps_Press/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Lying_Triceps_Press/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_triceps_pushdown",
+        "name": "Extensión de tríceps en polea alta",
+        "localImagePath": "triceps_cable_pushdown.webp",
+        "mainMuscleGroup": "Tríceps",
+        "mechanic": "Aislamiento",
+        "targetMuscles": [
+            "tríceps"
+        ],
+        "secondaryMuscles": [],
+        "equipments": [
+            "cable"
+        ],
+        "instructions": [
+            "Conecte una barra recta o en ángulo a una polea alta y agarre con un agarre por encima de la cabeza (con las palmas hacia abajo) al ancho de los hombros.",
+            "De pie, con el torso recto y una ligera inclinación hacia adelante, acerque la parte superior de los brazos al cuerpo y perpendicular al suelo. Los antebrazos deben apuntar hacia la polea mientras sostienen la barra. Esta es tu posición inicial.",
+            "Usando el tríceps, baja la barra hasta que toque la parte delantera de tus muslos y los brazos estén completamente extendidos perpendiculares al suelo. La parte superior de los brazos siempre debe permanecer inmóvil junto al torso y solo los antebrazos deben moverse. Exhala mientras realizas este movimiento.",
+            "Después de una segunda sujeción en la posición contraída, lleve la barra lentamente hasta el punto inicial. Inhale mientras realiza este paso.",
+            "Repita hasta la cantidad recomendada de repeticiones."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Triceps_Pushdown/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Triceps_Pushdown/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_triceps_overhead_extension_with_rope",
+        "name": "Extensión de tríceps tras nuca en polea",
+        "localImagePath": "triceps_cable_overhead_ext.webp",
+        "mainMuscleGroup": "Tríceps",
+        "mechanic": "Aislamiento",
+        "targetMuscles": [
+            "tríceps"
+        ],
+        "secondaryMuscles": [],
+        "equipments": [
+            "cable"
+        ],
+        "instructions": [
+            "Conecte una cuerda a una polea baja. Después de seleccionar un peso adecuado, agarre la cuerda con ambas manos y de espaldas al cable.",
+            "Coloque las manos detrás de la cabeza con los codos apuntando hacia arriba. Sus codos deben comenzar flexionados y puede escalonar su postura e inclinarse suavemente hacia afuera de la máquina para crear una mayor estabilidad. Esta será tu posición inicial.",
+            "Para realizar el movimiento, extiende el codo manteniendo la parte superior del brazo en posición, levantando las manos por encima de la cabeza.",
+            "Aprieta los tríceps en la parte superior del movimiento y baja lentamente el peso hasta la posición inicial."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Triceps_Overhead_Extension_with_Rope/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Triceps_Overhead_Extension_with_Rope/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_machine_triceps_extension",
+        "name": "Extensión de tríceps en máquina",
+        "localImagePath": "triceps_machine_extension.webp",
+        "mainMuscleGroup": "Tríceps",
+        "mechanic": "Aislamiento",
+        "targetMuscles": [
+            "tríceps"
+        ],
+        "secondaryMuscles": [],
+        "equipments": [
+            "máquina"
+        ],
+        "instructions": [
+            "Ajuste el asiento a la altura adecuada y seleccione su peso. Coloque la parte superior de sus brazos contra las almohadillas y agarre las manijas. Esta será tu posición inicial.",
+            "Realice el movimiento extendiendo el codo, alejando el antebrazo de la parte superior del brazo.",
+            "Haga una pausa al finalizar el movimiento y luego regrese lentamente el peso a la posición inicial.",
+            "Evite devolver el peso hasta los topes hasta que se complete la serie para mantener la tensión en los músculos que se trabajan."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Machine_Triceps_Extension/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Machine_Triceps_Extension/1.jpg"
+        ]
+    },
+    {
+        "exerciseId": "ex_dumbbell_tricep_extension__pronated_grip",
+        "name": "Press francés con mancuernas",
+        "localImagePath": "triceps_dumbbell_skullcrusher.webp",
+        "mainMuscleGroup": "Tríceps",
+        "mechanic": "Aislamiento",
+        "targetMuscles": [
+            "tríceps"
+        ],
+        "secondaryMuscles": [],
+        "equipments": [
+            "pesa"
+        ],
+        "instructions": [
+            "Acuéstese en un banco plano sosteniendo dos mancuernas directamente encima de sus hombros. Tus brazos deben estar completamente extendidos y formar un ángulo de 90 grados desde tu torso y el piso.",
+            "Las palmas de las manos deben mirar hacia adelante y los codos deben estar doblados hacia adentro. Esta será su posición inicial.",
+            "Ahora, inhala y baja lentamente las mancuernas hasta que estén cerca de tus oídos. Asegúrese de mantener la parte superior de los brazos inmóviles y los codos doblados.",
+            "Luego, exhala y usa tus tríceps para devolver el peso a la posición inicial."
+        ],
+        "remoteImagesUrls": [
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Tricep_Extension_-Pronated_Grip/0.jpg",
+            "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Tricep_Extension_-Pronated_Grip/1.jpg"
+        ]
+    }
+]
