@@ -34,6 +34,36 @@ Se consume la API de ExerciseDB para obtener los metadatos técnicos (instruccio
 
 ---
 
+## 4. Arquitectura de Software y Patrones de Diseño
+Para garantizar la escalabilidad, mantenibilidad y el cumplimiento de los estándares de desarrollo oficiales de Google, Overload se rige bajo una arquitectura limpia y modular fundamentada en los siguientes pilares:
+
+### 4.1. Patrón Arquitectónico de UI: MVVM (Model-View-ViewModel)
+La capa de presentación está estrictamente separada de la lógica de negocio y de los datos:
+* **View (Compose):** Se limita exclusivamente a renderizar la interfaz de usuario de forma reactiva a partir de un estado estructurado. No maneja lógica interna ni persistencia.
+* **ViewModel:** Actúa como el puente del flujo de datos. Conserva el estado de la pantalla frente a cambios de configuración, expone dicho estado y delega los eventos del usuario hacia las capas de dominio correspondientes.
+* **Model:** Compuesto por las entidades puras del negocio y la definición de las estructuras de datos.
+
+### 4.2. Capa de Datos: Patrón Repository (Single Source of Truth)
+Toda interacción con orígenes de datos se realiza a través de Repositorios específicos. Las pantallas nunca consumen Room o Ktor de forma directa. El repositorio abstrae el origen físico de la información y centraliza las reglas de la arquitectura *offline-first*, coordinando de manera transparente la base de datos local (Room), las peticiones HTTP remotas (Ktor) y la sincronización con el BaaS (Firebase).
+
+### 4.3. Gestión de Estado: Patrón UI State
+Cada pantalla expone un único flujo de estado inmutable (representado mediante `StateFlow` en Kotlin y consumido mediante `collectAsState()` en Compose). Este objeto de estado (`ScreenUiState`) es una clase de datos estricta que encapsula de forma segura las tres realidades posibles de la interfaz: `Loading`, `Success` (con la data estructurada cargada) y `Error` (con un mensaje controlado). Esto elimina estados inconsistentes en la UI.
+
+### 4.4. Navegación: Jetpack Navigation 3
+Se adopta de forma estricta el nuevo estándar nativo de **Navigation 3**. El flujo de navegación se gestiona de manera declarativa y con tipado seguro (*type-safe*), abstrayendo la pila de pantallas mediante destinos basados en objetos de configuración de Kotlin. Queda prohibido el uso de strings desestructurados como rutas (propios de Navigation 2.x), asegurando la validación del grafo de pantallas en tiempo de compilación.
+
+### 5.5. Estructura Organizacional de Paquetes
+El código fuente dentro del paquete principal (`com.pdm.overload`) se organiza rigurosamente bajo el principio de responsabilidad única. La estructura base de paquetes es:
+* `data/`: Contiene los archivos locales y remotos de persistencia. Aloja sub paquetes para `local/` (tablas y DAO de Room), `remote/` (clientes de Ktor y llamadas a la API de ExerciseDB) y `repositories/` (las implementaciones del patrón repositorio).
+* `domain/`: Contiene los modelos de negocio puros, clases de datos centrales de entrenamiento (Microciclos, Slots, Series) y los esquemas biomecánicos (Blueprints).
+* `ui/`: Aloja toda la experiencia visual. Se subdivide en:
+  * `screens/`: Funciones Composables organizadas por módulo (Acceso, Configuración, Entrenamiento, Análisis).
+  * `viewmodels/`: Los ViewModels encargados de emitir el UI State para cada pantalla.
+  * `routes/`: Clases de configuración y definición del grafo de navegación nativo de Navigation 3.
+  * `theme/`: Archivos de configuración del sistema de diseño (Colores, Tipografías y Formas de Material Design 3).
+
+---
+
 # Flujo de la Aplicación y Lógica de Negocios - Overload
 
 ## 1. Módulo de Acceso e Inicialización
