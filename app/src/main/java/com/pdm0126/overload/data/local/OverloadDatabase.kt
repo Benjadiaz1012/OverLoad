@@ -28,15 +28,13 @@ abstract class OverloadDatabase : RoomDatabase() {
         private var INSTANCE: OverloadDatabase? = null
 
         fun getDatabase(context: Context, scope: CoroutineScope): OverloadDatabase {
-            // Si la instancia ya existe, la retorna, sino la construye de forma segura
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     OverloadDatabase::class.java,
                     "overload_database"
                 )
-                    // Aquí enganchamos el evento que se dispara la primera vez que se crea la DB
-                    .addCallback(OverloadDatabaseCallback(context, scope))
+                    .addCallback(OverloadDatabaseCallback(context, scope) { INSTANCE!! })
                     .build()
 
                 INSTANCE = instance
@@ -45,32 +43,26 @@ abstract class OverloadDatabase : RoomDatabase() {
         }
     }
 
-    // El callback que hace el trabajo de leer el JSON
     private class OverloadDatabaseCallback(
         private val context: Context,
-        private val scope: CoroutineScope
+        private val scope: CoroutineScope,
+        private val provider: () -> OverloadDatabase
     ) : Callback() {
 
         override fun onCreate(db: SupportSQLiteDatabase) {
             super.onCreate(db)
-            INSTANCE?.let { database ->
-                scope.launch(Dispatchers.IO) {
-                    populateDatabase(database.exerciseDao(), context)
-                }
+            scope.launch(Dispatchers.IO) {
+                populateDatabase(provider().exerciseDao(), context)
             }
         }
-
         suspend fun populateDatabase(exerciseDao: ExerciseDao, context: Context) {
             try {
-                // Abrir y leer el archivo desde la carpeta assets
                 val inputStream = context.assets.open("ejercicios_maestros.json")
                 val jsonString = inputStream.bufferedReader().use { it.readText() }
 
-                // Usar Kotlinx Serialization para convertir el texto a lista de Entidades
                 val jsonParser = Json { ignoreUnknownKeys = true }
                 val exercises = jsonParser.decodeFromString<List<ExerciseEntity>>(jsonString)
 
-                // Insertar en la tabla SQLite
                 exerciseDao.insertAll(exercises)
                 Log.d("OverloadDB", "Éxito: Base de datos inicializada con ${exercises.size} ejercicios.")
             } catch (e: Exception) {
@@ -79,4 +71,3 @@ abstract class OverloadDatabase : RoomDatabase() {
         }
     }
 }
-

@@ -4,8 +4,10 @@ import com.pdm0126.overload.data.local.dao.ExerciseDao
 import com.pdm0126.overload.data.mapper.toDomainModel
 import com.pdm0126.overload.domain.model.Exercise
 import com.pdm0126.overload.domain.repository.ExerciseRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 class ExerciseRepositoryImp(
     private val exerciseDao: ExerciseDao
@@ -24,7 +26,8 @@ class ExerciseRepositoryImp(
     }
 
     override suspend fun getExerciseById(id: String): Exercise? {
-        return exerciseDao.getExerciseById(id)?.toDomainModel()
+        return withContext(Dispatchers.IO) {
+            exerciseDao.getExerciseById(id)?.toDomainModel()
+        }
     }
 }
-
