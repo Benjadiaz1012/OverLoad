@@ -3,7 +3,6 @@ package com.pdm0126.overload.domain.model
 data class Exercise(
     val id : String,
     val name : String,
-    val imagePath : String,
     val muscleGroup : String,
     val mechanic : String,
     val targetMuscles : List<String>,

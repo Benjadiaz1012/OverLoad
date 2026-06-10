@@ -7,7 +7,6 @@ fun ExerciseEntity.toDomainModel() : Exercise {
     return Exercise(
         id = exerciseId,
         name = name,
-        imagePath = localImagePath,
         muscleGroup = mainMuscleGroup,
         mechanic = mechanic,
         targetMuscles = targetMuscles,
@@ -23,7 +22,6 @@ fun Exercise.toEntity() : ExerciseEntity {
     return ExerciseEntity(
         exerciseId = id,
         name = name,
-        localImagePath = imagePath,
         mainMuscleGroup = muscleGroup,
         mechanic = mechanic,
         targetMuscles = targetMuscles,
