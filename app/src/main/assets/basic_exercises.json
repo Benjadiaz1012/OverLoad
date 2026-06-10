@@ -1,8 +1,7 @@
 [
     {
         "exerciseId": "ex_barbell_bench_press___medium_grip",
-        "name": "Press de banca plano con barra",
-        "localImagePath": "chest_barbell_bench_press.webp",
+        "name": "Press de banca con barra - Agarre medio",
         "mainMuscleGroup": "Pecho",
         "mechanic": "Compuesto",
         "targetMuscles": [
@@ -29,8 +28,7 @@
     },
     {
         "exerciseId": "ex_barbell_incline_bench_press___medium_grip",
-        "name": "Press de banca inclinado con barra",
-        "localImagePath": "chest_barbell_incline_press.webp",
+        "name": "Press de banca inclinado con barra - Agarre medio",
         "mainMuscleGroup": "Pecho",
         "mechanic": "Compuesto",
         "targetMuscles": [
@@ -57,8 +55,7 @@
     },
     {
         "exerciseId": "ex_dumbbell_bench_press",
-        "name": "Press con mancuernas en banco plano",
-        "localImagePath": "chest_dumbbell_bench_press.webp",
+        "name": "Press de banca con mancuernas",
         "mainMuscleGroup": "Pecho",
         "mechanic": "Compuesto",
         "targetMuscles": [
@@ -85,8 +82,7 @@
     },
     {
         "exerciseId": "ex_incline_dumbbell_press",
-        "name": "Press con mancuernas en banco inclinado",
-        "localImagePath": "chest_dumbbell_incline_press.webp",
+        "name": "Press inclinado con mancuernas",
         "mainMuscleGroup": "Pecho",
         "mechanic": "Compuesto",
         "targetMuscles": [
@@ -115,8 +111,7 @@
     },
     {
         "exerciseId": "ex_decline_dumbbell_bench_press",
-        "name": "Press con mancuernas en banco declinado",
-        "localImagePath": "chest_dumbbell_decline_press.webp",
+        "name": "Press de banca declinado con mancuernas",
         "mainMuscleGroup": "Pecho",
         "mechanic": "Compuesto",
         "targetMuscles": [
@@ -144,8 +139,7 @@
     },
     {
         "exerciseId": "ex_machine_bench_press",
-        "name": "Press plano en maquina",
-        "localImagePath": "chest_machine_flat_press.webp",
+        "name": "Press de banca con máquina",
         "mainMuscleGroup": "Pecho",
         "mechanic": "Compuesto",
         "targetMuscles": [
@@ -174,8 +168,7 @@
     },
     {
         "exerciseId": "ex_butterfly",
-        "name": "Aperturas en maquina",
-        "localImagePath": "chest_pec_deck.webp",
+        "name": "Mariposa",
         "mainMuscleGroup": "Pecho",
         "mechanic": "Aislamiento",
         "targetMuscles": [
@@ -199,8 +192,7 @@
     },
     {
         "exerciseId": "ex_dumbbell_flyes",
-        "name": "Aperturas con mancuernas (Flyes)",
-        "localImagePath": "chest_dumbbell_fly.webp",
+        "name": "Aperturas con mancuernas",
         "mainMuscleGroup": "Pecho",
         "mechanic": "Aislamiento",
         "targetMuscles": [
@@ -224,8 +216,7 @@
     },
     {
         "exerciseId": "ex_dips___chest_version",
-        "name": "Fondos en paralelas (Enfoque pectoral)",
-        "localImagePath": "chest_dips.webp",
+        "name": "Inmersiones - Versión para el pecho",
         "mainMuscleGroup": "Pecho",
         "mechanic": "Compuesto",
         "targetMuscles": [
@@ -251,8 +242,7 @@
     },
     {
         "exerciseId": "ex_pullups",
-        "name": "Dominadas (Pull-ups)",
-        "localImagePath": "back_pullups.webp",
+        "name": "dominadas",
         "mainMuscleGroup": "Espalda",
         "mechanic": "Compuesto",
         "targetMuscles": [
@@ -279,8 +269,7 @@
     },
     {
         "exerciseId": "ex_wide_grip_lat_pulldown",
-        "name": "Jalón al pecho con agarre ancho",
-        "localImagePath": "back_lat_pulldown.webp",
+        "name": "Pulldown lateral con agarre ancho",
         "mainMuscleGroup": "Espalda",
         "mechanic": "Compuesto",
         "targetMuscles": [
@@ -309,8 +298,7 @@
     },
     {
         "exerciseId": "ex_leverage_high_row",
-        "name": "Remo vertical en máquina",
-        "localImagePath": "back_machine_vertical_row.webp",
+        "name": "Aprovechar la fila alta",
         "mainMuscleGroup": "Espalda",
         "mechanic": "Compuesto",
         "targetMuscles": [
@@ -335,8 +323,7 @@
     },
     {
         "exerciseId": "ex_bent_arm_barbell_pullover",
-        "name": "Pullover con barra",
-        "localImagePath": "back_barbell_pullover.webp",
+        "name": "Jersey con barra con brazo doblado",
         "mainMuscleGroup": "Espalda",
         "mechanic": "Compuesto",
         "targetMuscles": [
@@ -365,8 +352,7 @@
     },
     {
         "exerciseId": "ex_rope_straight_arm_pulldown",
-        "name": "Pullover polea alta",
-        "localImagePath": "back_rope_pulldown.webp",
+        "name": "Pulldown con cuerda y brazo recto",
         "mainMuscleGroup": "Espalda",
         "mechanic": "Aislamiento",
         "targetMuscles": [
@@ -390,7 +376,6 @@
     {
         "exerciseId": "ex_bent_over_barbell_row",
         "name": "Remo inclinado con barra",
-        "localImagePath": "back_barbell_row.webp",
         "mainMuscleGroup": "Espalda",
         "mechanic": "Compuesto",
         "targetMuscles": [
@@ -417,8 +402,7 @@
     },
     {
         "exerciseId": "ex_seated_cable_rows",
-        "name": "Remo en polea baja con agarre",
-        "localImagePath": "back_cable_seated_row.webp",
+        "name": "Remo de cable sentado",
         "mainMuscleGroup": "Espalda",
         "mechanic": "Compuesto",
         "targetMuscles": [
@@ -446,8 +430,7 @@
     },
     {
         "exerciseId": "ex_leverage_iso_row",
-        "name": "Remo en horizontal en maquina",
-        "localImagePath": "back_machine_horizontal_row.webp",
+        "name": "Aprovechar la fila ISO",
         "mainMuscleGroup": "Espalda",
         "mechanic": "Compuesto",
         "targetMuscles": [
@@ -472,8 +455,7 @@
     },
     {
         "exerciseId": "ex_lying_t_bar_row",
-        "name": "Remo en barra T",
-        "localImagePath": "back_t_bar_row.webp",
+        "name": "Remo con barra en T acostado",
         "mainMuscleGroup": "Espalda",
         "mechanic": "Compuesto",
         "targetMuscles": [
@@ -501,8 +483,7 @@
     },
     {
         "exerciseId": "ex_seated_barbell_military_press",
-        "name": "Press militar con barra",
-        "localImagePath": "shoulder_barbell_military_press.webp",
+        "name": "Press militar sentado con barra",
         "mainMuscleGroup": "Hombros",
         "mechanic": "Compuesto",
         "targetMuscles": [
@@ -529,7 +510,6 @@
     {
         "exerciseId": "ex_dumbbell_shoulder_press",
         "name": "Press de hombros con mancuernas",
-        "localImagePath": "shoulder_dumbbell_press.webp",
         "mainMuscleGroup": "Hombros",
         "mechanic": "Compuesto",
         "targetMuscles": [
@@ -556,8 +536,7 @@
     },
     {
         "exerciseId": "ex_machine_shoulder_(military)_press",
-        "name": "Press de hombros en máquina",
-        "localImagePath": "shoulder_machine_press.webp",
+        "name": "Press de hombros en máquina (militar)",
         "mainMuscleGroup": "Hombros",
         "mechanic": "Compuesto",
         "targetMuscles": [
@@ -583,8 +562,7 @@
     },
     {
         "exerciseId": "ex_side_lateral_raise",
-        "name": "Elevaciones laterales con mancuernas",
-        "localImagePath": "shoulder_dumbbell_lateral_raise.webp",
+        "name": "Elevación lateral lateral",
         "mainMuscleGroup": "Hombros",
         "mechanic": "Aislamiento",
         "targetMuscles": [
@@ -607,8 +585,7 @@
     },
     {
         "exerciseId": "ex_front_dumbbell_raise",
-        "name": "Elevaciones frontales con mancuernas",
-        "localImagePath": "shoulder_dumbbell_front_raise.webp",
+        "name": "Elevación frontal con mancuernas",
         "mainMuscleGroup": "Hombros",
         "mechanic": "Aislamiento",
         "targetMuscles": [
@@ -631,8 +608,7 @@
     },
     {
         "exerciseId": "ex_cable_rear_delt_fly",
-        "name": "Face Pull en polea alta",
-        "localImagePath": "shoulder_cable_face_pull.webp",
+        "name": "Cable Delt Fly Trasero",
         "mainMuscleGroup": "Hombros",
         "mechanic": "Aislamiento",
         "targetMuscles": [
@@ -655,8 +631,7 @@
     },
     {
         "exerciseId": "ex_barbell_full_squat",
-        "name": "Sentadilla con barra trasera (Back Squat)",
-        "localImagePath": "legs_barbell_squat.webp",
+        "name": "Sentadilla completa con barra",
         "mainMuscleGroup": "Pierna",
         "mechanic": "Compuesto",
         "targetMuscles": [
@@ -686,8 +661,7 @@
     },
     {
         "exerciseId": "ex_split_squat_with_dumbbells",
-        "name": "Sentadilla búlgara con mancuernas",
-        "localImagePath": "legs_bulgarian_split_squat.webp",
+        "name": "Sentadilla dividida con mancuernas",
         "mainMuscleGroup": "Pierna",
         "mechanic": "Compuesto",
         "targetMuscles": [
@@ -713,8 +687,7 @@
     },
     {
         "exerciseId": "ex_leg_press",
-        "name": "Prensa de piernas inclinada (45°)",
-        "localImagePath": "legs_leg_press_45.webp",
+        "name": "Prensa de piernas",
         "mainMuscleGroup": "Pierna",
         "mechanic": "Compuesto",
         "targetMuscles": [
@@ -742,8 +715,7 @@
     },
     {
         "exerciseId": "ex_barbell_deadlift",
-        "name": "Peso muerto convencional con barra",
-        "localImagePath": "legs_barbell_deadlift.webp",
+        "name": "Peso muerto con barra",
         "mainMuscleGroup": "Pierna",
         "mechanic": "Compuesto",
         "targetMuscles": [
@@ -777,7 +749,6 @@
     {
         "exerciseId": "ex_romanian_deadlift",
         "name": "Peso muerto rumano",
-        "localImagePath": "legs_barbell_rdl.webp",
         "mainMuscleGroup": "Pierna",
         "mechanic": "Compuesto",
         "targetMuscles": [
@@ -805,8 +776,7 @@
     },
     {
         "exerciseId": "ex_barbell_hip_thrust",
-        "name": "Hip Thrust (Empuje de cadera) con barra",
-        "localImagePath": "legs_barbell_hip_thrust.webp",
+        "name": "Empuje de cadera con barra",
         "mainMuscleGroup": "Pierna",
         "mechanic": "Compuesto",
         "targetMuscles": [
@@ -831,8 +801,7 @@
     },
     {
         "exerciseId": "ex_leg_extensions",
-        "name": "Extensiones de cuádriceps en máquina",
-        "localImagePath": "legs_machine_extensions.webp",
+        "name": "Extensiones de piernas",
         "mainMuscleGroup": "Pierna",
         "mechanic": "Aislamiento",
         "targetMuscles": [
@@ -855,8 +824,7 @@
     },
     {
         "exerciseId": "ex_lying_leg_curls",
-        "name": "Curl femoral en máquina",
-        "localImagePath": "legs_machine_leg_curl.webp",
+        "name": "Flexiones de piernas acostadas",
         "mainMuscleGroup": "Pierna",
         "mechanic": "Aislamiento",
         "targetMuscles": [
@@ -879,8 +847,7 @@
     },
     {
         "exerciseId": "ex_thigh_adductor",
-        "name": "Aductor interno en maquina",
-        "localImagePath": "legs_machine_adductor.webp",
+        "name": "Aductor del muslo",
         "mainMuscleGroup": "Pierna",
         "mechanic": "Aislamiento",
         "targetMuscles": [
@@ -906,8 +873,7 @@
     },
     {
         "exerciseId": "ex_thigh_abductor",
-        "name": "Aductor externo en maquina",
-        "localImagePath": "legs_machine_abductor.webp",
+        "name": "Abductor del muslo",
         "mainMuscleGroup": "Pierna",
         "mechanic": "Aislamiento",
         "targetMuscles": [
@@ -932,8 +898,7 @@
     },
     {
         "exerciseId": "ex_standing_calf_raises",
-        "name": "Elevación de talones en máquina (De pie)",
-        "localImagePath": "legs_machine_calf_raise.webp",
+        "name": "Elevaciones de pantorrillas de pie",
         "mainMuscleGroup": "Pierna",
         "mechanic": "Aislamiento",
         "targetMuscles": [
@@ -957,8 +922,7 @@
     },
     {
         "exerciseId": "ex_dumbbell_alternate_bicep_curl",
-        "name": "Curl de bíceps con mancuernas (Alterno)",
-        "localImagePath": "biceps_dumbbell_alternate_curl.webp",
+        "name": "Curl de bíceps alternativo con mancuernas",
         "mainMuscleGroup": "Bíceps",
         "mechanic": "Aislamiento",
         "targetMuscles": [
@@ -984,8 +948,7 @@
     },
     {
         "exerciseId": "ex_barbell_curl",
-        "name": "Curl de bíceps con barra",
-        "localImagePath": "biceps_barbell_curl.webp",
+        "name": "Curl con barra",
         "mainMuscleGroup": "Bíceps",
         "mechanic": "Aislamiento",
         "targetMuscles": [
@@ -1011,8 +974,7 @@
     },
     {
         "exerciseId": "ex_spider_curl",
-        "name": "Spider Curl con barra Z (Curl araña)",
-        "localImagePath": "biceps_ez_bar_spider_curl.webp",
+        "name": "rizo de araña",
         "mainMuscleGroup": "Bíceps",
         "mechanic": "Aislamiento",
         "targetMuscles": [
@@ -1038,8 +1000,7 @@
     },
     {
         "exerciseId": "ex_hammer_curls",
-        "name": "Curl martillo (Hammer Curl)",
-        "localImagePath": "biceps_dumbbell_hammer_curl.webp",
+        "name": "Rizos de martillo",
         "mainMuscleGroup": "Bíceps",
         "mechanic": "Aislamiento",
         "targetMuscles": [
@@ -1063,8 +1024,7 @@
     },
     {
         "exerciseId": "ex_incline_inner_biceps_curl",
-        "name": "Curl de bíceps en banco inclinado",
-        "localImagePath": "biceps_dumbbell_incline_curl.webp",
+        "name": "Curl de bíceps interno inclinado",
         "mainMuscleGroup": "Bíceps",
         "mechanic": "Aislamiento",
         "targetMuscles": [
@@ -1088,8 +1048,7 @@
     },
     {
         "exerciseId": "ex_preacher_curl",
-        "name": "Curl de biceps en banco Scott",
-        "localImagePath": "biceps_preacher_curl.webp",
+        "name": "Curl predicador",
         "mainMuscleGroup": "Bíceps",
         "mechanic": "Aislamiento",
         "targetMuscles": [
@@ -1113,8 +1072,7 @@
     },
     {
         "exerciseId": "ex_lying_triceps_press",
-        "name": "Press francés con barra",
-        "localImagePath": "triceps_barbell_skullcrusher.webp",
+        "name": "Press de tríceps acostado",
         "mainMuscleGroup": "Tríceps",
         "mechanic": "Aislamiento",
         "targetMuscles": [
@@ -1138,8 +1096,7 @@
     },
     {
         "exerciseId": "ex_triceps_pushdown",
-        "name": "Extensión de tríceps en polea alta",
-        "localImagePath": "triceps_cable_pushdown.webp",
+        "name": "Flexión de tríceps",
         "mainMuscleGroup": "Tríceps",
         "mechanic": "Aislamiento",
         "targetMuscles": [
@@ -1163,8 +1120,7 @@
     },
     {
         "exerciseId": "ex_triceps_overhead_extension_with_rope",
-        "name": "Extensión de tríceps tras nuca en polea",
-        "localImagePath": "triceps_cable_overhead_ext.webp",
+        "name": "Extensión aérea de tríceps con cuerda",
         "mainMuscleGroup": "Tríceps",
         "mechanic": "Aislamiento",
         "targetMuscles": [
@@ -1188,7 +1144,6 @@
     {
         "exerciseId": "ex_machine_triceps_extension",
         "name": "Extensión de tríceps en máquina",
-        "localImagePath": "triceps_machine_extension.webp",
         "mainMuscleGroup": "Tríceps",
         "mechanic": "Aislamiento",
         "targetMuscles": [
@@ -1211,8 +1166,7 @@
     },
     {
         "exerciseId": "ex_dumbbell_tricep_extension__pronated_grip",
-        "name": "Press francés con mancuernas",
-        "localImagePath": "triceps_dumbbell_skullcrusher.webp",
+        "name": "Extensión de tríceps con mancuernas: agarre en pronación",
         "mainMuscleGroup": "Tríceps",
         "mechanic": "Aislamiento",
         "targetMuscles": [

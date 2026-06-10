@@ -57,7 +57,7 @@ abstract class OverloadDatabase : RoomDatabase() {
         }
         suspend fun populateDatabase(exerciseDao: ExerciseDao, context: Context) {
             try {
-                val inputStream = context.assets.open("ejercicios_maestros.json")
+                val inputStream = context.assets.open("basic_exercises.json")
                 val jsonString = inputStream.bufferedReader().use { it.readText() }
 
                 val jsonParser = Json { ignoreUnknownKeys = true }

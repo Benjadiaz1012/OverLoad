@@ -10,7 +10,6 @@ data class ExerciseEntity(
     @PrimaryKey
     val exerciseId: String,
     val name: String,
-    val localImagePath: String,
     val mainMuscleGroup: String,
     val mechanic: String,
     val targetMuscles: List<String>,
