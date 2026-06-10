@@ -2,6 +2,7 @@ package com.pdm0126.overload.data.repository
 
 import com.pdm0126.overload.data.local.dao.ExerciseDao
 import com.pdm0126.overload.data.mapper.toDomainModel
+import com.pdm0126.overload.data.mapper.toEntity
 import com.pdm0126.overload.data.remote.ExerciseApiClient
 import com.pdm0126.overload.data.remote.dto.ExerciseDto
 import com.pdm0126.overload.domain.model.Exercise
@@ -29,6 +30,12 @@ class ExerciseRepositoryImp(
             entities.map { entity -> entity.toDomainModel() }
         }
     }
+    override suspend fun saveRemoteExerciseToLocal(exercise: Exercise) {
+        withContext(Dispatchers.IO) {
+            val entity = exercise.toEntity()
+            exerciseDao.insertExercise(entity)
+        }
+    }
 
     override suspend fun getExerciseById(id: String): Exercise? {
         return withContext(Dispatchers.IO) {
@@ -38,7 +45,6 @@ class ExerciseRepositoryImp(
 
     override suspend fun searchRemoteExercises(query: String): List<Exercise> {
         return withContext(Dispatchers.IO) {
-            // Realiza la búsqueda en la API remota
             val remoteDtos = ktorClient.fetchRemoteExercises()
             remoteDtos
                 .filter { dto -> dto.name.contains(query, ignoreCase = true) }

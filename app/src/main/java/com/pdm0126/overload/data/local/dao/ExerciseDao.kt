@@ -12,10 +12,16 @@ interface ExerciseDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(exercises: List<ExerciseEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertExercise(exercise: ExerciseEntity): Long
+
     @Query("SELECT * FROM exercises_table")
     fun getAllExercises(): Flow<List<ExerciseEntity>>
+
     @Query("SELECT * FROM exercises_table WHERE mainMuscleGroup = :muscleGroup")
     fun getExercisesByMuscleGroup(muscleGroup: String): Flow<List<ExerciseEntity>>
+
     @Query("SELECT * FROM exercises_table WHERE exerciseId = :id LIMIT 1")
     fun getExerciseById(id: String): ExerciseEntity?
 }

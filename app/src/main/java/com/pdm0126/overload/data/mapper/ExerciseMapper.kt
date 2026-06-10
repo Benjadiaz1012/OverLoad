@@ -37,11 +37,19 @@ fun ExerciseDto.toDomainModel(): Exercise {
     val baseUrl = "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/"
 
     val generatedId = "ex_${name.trim().lowercase().replace(" ", "_").replace("-", "_")}"
-
+    val mappedMuscle = when(primaryMuscles.firstOrNull()?.lowercase()) {
+        "chest" -> "Pecho"
+        "middle back", "lats", "lower back" -> "Espalda"
+        "shoulders" -> "Hombros"
+        "quadriceps", "hamstrings", "calves", "glutes", "upper legs", "lower legs" -> "Pierna"
+        "biceps" -> "Bíceps"
+        "triceps" -> "Tríceps"
+        else -> "General"
+    }
     return Exercise(
         id = generatedId,
         name = name,
-        muscleGroup = primaryMuscles.firstOrNull()?.replaceFirstChar { it.uppercase() } ?: "General",
+        muscleGroup = mappedMuscle,
         mechanic = if (mechanic?.lowercase() == "compound") "Compuesto" else "Aislamiento",
         targetMuscles = primaryMuscles,
         secondaryMuscles = secondaryMuscles,
