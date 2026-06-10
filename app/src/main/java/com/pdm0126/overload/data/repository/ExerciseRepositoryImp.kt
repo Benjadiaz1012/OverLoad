@@ -1,5 +1,6 @@
 package com.pdm0126.overload.data.repository
 
+import android.util.Log
 import com.pdm0126.overload.data.local.dao.ExerciseDao
 import com.pdm0126.overload.data.mapper.toDomainModel
 import com.pdm0126.overload.data.mapper.toEntity
@@ -33,7 +34,8 @@ class ExerciseRepositoryImp(
     override suspend fun saveRemoteExerciseToLocal(exercise: Exercise) {
         withContext(Dispatchers.IO) {
             val entity = exercise.toEntity()
-            exerciseDao.insertExercise(entity)
+            val id = exerciseDao.insertExercise(entity)
+            Log.d("OverloadDB", "Guardado exitoso con ID: $id")
         }
     }
 

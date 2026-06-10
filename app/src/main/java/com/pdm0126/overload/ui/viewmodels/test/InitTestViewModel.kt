@@ -13,11 +13,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
-class TestViewModel(
+class InitTestViewModel(
     private val repository: ExerciseRepository
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow<TestUiState>(TestUiState.Loading)
-    val uiState: StateFlow<TestUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow<InitTestUiState>(InitTestUiState.Loading)
+    val uiState: StateFlow<InitTestUiState> = _uiState.asStateFlow()
 
     init {
         loadExercises()
@@ -27,13 +27,13 @@ class TestViewModel(
         viewModelScope.launch {
             repository.getAllExercises()
                 .catch { error ->
-                    _uiState.value = TestUiState.Error(error.message ?: "Error desconocido")
+                    _uiState.value = InitTestUiState.Error(error.message ?: "Error desconocido")
                 }
                 .collect { exerciseList ->
                     if (exerciseList.isEmpty()) {
-                        _uiState.value = TestUiState.Loading
+                        _uiState.value = InitTestUiState.Loading
                     } else {
-                        _uiState.value = TestUiState.Success(exerciseList)
+                        _uiState.value = InitTestUiState.Success(exerciseList)
                     }
                 }
         }
@@ -43,7 +43,7 @@ class TestViewModel(
             initializer {
                 val application =
                     (this[ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY] as OverloadApplication)
-                TestViewModel(application.exerciseRepository)
+                InitTestViewModel(application.exerciseRepository)
             }
         }
     }

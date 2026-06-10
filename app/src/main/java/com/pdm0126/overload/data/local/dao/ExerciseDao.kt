@@ -14,7 +14,7 @@ interface ExerciseDao {
     fun insertAll(exercises: List<ExerciseEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertExercise(exercise: ExerciseEntity): Long
+    fun insertExercise(exercise: ExerciseEntity): Long
 
     @Query("SELECT * FROM exercises_table")
     fun getAllExercises(): Flow<List<ExerciseEntity>>

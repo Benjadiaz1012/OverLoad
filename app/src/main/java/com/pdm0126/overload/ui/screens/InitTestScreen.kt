@@ -13,12 +13,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pdm0126.overload.domain.model.Exercise
-import com.pdm0126.overload.ui.viewmodels.test.TestUiState
-import com.pdm0126.overload.ui.viewmodels.test.TestViewModel
+import com.pdm0126.overload.ui.viewmodels.test.InitTestUiState
+import com.pdm0126.overload.ui.viewmodels.test.InitTestViewModel
 
 @Composable
-fun TestScreen(
-    viewModel: TestViewModel = viewModel(factory = TestViewModel.Factory)
+fun InitTestScreen(
+    viewModel: InitTestViewModel = viewModel(factory = InitTestViewModel.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -32,16 +32,16 @@ fun TestScreen(
             contentAlignment = Alignment.Center
         ) {
             when (val state = uiState) {
-                is TestUiState.Loading -> {
+                is InitTestUiState.Loading -> {
                     CircularProgressIndicator()
                 }
-                is TestUiState.Error -> {
+                is InitTestUiState.Error -> {
                     Text(
                         text = "Error: ${state.message}",
                         color = MaterialTheme.colorScheme.error
                     )
                 }
-                is TestUiState.Success -> {
+                is InitTestUiState.Success -> {
                     ExerciseList(
                         exercises = state.exercises
                     )

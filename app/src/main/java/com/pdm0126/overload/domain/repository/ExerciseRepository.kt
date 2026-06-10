@@ -6,5 +6,9 @@ import kotlinx.coroutines.flow.Flow
 interface ExerciseRepository {
     fun getAllExercises(): Flow<List<Exercise>>
     fun getExercisesByMuscleGroup(muscleGroup: String): Flow<List<Exercise>>
+
+    suspend fun saveRemoteExerciseToLocal(exercise: Exercise)
     suspend fun getExerciseById(id: String): Exercise?
+
+    suspend fun searchRemoteExercises(query: String): List<Exercise>
 }
