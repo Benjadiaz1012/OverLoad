@@ -36,7 +36,7 @@ interface RoutineDao {
     fun deleteSlotById(slotId: Long)
 
     // Consultas principales
-    // Con @Transaction, Room lee nuestras clases de relación y arma el árbol completo
+    // Con @Transaction room lee nuestras clases de relación y arma el arbol completo
     @Transaction
     @Query("SELECT * FROM microcycles_table WHERE isActive = 1 LIMIT 1")
     fun getActiveMicrocycle(): Flow<MicrocycleWithDays?>
