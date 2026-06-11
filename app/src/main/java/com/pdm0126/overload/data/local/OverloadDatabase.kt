@@ -9,20 +9,31 @@ import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.pdm0126.overload.data.local.converter.Converters
 import com.pdm0126.overload.data.local.dao.ExerciseDao
+import com.pdm0126.overload.data.local.dao.RoutineDao
 import com.pdm0126.overload.data.local.entity.ExerciseEntity
+import com.pdm0126.overload.data.local.entity.DayEntity
+import com.pdm0126.overload.data.local.entity.MicrocycleEntity
+import com.pdm0126.overload.data.local.entity.SlotEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 
 @Database(
-    entities = [ExerciseEntity::class],
-    version = 1,
+    entities = [
+        ExerciseEntity::class,
+        MicrocycleEntity::class,
+        DayEntity::class,
+        SlotEntity::class
+               ],
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
 abstract class OverloadDatabase : RoomDatabase() {
     abstract fun exerciseDao(): ExerciseDao
+    abstract fun routineDao(): RoutineDao
+
     companion object {
         @Volatile
         private var INSTANCE: OverloadDatabase? = null

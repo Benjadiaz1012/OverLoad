@@ -52,7 +52,7 @@ Cada pantalla expone un único flujo de estado inmutable (representado mediante 
 ### 4.4. Navegación: Jetpack Navigation 3
 Se adopta de forma estricta el nuevo estándar nativo de **Navigation 3**. El flujo de navegación se gestiona de manera declarativa y con tipado seguro (*type-safe*), abstrayendo la pila de pantallas mediante destinos basados en objetos de configuración de Kotlin. Queda prohibido el uso de strings desestructurados como rutas (propios de Navigation 2.x), asegurando la validación del grafo de pantallas en tiempo de compilación.
 
-### 5.5. Estructura Organizacional de Paquetes
+### 4.5. Estructura Organizacional de Paquetes
 El código fuente dentro del paquete principal (`com.pdm.overload`) se organiza rigurosamente bajo el principio de responsabilidad única. La estructura base de paquetes es:
 * `data/`: Contiene los archivos locales y remotos de persistencia. Aloja sub paquetes para `local/` (tablas y DAO de Room), `remote/` (clientes de Ktor y llamadas a la API de ExerciseDB) y `repositories/` (las implementaciones del patrón repositorio).
 * `domain/`: Contiene los modelos de negocio puros, clases de datos centrales de entrenamiento y las abstracciones del repositorio.
