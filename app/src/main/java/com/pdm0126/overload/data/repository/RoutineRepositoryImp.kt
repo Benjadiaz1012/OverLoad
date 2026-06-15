@@ -29,42 +29,34 @@ class RoutineRepositoryImp(
     }
 
     override suspend fun createMicrocycle(name: String, blueprintType: String, isActive: Boolean): Long {
-        return withContext(Dispatchers.IO) {
-            val newMicrocycle = MicrocycleEntity(
-                name = name,
-                blueprintType = blueprintType,
-                isActive = isActive
-            )
-            routineDao.insertMicrocycle(newMicrocycle) // Retorna el id generado
-        }
+        val newMicrocycle = MicrocycleEntity(
+            name = name,
+            blueprintType = blueprintType,
+            isActive = isActive
+        )
+        return routineDao.insertMicrocycle(newMicrocycle) // Retorna el id generado
     }
 
     override suspend fun addDayToMicrocycle(microcycleId: Long, order: Int, focus: String): Long {
-        return withContext(Dispatchers.IO) {
-            val newDay = DayEntity(
-                microcycleId = microcycleId,
-                order = order,
-                focus = focus
-            )
-            routineDao.insertDay(newDay) // Retorna el id del día
-        }
+        val newDay = DayEntity(
+            microcycleId = microcycleId,
+            order = order,
+            focus = focus
+        )
+        return routineDao.insertDay(newDay) // Retorna el id del día
     }
 
     override suspend fun addExerciseSlot(dayId: Long, exerciseId: String, order: Int, targetSets: Int): Long {
-        return withContext(Dispatchers.IO) {
-            val newSlot = SlotEntity(
-                dayId = dayId,
-                exerciseId = exerciseId,
-                order = order,
-                targetSets = targetSets
-            )
-            routineDao.insertSlot(newSlot) // Retorna el id del slot
-        }
+        val newSlot = SlotEntity(
+            dayId = dayId,
+            exerciseId = exerciseId,
+            order = order,
+            targetSets = targetSets
+        )
+        return routineDao.insertSlot(newSlot) // Retorna el id del slot
     }
 
     override suspend fun removeExerciseSlot(slotId: Long) {
-        withContext(Dispatchers.IO) {
-            routineDao.deleteSlotById(slotId)
-        }
+        routineDao.deleteSlotById(slotId)
     }
 }

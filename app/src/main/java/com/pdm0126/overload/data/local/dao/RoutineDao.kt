@@ -17,23 +17,23 @@ interface RoutineDao {
 
     // Inserciones
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertMicrocycle(microcycle: MicrocycleEntity): Long
+    suspend fun insertMicrocycle(microcycle: MicrocycleEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertDay(day: DayEntity): Long
+    suspend fun insertDay(day: DayEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertSlot(slot: SlotEntity): Long
+    suspend fun insertSlot(slot: SlotEntity): Long
 
     // Actualizaciones/Borrados
     @Update
-    fun updateMicrocycle(microcycle: MicrocycleEntity)
+    suspend fun updateMicrocycle(microcycle: MicrocycleEntity)
 
     @Update
-    fun updateDay(day: DayEntity)
+    suspend fun updateDay(day: DayEntity)
 
     @Query("DELETE FROM slots_table WHERE slotId = :slotId")
-    fun deleteSlotById(slotId: Long)
+    suspend fun deleteSlotById(slotId: Long)
 
     // Consultas principales
     // Con @Transaction room lee nuestras clases de relación y arma el arbol completo
