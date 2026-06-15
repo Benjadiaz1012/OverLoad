@@ -8,7 +8,7 @@ data class WorkoutSet(
     val setNumber: Int,
     val weightKg: Float,
     val reps: Int,
-    val rir: Int?,              // null si el RIR fue desactivado por el usuario
+    val rir: Int?,
     val isRirEnabled: Boolean,
-    val rirFactor: Float        // Factor de ponderación pre-calculado (0.4, 0.5, 0.8 o 1.0)
+    val rirFactor: Float
 )

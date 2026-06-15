@@ -14,18 +14,6 @@ class WorkoutRepositoryImp(
     private val workoutDao: WorkoutDao
 ) : WorkoutRepository {
 
-    // Lógica central de negocio
-
-    /**
-     * Calcula el Factor_RIR según la tabla de ponderación definida en la arquitectura funcional.
-     *
-     * | Estado             | Factor |
-     * |--------------------|--------|
-     * | RIR desactivado    |  0.5   |
-     * | RIR 4 o 5          |  0.4   |
-     * | RIR 2 o 3          |  0.8   |
-     * | RIR 0 o 1          |  1.0   |
-     */
     private fun computeRirFactor(rir: Int?, isRirEnabled: Boolean): Float {
         if (!isRirEnabled) return 0.5f
         return when (rir) {
@@ -36,7 +24,6 @@ class WorkoutRepositoryImp(
         }
     }
 
-    // Flujos reactivos
     override fun getActiveSession(): Flow<WorkoutSession?> {
         return workoutDao.getActiveSession().map { relation ->
             relation?.toDomainModel()
@@ -55,7 +42,6 @@ class WorkoutRepositoryImp(
         }
     }
 
-    // Operaciones suspendidas
 
     override suspend fun getLastSetsForSlot(
         slotId: Long,
@@ -75,8 +61,6 @@ class WorkoutRepositoryImp(
     }
 
     override suspend fun endSession(sessionId: Long) {
-        // Recuperamos la entidad actual para actualizar sólo el endTimestamp
-        // Usamos una query directa al DAO para no exponer un método innecesario en la interfaz
         val currentSession = workoutDao.getSessionSnapshot(sessionId) ?: return
         workoutDao.updateSession(
             currentSession.copy(endTimestamp = System.currentTimeMillis())
@@ -85,7 +69,7 @@ class WorkoutRepositoryImp(
 
     override suspend fun logSet(
         sessionId: Long,
-        slotId: Long,
+        slotId: Long?,
         exerciseId: String,
         setNumber: Int,
         weightKg: Float,

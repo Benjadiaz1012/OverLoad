@@ -27,7 +27,7 @@ interface WorkoutRepository {
     // Registra una serie individual. Aplica la lógica de rirFactor internamente.
     suspend fun logSet(
         sessionId: Long,
-        slotId: Long,
+        slotId: Long?,
         exerciseId: String,
         setNumber: Int,
         weightKg: Float,
