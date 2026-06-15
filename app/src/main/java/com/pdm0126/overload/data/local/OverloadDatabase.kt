@@ -10,10 +10,13 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.pdm0126.overload.data.local.converter.Converters
 import com.pdm0126.overload.data.local.dao.ExerciseDao
 import com.pdm0126.overload.data.local.dao.RoutineDao
+import com.pdm0126.overload.data.local.dao.WorkoutDao
 import com.pdm0126.overload.data.local.entity.ExerciseEntity
 import com.pdm0126.overload.data.local.entity.DayEntity
 import com.pdm0126.overload.data.local.entity.MicrocycleEntity
 import com.pdm0126.overload.data.local.entity.SlotEntity
+import com.pdm0126.overload.data.local.entity.WorkoutSessionEntity
+import com.pdm0126.overload.data.local.entity.WorkoutSetEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,15 +27,18 @@ import kotlinx.serialization.json.Json
         ExerciseEntity::class,
         MicrocycleEntity::class,
         DayEntity::class,
-        SlotEntity::class
+        SlotEntity::class,
+        WorkoutSessionEntity::class,
+        WorkoutSetEntity::class
                ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
 abstract class OverloadDatabase : RoomDatabase() {
     abstract fun exerciseDao(): ExerciseDao
     abstract fun routineDao(): RoutineDao
+    abstract fun workoutDao(): WorkoutDao
 
     companion object {
         @Volatile
@@ -45,6 +51,7 @@ abstract class OverloadDatabase : RoomDatabase() {
                     OverloadDatabase::class.java,
                     "overload_database"
                 )
+                    .fallbackToDestructiveMigration(dropAllTables = true) // Permite reconstruir la BD en cambios de esquema durante el desarrollo
                     .addCallback(OverloadDatabaseCallback(context, scope) { INSTANCE!! })
                     .build()
 
