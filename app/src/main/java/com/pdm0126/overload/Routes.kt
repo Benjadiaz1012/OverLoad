@@ -1,0 +1,10 @@
+package com.pdm0126.overload
+
+import androidx.navigation3.runtime.NavKey
+import kotlinx.serialization.Serializable
+
+@Serializable
+sealed class Routes : NavKey{
+    @Serializable
+    data object SignIn: Routes()
+}
