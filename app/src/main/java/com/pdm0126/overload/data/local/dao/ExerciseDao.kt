@@ -11,10 +11,10 @@ import kotlinx.coroutines.flow.Flow
 interface ExerciseDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(exercises: List<ExerciseEntity>)
+    suspend fun insertAll(exercises: List<ExerciseEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertExercise(exercise: ExerciseEntity): Long
+    suspend fun insertExercise(exercise: ExerciseEntity)
 
     @Query("SELECT * FROM exercises_table")
     fun getAllExercises(): Flow<List<ExerciseEntity>>
@@ -23,5 +23,5 @@ interface ExerciseDao {
     fun getExercisesByMuscleGroup(muscleGroup: String): Flow<List<ExerciseEntity>>
 
     @Query("SELECT * FROM exercises_table WHERE exerciseId = :id LIMIT 1")
-    fun getExerciseById(id: String): ExerciseEntity?
+    suspend fun getExerciseById(id: String): ExerciseEntity?
 }

@@ -14,7 +14,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             OverLoadTheme {
-                SearchTestScreen()
+                // Probamos la búsqueda remota de ejercicios y guardamos en local
+                //SearchTestScreen()
+                // Probamos la carga de ejercicios desde local, los guardados usando el search también deben aparecer
+                InitTestScreen()
             }
         }
     }

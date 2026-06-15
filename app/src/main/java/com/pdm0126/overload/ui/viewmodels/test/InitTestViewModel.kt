@@ -2,6 +2,7 @@ package com.pdm0126.overload.ui.viewmodels.test
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
@@ -41,9 +42,8 @@ class InitTestViewModel(
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                val application =
-                    (this[ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY] as OverloadApplication)
-                InitTestViewModel(application.exerciseRepository)
+                val application = (this[APPLICATION_KEY] as OverloadApplication)
+                InitTestViewModel(application.overloadProvider.provideExerciseRepository())
             }
         }
     }

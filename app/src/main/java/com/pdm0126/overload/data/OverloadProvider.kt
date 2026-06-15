@@ -1,0 +1,35 @@
+package com.pdm0126.overload.data
+
+import android.content.Context
+import com.pdm0126.overload.data.local.OverloadDatabase
+import com.pdm0126.overload.data.remote.ExerciseApiClient
+import com.pdm0126.overload.data.repository.ExerciseRepositoryImp
+import com.pdm0126.overload.data.repository.RoutineRepositoryImp
+import com.pdm0126.overload.domain.repository.ExerciseRepository
+import com.pdm0126.overload.domain.repository.RoutineRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+
+class OverloadProvider(context: Context) {
+
+    // Scope global necesario para el callback de población inicial de Room
+    private val applicationScope = CoroutineScope(SupervisorJob())
+
+    private val appDatabase = OverloadDatabase.getDatabase(context, applicationScope)
+
+    private val exerciseDao = appDatabase.exerciseDao()
+    private val routineDao = appDatabase.routineDao()
+    private val exerciseApiClient = ExerciseApiClient()
+
+    private val exerciseRepository: ExerciseRepository = ExerciseRepositoryImp(exerciseDao, exerciseApiClient)
+    private val routineRepository: RoutineRepository = RoutineRepositoryImp(routineDao)
+
+    // Repartimos las dependencias
+    fun provideExerciseRepository(): ExerciseRepository {
+        return exerciseRepository
+    }
+
+    fun provideRoutineRepository(): RoutineRepository {
+        return routineRepository
+    }
+}

@@ -13,8 +13,8 @@ kotlinxSerializationCore = "1.11.0"
 coil = "3.4.0"
 lifecycleViewmodelCompose = "2.10.0"
 ktor = "3.4.3"
-ksp = "2.2.10-2.0.2"
-room = "2.6.1"
+ksp = "2.3.9"
+room = "2.8.4"
 firebaseBom = "33.7.0"
 googleServices = "4.4.2"
 gson = "2.10.1"
@@ -54,9 +54,9 @@ ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-conte
 ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
 
-androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
-androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
-androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+room-runtime  = { group = "androidx.room", name = "room-runtime",  version.ref = "room" }
+room-ktx      = { group = "androidx.room", name = "room-ktx",      version.ref = "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
@@ -68,6 +68,6 @@ gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
 

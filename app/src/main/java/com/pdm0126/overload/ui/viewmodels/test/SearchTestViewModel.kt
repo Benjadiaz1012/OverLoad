@@ -57,7 +57,7 @@ class SearchTestViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as OverloadApplication)
-                SearchTestViewModel(application.exerciseRepository)
+                SearchTestViewModel(application.overloadProvider.provideExerciseRepository())
             }
         }
     }

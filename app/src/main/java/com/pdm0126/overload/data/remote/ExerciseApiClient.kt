@@ -28,7 +28,8 @@ class ExerciseApiClient {
                 ignoreUnknownKeys = true
                 isLenient = true
             },
-                contentType = ContentType.Any)
+                contentType = ContentType.Any
+            )
         }
 
         // Plugin de logging

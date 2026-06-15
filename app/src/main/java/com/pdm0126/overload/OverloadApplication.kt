@@ -1,19 +1,9 @@
 package com.pdm0126.overload
 
 import android.app.Application
-import com.pdm0126.overload.data.local.OverloadDatabase
-import com.pdm0126.overload.data.remote.ExerciseApiClient
-import com.pdm0126.overload.data.repository.ExerciseRepositoryImp
-import com.pdm0126.overload.domain.repository.ExerciseRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
+import com.pdm0126.overload.data.OverloadProvider
+import kotlin.getValue
 
 class OverloadApplication : Application() {
-    val applicationScope = CoroutineScope(SupervisorJob())
-    val database by lazy { OverloadDatabase.getDatabase(this, applicationScope) }
-
-    val exerciseRepository: ExerciseRepository by lazy {
-        ExerciseRepositoryImp(database.exerciseDao(), ExerciseApiClient())
-    }
+    val overloadProvider by lazy { OverloadProvider(this) }
 }
-

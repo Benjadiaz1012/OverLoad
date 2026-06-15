@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.google.devtools.ksp)
+    alias(libs.plugins.ksp)
     //alias(libs.plugins.google.gms.google.services)
 }
 
@@ -62,9 +62,9 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.client.logging)
 
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
