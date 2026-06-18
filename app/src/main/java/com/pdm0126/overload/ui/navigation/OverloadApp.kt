@@ -17,6 +17,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.pdm0126.overload.ui.routes.Routes
 import com.pdm0126.overload.ui.components.OverloadScaffold
+import com.pdm0126.overload.ui.screens.library.LibraryScreen
 
 @Composable
 fun OverloadApp() {
@@ -43,7 +44,10 @@ fun OverloadApp() {
         NavDisplay(
             backStack = backStack,
             // Solo aplicamos el padding inferior, el padding superior lo manejara el OverloadScaffold de cada pantalla
-            modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()),
+            modifier = Modifier
+                .padding(
+                    bottom = innerPadding.calculateBottomPadding()
+                ),
             onBack = { backStack.removeLastOrNull() },
             entryProvider = entryProvider {
                 entry<Routes.Dashboard> {
@@ -53,7 +57,7 @@ fun OverloadApp() {
                     PlaceholderScreen("Mis Rutinas")
                 }
                 entry<Routes.Library> {
-                    PlaceholderScreen("Librería de Ejercicios")
+                    LibraryScreen()
                 }
                 entry<Routes.Analysis> {
                     PlaceholderScreen("Análisis y Progreso")
