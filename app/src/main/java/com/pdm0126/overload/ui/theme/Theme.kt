@@ -25,16 +25,9 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 @Composable
-fun OverloadTheme(content: @Composable () -> Unit) {
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            val window = (view.context as Activity).window
-            window.statusBarColor = DarkColorScheme.background.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
-        }
-    }
-
+fun OverloadTheme(
+    content: @Composable () -> Unit
+) {
     MaterialTheme(
         colorScheme = DarkColorScheme,
         content = content
