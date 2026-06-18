@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.pdm0126.overload.ui.screens.MainScreen
+import com.pdm0126.overload.ui.navigation.OverloadApp
 import com.pdm0126.overload.ui.theme.OverloadTheme
 
 class MainActivity : ComponentActivity() {
@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             OverloadTheme {
-                MainScreen()
+                OverloadApp()
             }
         }
     }
