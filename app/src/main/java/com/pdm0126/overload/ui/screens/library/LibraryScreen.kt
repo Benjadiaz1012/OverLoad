@@ -10,8 +10,11 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,6 +29,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.pdm0126.overload.domain.model.Exercise
 import com.pdm0126.overload.ui.components.OverloadScaffold
+import kotlinx.coroutines.launch
 
 @Composable
 fun LibraryScreen(
@@ -34,26 +38,72 @@ fun LibraryScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
 
-    OverloadScaffold(title = "Librería de Ejercicios", showBackButton = false) { paddingValues ->
-        Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
-            // Barra de Búsqueda
+    OverloadScaffold(
+        title = "Librería de Ejercicios",
+        showBackButton = false,
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            SecondaryTabRow(
+                selectedTabIndex = state.selectedTabIndex,
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.primary
+            ) {
+                Tab(
+                    selected = state.selectedTabIndex == 0,
+                    onClick = { viewModel.onTabSelected(0) },
+                    text = { Text("Guardados") }
+
+                )
+                Tab(
+                    selected = state.selectedTabIndex == 1,
+                    onClick = { viewModel.onTabSelected(1) },
+                    text = { Text("Explorar") }
+                )
+            }
+
+            val isLocal = state.selectedTabIndex == 0
             OutlinedTextField(
-                value = state.searchState.query,
+                value = state.searchQuery,
                 onValueChange = viewModel::onSearchQueryChanged,
-                modifier = Modifier.fillMaxWidth().padding(16.dp),
-                placeholder = { Text("Buscar en internet...") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                placeholder = { Text(if (isLocal) "Buscar en guardados..." else "Buscar en internet...") },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 trailingIcon = {
-                    if (state.searchState.query.isNotEmpty()) {
-                        IconButton(onClick = { viewModel.onSearchQueryChanged(""); focusManager.clearFocus() }) {
-                            Icon(Icons.Default.Cancel, contentDescription = "Buscar", tint = MaterialTheme.colorScheme.primary)
+                    if (state.searchQuery.isNotEmpty()) {
+                        if (isLocal) {
+                            IconButton(
+                                onClick = { viewModel.searchRemoteExercises(); focusManager.clearFocus() }
+                            ) {
+                                Icon(
+                                    Icons.Default.Cancel,
+                                    contentDescription = "Buscar",
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
                         }
                     }
                 },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                keyboardActions = KeyboardActions(onSearch = { viewModel.searchRemoteExercises(); focusManager.clearFocus() }),
+                keyboardActions = KeyboardActions(
+                    onSearch = {
+                        if (!isLocal) {
+                            viewModel.searchRemoteExercises()
+                            focusManager.clearFocus()
+                        }
+                    },
+                    onDone = { focusManager.clearFocus() }
+                ),
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
@@ -61,71 +111,99 @@ fun LibraryScreen(
                 )
             )
 
-            // Chips de Filtro
-            if (state.searchState.remoteResults.isEmpty() && state.searchState.query.isBlank()) {
-                val muscleGroups = listOf("pecho", "espalda", "hombros", "bíceps", "tríceps", "pierna")
-                LazyRow(
-                    contentPadding = PaddingValues(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.padding(bottom = 8.dp)
-                ) {
-                    items(muscleGroups) { muscle ->
-                        FilterChip(
-                            selected = state.selectedMuscle == muscle,
-                            onClick = { viewModel.onMuscleFilterSelected(muscle) },
-                            label = { Text(muscle.replaceFirstChar { it.uppercase() }) },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = MaterialTheme.colorScheme.primary,
-                                selectedLabelColor = MaterialTheme.colorScheme.onPrimary
-                            )
+            val muscleGroups = listOf("pecho", "espalda", "hombros", "bíceps", "tríceps", "pierna")
+            LazyRow(
+                contentPadding = PaddingValues(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                modifier = Modifier.padding(bottom = 8.dp)
+            ) {
+                items(muscleGroups) { muscle ->
+                    FilterChip(
+                        selected = state.selectedMuscle == muscle,
+                        onClick = { viewModel.onMuscleFilterSelected(muscle) },
+                        label = { Text(muscle.replaceFirstChar { it.uppercase() }) },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = MaterialTheme.colorScheme.primary,
+                            selectedLabelColor = MaterialTheme.colorScheme.onPrimary
                         )
-                    }
+                    )
                 }
             }
 
-            // Contenido (Lista o Estados)
-            Box(modifier = Modifier.fillMaxSize()) {
-                when {
-                    state.searchState.isSearching -> {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .align(Alignment.Center),
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                    state.searchState.errorMessage != null -> {
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                if (isLocal) {
+                    if (state.localExercises.isEmpty()) {
                         Text(
-                            text = state.searchState.errorMessage!!,
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.align(Alignment.Center).padding(32.dp),
-                            textAlign = TextAlign.Center
+                            text = "No tienes ejercicios guardados en este grupo.",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.align(Alignment.Center)
                         )
-                    }
-                    else -> {
-                        val isShowingRemote = state.searchState.remoteResults.isNotEmpty()
-                        val listToShow = if (isShowingRemote) state.searchState.remoteResults else state.localExercises
-
+                    } else {
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
                             contentPadding = PaddingValues(16.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            if (isShowingRemote) {
-                                item {
-                                    Text("Resultados", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
-                                }
-                            } else if (listToShow.isEmpty()) {
-                                item {
-                                    Text("No tienes ejercicios guardados en este grupo.", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                }
-                            }
-
-                            items(listToShow, key = { it.id }) { exercise ->
+                            items(state.localExercises, key = { it.id }) { exercise ->
                                 ExerciseCard(
                                     exercise = exercise,
-                                    isRemote = isShowingRemote,
-                                    onSaveClick = { viewModel.saveExerciseToLocal(exercise) }
+                                    isSaved = true,
+                                    onSaveClick = {}
                                 )
+                            }
+                        }
+                    }
+                } else {
+                    when {
+                        state.remoteState.isSearching -> {
+                            CircularProgressIndicator(
+                                modifier = Modifier.align(Alignment.Center),
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+
+                        state.remoteState.errorMessage != null -> {
+                            Text(
+                                text = state.remoteState.errorMessage!!,
+                                color = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.align(Alignment.Center).padding(32.dp),
+                                textAlign = TextAlign.Center
+                            )
+                        }
+
+                        state.remoteState.results.isEmpty() && state.searchQuery.isBlank() -> {
+                            Text(
+                                text = "Busca un ejercicio en la base de datos global.",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+                        }
+
+                        else -> {
+                            LazyColumn(
+                                modifier = Modifier.fillMaxSize(),
+                                contentPadding = PaddingValues(16.dp),
+                                verticalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                items(state.remoteState.results, key = { it.id }) { exercise ->
+                                    val isSaved = state.savedExercisesIds.contains(exercise.id)
+
+                                    ExerciseCard(
+                                        exercise = exercise,
+                                        isSaved = isSaved,
+                                        onSaveClick = {
+                                            viewModel.saveExerciseToLocal(exercise)
+                                            coroutineScope.launch {
+                                                snackbarHostState.showSnackbar(
+                                                    message = "${exercise.name} guardado en tu biblioteca",
+                                                    duration = SnackbarDuration.Short
+                                                )
+                                            }
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
@@ -138,7 +216,7 @@ fun LibraryScreen(
 @Composable
 fun ExerciseCard(
     exercise: Exercise,
-    isRemote: Boolean,
+    isSaved: Boolean,
     onSaveClick: () -> Unit
 ) {
     Card(
@@ -170,7 +248,7 @@ fun ExerciseCard(
                 )
             }
 
-            if (isRemote) {
+            if (isSaved) {
                 IconButton(onClick = onSaveClick) {
                     Icon(
                         Icons.Default.SaveAlt,

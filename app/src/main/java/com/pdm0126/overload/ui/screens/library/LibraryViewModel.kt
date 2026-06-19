@@ -16,42 +16,42 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-/*private data class SearchState(
-    val query: String = "",
-    val isSearching: Boolean = false,
-    val remoteResults: List<Exercise> = emptyList(),
-    val errorMessage: String? = null
-)*/
-
 class LibraryViewModel(
     private val repository: ExerciseRepository
 ) : ViewModel() {
 
+    private val _selectedTabIndex = MutableStateFlow(0)
     private val _selectedMuscle = MutableStateFlow<String?>(null)
     private val _searchQuery = MutableStateFlow("")
     private val _isSearching = MutableStateFlow(false)
-    private val _remoteResults = MutableStateFlow<List<Exercise>>(emptyList())
-    private val _errorMessage = MutableStateFlow<String?>(null)
+    private val _remoteState = MutableStateFlow(RemoteState())
 
 
     val uiState: StateFlow<LibraryUiState> = combine(
-        repository.getAllExercises(),
-        _selectedMuscle,
-        combine(
-            _searchQuery, _isSearching, _remoteResults, _errorMessage
-        ) { query, searching, remote, error ->
-            SearchState(query, searching, remote, error)
-        }
-    ) { local, muscle, searchState ->
+        repository.getAllExercises(),           // Flow<List<Exercise>>
+        _selectedTabIndex,                     // MutableStateFlow<Int>
+        _selectedMuscle,                       // MutableStateFlow<String?>
+        _searchQuery,                          // MutableStateFlow<String>
+        _remoteState                           // MutableStateFlow<RemoteState>
+    ) { local, tabIndex, muscle, query, remote ->
 
-        val filteredLocal = if (muscle == null) local else local.filter {
-            it.muscleGroup.equals(muscle, ignoreCase = true)
+        val filteredLocal = local.filter { exercise ->
+            val matchesMuscle = muscle == null || exercise.muscleGroup.equals(muscle, ignoreCase = true)
+            val matchesQuery = query.isBlank() || exercise.name.contains(query, ignoreCase = true)
+            matchesMuscle && matchesQuery
+        }
+
+        val filteredRemote = remote.results.filter { exercise ->
+            muscle == null || exercise.muscleGroup.equals(muscle, ignoreCase = true)
         }
 
         LibraryUiState(
+            selectedTabIndex = tabIndex,
             localExercises = filteredLocal,
+            savedExercisesIds = local.map { ex -> ex.id }.toSet(),
             selectedMuscle = muscle,
-            searchState = searchState
+            searchQuery = query,
+            remoteState = remote.copy(results = filteredRemote)
         )
     }.stateIn(
         scope = viewModelScope,
@@ -59,11 +59,17 @@ class LibraryViewModel(
         initialValue = LibraryUiState()
     )
 
+    fun onTabSelected(index: Int) {
+        if (_selectedTabIndex.value != index) {
+            _selectedTabIndex.value = index
+            _selectedMuscle.value = ""
+        }
+    }
+
     fun onSearchQueryChanged(query: String) {
         _searchQuery.value = query
-        if (query.isBlank()) {
-            _remoteResults.value = emptyList()
-            _errorMessage.value = null
+        if (query.isBlank() && _selectedTabIndex.value == 1) {
+            _remoteState.value = RemoteState() // Limpiar resultados de búsqueda
         }
     }
 
@@ -72,17 +78,19 @@ class LibraryViewModel(
     }
 
     fun searchRemoteExercises() {
-        if (_searchQuery.value.isBlank()) return
-
+        if (_searchQuery.value.isBlank() || _selectedTabIndex.value != 1)
+            return
         viewModelScope.launch {
-            _isSearching.value = true
-            _errorMessage.value = null
+            _remoteState.value = RemoteState(isSearching = true, errorMessage = null)
             try {
                 val results = repository.searchRemoteExercises(_searchQuery.value)
-                _remoteResults.value = results
-                if (results.isEmpty()) _errorMessage.value = "No se encontraron ejercicios con ese nombre."
+                if (results.isEmpty()) {
+                    _remoteState.value = RemoteState(errorMessage = "No se encontraron resultados.")
+                } else {
+                    _remoteState.value = RemoteState(results = results)
+                }
             } catch (e: Exception) {
-                _errorMessage.value = "Error de conexión. Verifica tu internet."
+                _remoteState.value = RemoteState(errorMessage = "Error de conexión. Verifica tu internet")
             } finally {
                 _isSearching.value = false
             }
@@ -92,7 +100,6 @@ class LibraryViewModel(
     fun saveExerciseToLocal(exercise: Exercise) {
         viewModelScope.launch {
             repository.saveRemoteExerciseToLocal(exercise)
-            _remoteResults.value = _remoteResults.value.filterNot { it.id == exercise.id }
         }
     }
 

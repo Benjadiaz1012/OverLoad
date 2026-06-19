@@ -18,10 +18,12 @@ fun OverloadScaffold(
     onBackClick: () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
     floatingActionButton: @Composable () -> Unit = {},
+    snackbarHost: @Composable () -> Unit = {},
     content: @Composable (PaddingValues) -> Unit
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        snackbarHost = snackbarHost,
         topBar = {
             if (title.isNotEmpty()) {
                 TopAppBar(

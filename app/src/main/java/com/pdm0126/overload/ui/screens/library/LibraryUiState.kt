@@ -3,21 +3,17 @@ package com.pdm0126.overload.ui.screens.library
 import com.pdm0126.overload.domain.model.Exercise
 
 data class LibraryUiState(
-    // Local
+    val selectedTabIndex: Int = 0,
     val localExercises: List<Exercise> = emptyList(),
+    val savedExercisesIds: Set<String> = emptySet(),
     val selectedMuscle: String? = null,
-    // Remoto
-    /*val searchQuery: String = "",
-    val isSearching: Boolean = false,
-    val remoteResults: List<Exercise> = emptyList(),
-    val errorMessage: String? = null*/
-    val searchState: SearchState = SearchState()
+    val searchQuery: String = "",
+    val remoteState: RemoteState = RemoteState()
 )
 
-data class SearchState(
-    val query: String = "",
+data class RemoteState(
     val isSearching: Boolean = false,
-    val remoteResults: List<Exercise> = emptyList(),
+    val results: List<Exercise> = emptyList(),
     val errorMessage: String? = null
 )
 
