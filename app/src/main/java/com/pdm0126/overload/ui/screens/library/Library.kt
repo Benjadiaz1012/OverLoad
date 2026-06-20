@@ -1,5 +1,6 @@
 package com.pdm0126.overload.ui.screens.library
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -19,8 +20,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
@@ -39,7 +38,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun LibraryScreen(
-    viewModel: LibraryViewModel = viewModel(factory = LibraryViewModel.Factory)
+    viewModel: LibraryViewModel = viewModel(factory = LibraryViewModel.Factory),
+    onExerciseClick: (String) -> Unit
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
@@ -189,7 +189,7 @@ fun LibraryScreen(
                                 ExerciseCard(
                                     exercise = exercise,
                                     isBookmarked = true,
-                                    onSaveClick = {
+                                    onBookmarkClick = {
                                         lastWasBookmark.value = true
                                         viewModel.toggleBookmark(exercise)
                                         coroutineScope.launch {
@@ -199,7 +199,8 @@ fun LibraryScreen(
                                                 duration = SnackbarDuration.Short
                                             )
                                         }
-                                    }
+                                    },
+                                    onExerciseClick = { onExerciseClick(exercise.id) }
                                 )
                             }
                         }
@@ -240,7 +241,7 @@ fun LibraryScreen(
                                     ExerciseCard(
                                         exercise = exercise,
                                         isBookmarked = isBookmarked,
-                                        onSaveClick = {
+                                        onBookmarkClick = {
                                             lastWasBookmark.value = isBookmarked
                                             viewModel.toggleBookmark(exercise)
                                             coroutineScope.launch {
@@ -250,7 +251,8 @@ fun LibraryScreen(
                                                     duration = SnackbarDuration.Short
                                                 )
                                             }
-                                        }
+                                        },
+                                        onExerciseClick = { onExerciseClick(exercise.id) }
                                     )
                                 }
                             }
@@ -266,11 +268,13 @@ fun LibraryScreen(
 fun ExerciseCard(
     exercise: Exercise,
     isBookmarked: Boolean,
-    onSaveClick: () -> Unit
+    onBookmarkClick: () -> Unit,
+    onExerciseClick: () -> Unit
 ) {
     OutlinedCard(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .clickable { onExerciseClick() },
         shape = RoundedCornerShape(8.dp)
     ) {
         Row(
@@ -308,7 +312,7 @@ fun ExerciseCard(
 
             BookmarkButton(
                 isBookmarked = isBookmarked,
-                onCheckedChange = { onSaveClick() }
+                onCheckedChange = { onBookmarkClick() }
             )
         }
     }

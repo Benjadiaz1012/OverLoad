@@ -5,14 +5,14 @@
         "mainMuscleGroup": "Pecho",
         "mechanic": "Compuesto",
         "targetMuscles": [
-            "pecho"
+            "Pecho"
         ],
         "secondaryMuscles": [
-            "espalda",
-            "tríceps"
+            "Hombros",
+            "Tríceps"
         ],
         "equipments": [
-            "barra con pesas"
+            "Barra"
         ],
         "instructions": [
             "Recuéstese en un banco plano. Usando un agarre de ancho medio (un agarre que crea un ángulo de 90 grados en el medio del movimiento entre los antebrazos y la parte superior de los brazos), levante la barra del soporte y manténgala recta sobre usted con los brazos bloqueados. Esta será tu posición inicial.",
@@ -32,14 +32,14 @@
         "mainMuscleGroup": "Pecho",
         "mechanic": "Compuesto",
         "targetMuscles": [
-            "pecho"
+            "Pecho"
         ],
         "secondaryMuscles": [
-            "espalda",
-            "tríceps"
+            "Hombros",
+            "Tríceps"
         ],
         "equipments": [
-            "barra con pesas"
+            "Barra"
         ],
         "instructions": [
             "Recuéstese en un banco inclinado. Usando un agarre de ancho medio (un agarre que crea un ángulo de 90 grados en el medio del movimiento entre los antebrazos y la parte superior de los brazos), levante la barra del soporte y manténgala recta sobre usted con los brazos bloqueados. Esta será tu posición inicial.",
@@ -59,14 +59,14 @@
         "mainMuscleGroup": "Pecho",
         "mechanic": "Compuesto",
         "targetMuscles": [
-            "pecho"
+            "Pecho"
         ],
         "secondaryMuscles": [
-            "espalda",
-            "tríceps"
+            "Hombros",
+            "Tríceps"
         ],
         "equipments": [
-            "pesa"
+            "Mancuernas"
         ],
         "instructions": [
             "Acuéstate en un banco plano con una mancuerna en cada mano apoyada sobre tus muslos. Las palmas de tus manos estarán una frente a la otra.",
@@ -86,14 +86,14 @@
         "mainMuscleGroup": "Pecho",
         "mechanic": "Compuesto",
         "targetMuscles": [
-            "pecho"
+            "Pecho"
         ],
         "secondaryMuscles": [
-            "espalda",
-            "tríceps"
+            "Hombros",
+            "Tríceps"
         ],
         "equipments": [
-            "pesa"
+            "Mancuernas"
         ],
         "instructions": [
             "Recuéstese en un banco inclinado con una mancuerna en cada mano sobre los muslos. Las palmas de tus manos estarán una frente a la otra.",
@@ -115,14 +115,14 @@
         "mainMuscleGroup": "Pecho",
         "mechanic": "Compuesto",
         "targetMuscles": [
-            "pecho"
+            "Pecho"
         ],
         "secondaryMuscles": [
-            "espalda",
-            "tríceps"
+            "Hombros",
+            "Tríceps"
         ],
         "equipments": [
-            "pesa"
+            "Mancuernas"
         ],
         "instructions": [
             "Asegure sus piernas al final del banco de descenso y acuéstese con una mancuerna en cada mano encima de sus muslos. Las palmas de tu mano estarán una frente a la otra.",
@@ -143,14 +143,14 @@
         "mainMuscleGroup": "Pecho",
         "mechanic": "Compuesto",
         "targetMuscles": [
-            "pecho"
+            "Pecho"
         ],
         "secondaryMuscles": [
-            "espalda",
-            "tríceps"
+            "Hombros",
+            "Tríceps"
         ],
         "equipments": [
-            "máquina"
+            "Máquina"
         ],
         "instructions": [
             "Siéntate en la máquina de prensa de pecho y selecciona el peso.",
@@ -172,11 +172,11 @@
         "mainMuscleGroup": "Pecho",
         "mechanic": "Aislamiento",
         "targetMuscles": [
-            "pecho"
+            "Pecho"
         ],
         "secondaryMuscles": [],
         "equipments": [
-            "máquina"
+            "Máquina"
         ],
         "instructions": [
             "Siéntese en la máquina con la espalda apoyada sobre la almohadilla.",
@@ -196,11 +196,11 @@
         "mainMuscleGroup": "Pecho",
         "mechanic": "Aislamiento",
         "targetMuscles": [
-            "pecho"
+            "Pecho"
         ],
         "secondaryMuscles": [],
         "equipments": [
-            "pesa"
+            "Mancuernas"
         ],
         "instructions": [
             "Acuéstate en un banco plano con una mancuerna en cada mano apoyada sobre tus muslos. Las palmas de tu mano estarán una frente a la otra.",
@@ -220,14 +220,14 @@
         "mainMuscleGroup": "Pecho",
         "mechanic": "Compuesto",
         "targetMuscles": [
-            "pecho"
+            "Pecho"
         ],
         "secondaryMuscles": [
-            "espalda",
-            "tríceps"
+            "Hombros",
+            "Tríceps"
         ],
         "equipments": [
-            "otro"
+            "Otro"
         ],
         "instructions": [
             "Para este ejercicio necesitarás acceso a barras paralelas. Para llegar a la posición inicial, sostenga el cuerpo con los brazos extendidos (brazos bloqueados) por encima de las barras.",
@@ -246,11 +246,11 @@
         "mainMuscleGroup": "Espalda",
         "mechanic": "Compuesto",
         "targetMuscles": [
-            "dorsales"
+            "Dorsales"
         ],
         "secondaryMuscles": [
-            "bíceps",
-            "espalda media"
+            "Bíceps",
+            "Espalda media"
         ],
         "equipments": [
             "solo cuerpo"
@@ -273,15 +273,15 @@
         "mainMuscleGroup": "Espalda",
         "mechanic": "Compuesto",
         "targetMuscles": [
-            "dorsales"
+            "Dorsales"
         ],
         "secondaryMuscles": [
-            "bíceps",
-            "espalda media",
-            "espalda"
+            "Bíceps",
+            "Espalda media",
+            "Hombros"
         ],
         "equipments": [
-            "cable"
+            "Polea"
         ],
         "instructions": [
             "Siéntate en una máquina desplegable con una barra ancha unida a la polea superior. Asegúrese de ajustar la rodillera de la máquina a su altura. Estas almohadillas evitarán que tu cuerpo se eleve por la resistencia adherida a la barra.",
@@ -302,13 +302,13 @@
         "mainMuscleGroup": "Espalda",
         "mechanic": "Compuesto",
         "targetMuscles": [
-            "espalda media"
+            "Espalda media"
         ],
         "secondaryMuscles": [
-            "dorsales"
+            "Dorsales"
         ],
         "equipments": [
-            "máquina"
+            "Máquina"
         ],
         "instructions": [
             "Cargue un peso adecuado en los pasadores y ajuste la altura del asiento para que pueda alcanzar las manijas que están encima de usted. Ajuste la rodillera para ayudarle a mantenerse en el suelo. Sujete las manijas con un agarre en pronación. Esta será tu posición inicial.",
@@ -327,16 +327,16 @@
         "mainMuscleGroup": "Espalda",
         "mechanic": "Compuesto",
         "targetMuscles": [
-            "dorsales"
+            "Dorsales"
         ],
         "secondaryMuscles": [
-            "pecho",
-            "dorsales",
-            "espalda",
-            "tríceps"
+            "Pecho",
+            "Dorsales",
+            "Hombros",
+            "Tríceps"
         ],
         "equipments": [
-            "barra con pesas"
+            "Barra"
         ],
         "instructions": [
             "Acuéstese en un banco plano con una barra usando el ancho de agarre de los hombros.",
@@ -356,11 +356,11 @@
         "mainMuscleGroup": "Espalda",
         "mechanic": "Aislamiento",
         "targetMuscles": [
-            "dorsales"
+            "Dorsales"
         ],
         "secondaryMuscles": [],
         "equipments": [
-            "cable"
+            "Polea"
         ],
         "instructions": [
             "Conecte una cuerda a una polea alta y seleccione su peso. Párate a un par de pies de la polea con los pies escalonados y toma la cuerda con ambas manos. Inclínese hacia adelante desde la cadera, manteniendo la espalda recta y los brazos extendidos frente a usted. Esta será tu posición inicial.",
@@ -379,15 +379,15 @@
         "mainMuscleGroup": "Espalda",
         "mechanic": "Compuesto",
         "targetMuscles": [
-            "espalda media"
+            "Espalda media"
         ],
         "secondaryMuscles": [
-            "bíceps",
-            "dorsales",
-            "espalda"
+            "Bíceps",
+            "Dorsales",
+            "Hombros"
         ],
         "equipments": [
-            "barra con pesas"
+            "Barra"
         ],
         "instructions": [
             "Sosteniendo una barra con un agarre en pronación (con las palmas hacia abajo), doble ligeramente las rodillas y lleve el torso hacia adelante, doblando la cintura, mientras mantiene la espalda recta hasta que quede casi paralela al suelo. Consejo: asegúrese de mantener la cabeza erguida. La barra debe colgar directamente frente a usted mientras sus brazos cuelgan perpendiculares al suelo y a su torso. Esta es tu posición inicial.",
@@ -406,15 +406,15 @@
         "mainMuscleGroup": "Espalda",
         "mechanic": "Compuesto",
         "targetMuscles": [
-            "espalda media"
+            "Espalda media"
         ],
         "secondaryMuscles": [
-            "bíceps",
-            "dorsales",
-            "espalda"
+            "Bíceps",
+            "Dorsales",
+            "Hombros"
         ],
         "equipments": [
-            "cable"
+            "Polea"
         ],
         "instructions": [
             "Para este ejercicio necesitarás acceso a una máquina de remo en polea baja con barra en V. Nota: La barra en V le permitirá tener un agarre neutral donde las palmas de sus manos estén enfrentadas. Para llegar a la posición inicial, primero siéntese en la máquina y coloque los pies en la plataforma delantera o en la barra transversal proporcionada, asegurándose de que las rodillas estén ligeramente dobladas y no bloqueadas.",
@@ -434,14 +434,14 @@
         "mainMuscleGroup": "Espalda",
         "mechanic": "Compuesto",
         "targetMuscles": [
-            "dorsales"
+            "Dorsales"
         ],
         "secondaryMuscles": [
-            "bíceps",
-            "espalda media"
+            "Bíceps",
+            "Espalda media"
         ],
         "equipments": [
-            "máquina"
+            "Máquina"
         ],
         "instructions": [
             "Cargue un peso adecuado en los pasadores y ajuste la altura del asiento para que las manijas queden al nivel del pecho. Sujete las manijas con un agarre neutral o en pronación. Esta será tu posición inicial.",
@@ -459,14 +459,14 @@
         "mainMuscleGroup": "Espalda",
         "mechanic": "Compuesto",
         "targetMuscles": [
-            "espalda media"
+            "Espalda media"
         ],
         "secondaryMuscles": [
-            "bíceps",
-            "dorsales"
+            "Bíceps",
+            "Dorsales"
         ],
         "equipments": [
-            "máquina"
+            "Máquina"
         ],
         "instructions": [
             "Cargue la máquina de remo con barra en T con el peso deseado y ajuste la altura de las piernas para que la parte superior del pecho quede en la parte superior de la almohadilla. Consejo: En algunas máquinas lo único que puedes hacer es pararte en el escalón adecuado que te permita estar a una altura que tenga la parte superior del pecho en la parte superior de la almohadilla.",
@@ -487,13 +487,13 @@
         "mainMuscleGroup": "Hombros",
         "mechanic": "Compuesto",
         "targetMuscles": [
-            "espalda"
+            "Hombros"
         ],
         "secondaryMuscles": [
-            "tríceps"
+            "Tríceps"
         ],
         "equipments": [
-            "barra con pesas"
+            "Barra"
         ],
         "instructions": [
             "Siéntese en un banco de press militar con una barra detrás de la cabeza y pídale a un observador que le dé la barra (mejor en el manguito rotador de esta manera) o levántela usted mismo con cuidado con un agarre en pronación (con las palmas hacia adelante). Consejo: el agarre debe ser más ancho que el ancho de los hombros y debe crear un ángulo de 90 grados entre el antebrazo y la parte superior del brazo a medida que la barra desciende.",
@@ -513,13 +513,13 @@
         "mainMuscleGroup": "Hombros",
         "mechanic": "Compuesto",
         "targetMuscles": [
-            "espalda"
+            "Hombros"
         ],
         "secondaryMuscles": [
-            "tríceps"
+            "Tríceps"
         ],
         "equipments": [
-            "pesa"
+            "Mancuernas"
         ],
         "instructions": [
             "Mientras sostiene una mancuerna en cada mano, siéntese en un banco de press militar o en un banco utilitario que tenga respaldo para la espalda. Coloque las mancuernas en posición vertical sobre sus muslos.",
@@ -540,13 +540,13 @@
         "mainMuscleGroup": "Hombros",
         "mechanic": "Compuesto",
         "targetMuscles": [
-            "espalda"
+            "Hombros"
         ],
         "secondaryMuscles": [
-            "tríceps"
+            "Tríceps"
         ],
         "equipments": [
-            "máquina"
+            "Máquina"
         ],
         "instructions": [
             "Siéntate en la máquina de press de hombros y selecciona el peso.",
@@ -566,11 +566,11 @@
         "mainMuscleGroup": "Hombros",
         "mechanic": "Aislamiento",
         "targetMuscles": [
-            "espalda"
+            "Hombros"
         ],
         "secondaryMuscles": [],
         "equipments": [
-            "pesa"
+            "Mancuernas"
         ],
         "instructions": [
             "Elija un par de mancuernas y párese con el torso recto y las mancuernas a su lado con los brazos extendidos y las palmas de la mano hacia usted. Esta será tu posición inicial.",
@@ -589,11 +589,11 @@
         "mainMuscleGroup": "Hombros",
         "mechanic": "Aislamiento",
         "targetMuscles": [
-            "espalda"
+            "Hombros"
         ],
         "secondaryMuscles": [],
         "equipments": [
-            "pesa"
+            "Mancuernas"
         ],
         "instructions": [
             "Elija un par de mancuernas y párese con el torso recto y las mancuernas frente a los muslos con los brazos extendidos y las palmas de las manos hacia los muslos. Esta será tu posición inicial.",
@@ -612,11 +612,11 @@
         "mainMuscleGroup": "Hombros",
         "mechanic": "Aislamiento",
         "targetMuscles": [
-            "espalda"
+            "Hombros"
         ],
         "secondaryMuscles": [],
         "equipments": [
-            "cable"
+            "Polea"
         ],
         "instructions": [
             "Ajuste las poleas a la altura adecuada y ajuste el peso. Las poleas deben estar por encima de tu cabeza.",
@@ -635,16 +635,16 @@
         "mainMuscleGroup": "Pierna",
         "mechanic": "Compuesto",
         "targetMuscles": [
-            "cuadríceps"
+            "Cuadríceps"
         ],
         "secondaryMuscles": [
-            "terneros",
-            "glúteos",
-            "isquiotibiales",
-            "espalda baja"
+            "Pantorrillas",
+            "Glúteos",
+            "Isquiotibiales",
+            "Espalda baja"
         ],
         "equipments": [
-            "barra con pesas"
+            "Barra"
         ],
         "instructions": [
             "Este ejercicio se realiza mejor dentro de una rejilla para sentadillas por motivos de seguridad. Para comenzar, primero coloque la barra sobre una rejilla justo por encima del nivel de los hombros. Una vez elegida la altura correcta y cargada la barra, colóquese debajo de la barra y coloque la parte posterior de los hombros (ligeramente debajo del cuello) sobre ella.",
@@ -665,14 +665,14 @@
         "mainMuscleGroup": "Pierna",
         "mechanic": "Compuesto",
         "targetMuscles": [
-            "cuadríceps"
+            "Cuadríceps"
         ],
         "secondaryMuscles": [
-            "glúteos",
-            "isquiotibiales"
+            "Glúteos",
+            "Isquiotibiales"
         ],
         "equipments": [
-            "pesa"
+            "Mancuernas"
         ],
         "instructions": [
             "Colóquese en una postura escalonada con el pie trasero elevado y el pie delantero hacia adelante.",
@@ -691,15 +691,15 @@
         "mainMuscleGroup": "Pierna",
         "mechanic": "Compuesto",
         "targetMuscles": [
-            "cuadríceps"
+            "Cuadríceps"
         ],
         "secondaryMuscles": [
-            "terneros",
-            "glúteos",
-            "isquiotibiales"
+            "Pantorrillas",
+            "Glúteos",
+            "Isquiotibiales"
         ],
         "equipments": [
-            "máquina"
+            "Máquina"
         ],
         "instructions": [
             "Usando una máquina de prensa de piernas, siéntese en la máquina y coloque las piernas en la plataforma directamente frente a usted en una postura de pie media (al ancho de los hombros). (Nota: para los propósitos de esta discusión, usaremos la postura media descrita anteriormente, que apunta al desarrollo general; sin embargo, puede elegir cualquiera de las tres posturas descritas en la sección de posicionamiento de los pies).",
@@ -719,20 +719,20 @@
         "mainMuscleGroup": "Pierna",
         "mechanic": "Compuesto",
         "targetMuscles": [
-            "espalda baja"
+            "Espalda baja"
         ],
         "secondaryMuscles": [
-            "terneros",
-            "antebrazos",
-            "glúteos",
-            "isquiotibiales",
-            "dorsales",
-            "espalda media",
-            "cuadríceps",
-            "trampas"
+            "Pantorrillas",
+            "Antebrazos",
+            "Glúteos",
+            "Isquiotibiales",
+            "Dorsales",
+            "Espalda media",
+            "Cuadríceps",
+            "Trapecios"
         ],
         "equipments": [
-            "barra con pesas"
+            "Barra"
         ],
         "instructions": [
             "Párate frente a una barra cargada.",
@@ -752,15 +752,15 @@
         "mainMuscleGroup": "Pierna",
         "mechanic": "Compuesto",
         "targetMuscles": [
-            "isquiotibiales"
+            "Isquiotibiales"
         ],
         "secondaryMuscles": [
-            "terneros",
-            "glúteos",
-            "espalda baja"
+            "Pantorrillas",
+            "Glúteos",
+            "Espalda baja"
         ],
         "equipments": [
-            "barra con pesas"
+            "Barra"
         ],
         "instructions": [
             "Coloque una barra frente a usted en el suelo y agárela usando un agarre en pronación (con las palmas hacia abajo) un poco más ancho que el ancho de los hombros. Consejo: Dependiendo del peso utilizado, es posible que necesites muñequeras para realizar el ejercicio y también una plataforma elevada para permitir un mejor rango de movimiento.",
@@ -780,14 +780,14 @@
         "mainMuscleGroup": "Pierna",
         "mechanic": "Compuesto",
         "targetMuscles": [
-            "glúteos"
+            "Glúteos"
         ],
         "secondaryMuscles": [
-            "terneros",
-            "isquiotibiales"
+            "Pantorrillas",
+            "Isquiotibiales"
         ],
         "equipments": [
-            "barra con pesas"
+            "Barra"
         ],
         "instructions": [
             "Comience sentado en el suelo con un banco directamente detrás de usted. Coloque una barra cargada sobre sus piernas. Usar una barra de grasa o tener una almohadilla en la barra puede reducir en gran medida las molestias causadas por este ejercicio.",
@@ -805,11 +805,11 @@
         "mainMuscleGroup": "Pierna",
         "mechanic": "Aislamiento",
         "targetMuscles": [
-            "cuadríceps"
+            "Cuadríceps"
         ],
         "secondaryMuscles": [],
         "equipments": [
-            "máquina"
+            "Máquina"
         ],
         "instructions": [
             "Para este ejercicio necesitarás utilizar una máquina de extensión de piernas. Primero elige tu peso y siéntate en la máquina con las piernas debajo de la almohadilla (los pies apuntando hacia adelante) y las manos sujetando las barras laterales. Esta será tu posición inicial. Consejo: deberá ajustar la almohadilla para que caiga sobre la parte inferior de la pierna (justo encima de los pies). Además, asegúrese de que sus piernas formen un ángulo de 90 grados entre la parte inferior y superior de la pierna. Si el ángulo es inferior a 90 grados, significa que la rodilla está sobre los dedos del pie, lo que a su vez crea una tensión indebida en la articulación de la rodilla. Si la máquina está diseñada de esa manera, busca otra máquina o simplemente asegúrate de que cuando comiences a ejecutar el ejercicio dejes de bajar una vez que alcances el ángulo de 90 grados.",
@@ -828,11 +828,11 @@
         "mainMuscleGroup": "Pierna",
         "mechanic": "Aislamiento",
         "targetMuscles": [
-            "isquiotibiales"
+            "Isquiotibiales"
         ],
         "secondaryMuscles": [],
         "equipments": [
-            "máquina"
+            "Máquina"
         ],
         "instructions": [
             "Ajuste la palanca de la máquina para que se ajuste a su altura y acuéstese boca abajo en la máquina de curl de piernas con la almohadilla de la palanca en la parte posterior de las piernas (solo unos centímetros debajo de las pantorrillas). Consejo: Utilice preferentemente una máquina de curl de piernas que esté en ángulo en lugar de plana, ya que una posición en ángulo es más favorable para el reclutamiento de los isquiotibiales.",
@@ -851,14 +851,14 @@
         "mainMuscleGroup": "Pierna",
         "mechanic": "Aislamiento",
         "targetMuscles": [
-            "aductores"
+            "Aductores"
         ],
         "secondaryMuscles": [
-            "glúteos",
-            "isquiotibiales"
+            "Glúteos",
+            "Isquiotibiales"
         ],
         "equipments": [
-            "máquina"
+            "Máquina"
         ],
         "instructions": [
             "Para comenzar, siéntese en la máquina de aductores y seleccione un peso con el que se sienta cómodo. Cuando sus piernas estén colocadas correctamente sobre las almohadillas de la máquina, agarre las manijas de cada lado. Toda la parte superior de tu cuerpo (desde la cintura hacia arriba) debe estar estacionaria. Esta es la posición inicial.",
@@ -877,13 +877,13 @@
         "mainMuscleGroup": "Pierna",
         "mechanic": "Aislamiento",
         "targetMuscles": [
-            "secuestradores"
+            "Abductores"
         ],
         "secondaryMuscles": [
-            "glúteos"
+            "Glúteos"
         ],
         "equipments": [
-            "máquina"
+            "Máquina"
         ],
         "instructions": [
             "Para comenzar, siéntese en la máquina abductora y seleccione un peso con el que se sienta cómodo. Cuando sus piernas estén colocadas correctamente, agarre las manijas de cada lado. Toda la parte superior de tu cuerpo (desde la cintura hacia arriba) debe estar estacionaria. Esta es la posición inicial.",
@@ -902,11 +902,11 @@
         "mainMuscleGroup": "Pierna",
         "mechanic": "Aislamiento",
         "targetMuscles": [
-            "terneros"
+            "Pantorrillas"
         ],
         "secondaryMuscles": [],
         "equipments": [
-            "máquina"
+            "Máquina"
         ],
         "instructions": [
             "Ajuste la palanca acolchada de la máquina de elevación de pantorrillas para adaptarla a su altura.",
@@ -926,13 +926,13 @@
         "mainMuscleGroup": "Bíceps",
         "mechanic": "Aislamiento",
         "targetMuscles": [
-            "bíceps"
+            "Bíceps"
         ],
         "secondaryMuscles": [
-            "antebrazos"
+            "Antebrazos"
         ],
         "equipments": [
-            "pesa"
+            "Mancuernas"
         ],
         "instructions": [
             "Párese (torso erguido) con una mancuerna en cada mano sostenida con los brazos extendidos. Los codos deben estar cerca del torso y las palmas de las manos deben mirar hacia los muslos.",
@@ -952,13 +952,13 @@
         "mainMuscleGroup": "Bíceps",
         "mechanic": "Aislamiento",
         "targetMuscles": [
-            "bíceps"
+            "Bíceps"
         ],
         "secondaryMuscles": [
-            "antebrazos"
+            "Antebrazos"
         ],
         "equipments": [
-            "barra con pesas"
+            "Barra"
         ],
         "instructions": [
             "Párese con el torso erguido mientras sostiene una barra con un agarre a la altura de los hombros. Las palmas de las manos deben mirar hacia adelante y los codos deben estar cerca del torso. Esta será tu posición inicial.",
@@ -978,7 +978,7 @@
         "mainMuscleGroup": "Bíceps",
         "mechanic": "Aislamiento",
         "targetMuscles": [
-            "bíceps"
+            "Bíceps"
         ],
         "secondaryMuscles": [],
         "equipments": [
@@ -1004,11 +1004,11 @@
         "mainMuscleGroup": "Bíceps",
         "mechanic": "Aislamiento",
         "targetMuscles": [
-            "bíceps"
+            "Bíceps"
         ],
         "secondaryMuscles": [],
         "equipments": [
-            "pesa"
+            "Mancuernas"
         ],
         "instructions": [
             "Ponte de pie con el torso erguido y una mancuerna en cada mano sostenida con los brazos extendidos. Los codos deben estar cerca del torso.",
@@ -1028,11 +1028,11 @@
         "mainMuscleGroup": "Bíceps",
         "mechanic": "Aislamiento",
         "targetMuscles": [
-            "bíceps"
+            "Bíceps"
         ],
         "secondaryMuscles": [],
         "equipments": [
-            "pesa"
+            "Mancuernas"
         ],
         "instructions": [
             "Sostenga una mancuerna en cada mano y recuéstese en un banco inclinado.",
@@ -1052,11 +1052,11 @@
         "mainMuscleGroup": "Bíceps",
         "mechanic": "Aislamiento",
         "targetMuscles": [
-            "bíceps"
+            "Bíceps"
         ],
         "secondaryMuscles": [],
         "equipments": [
-            "barra con pesas"
+            "Barra"
         ],
         "instructions": [
             "Para realizar este movimiento necesitarás un banco de predicador y una barra E-Z. Agarre la barra de curl E-Z por el mango interior cercano (pida a alguien que le entregue la barra, lo cual es preferible) o agarre la barra del soporte de la barra frontal proporcionado por la mayoría de los bancos de predicadores). Las palmas de tus manos deben mirar hacia adelante y deben estar ligeramente inclinadas hacia adentro debido a la forma de la barra.",
@@ -1076,7 +1076,7 @@
         "mainMuscleGroup": "Tríceps",
         "mechanic": "Aislamiento",
         "targetMuscles": [
-            "tríceps"
+            "Tríceps"
         ],
         "secondaryMuscles": [],
         "equipments": [
@@ -1100,11 +1100,11 @@
         "mainMuscleGroup": "Tríceps",
         "mechanic": "Aislamiento",
         "targetMuscles": [
-            "tríceps"
+            "Tríceps"
         ],
         "secondaryMuscles": [],
         "equipments": [
-            "cable"
+            "Polea"
         ],
         "instructions": [
             "Conecte una barra recta o en ángulo a una polea alta y agarre con un agarre por encima de la cabeza (con las palmas hacia abajo) al ancho de los hombros.",
@@ -1124,11 +1124,11 @@
         "mainMuscleGroup": "Tríceps",
         "mechanic": "Aislamiento",
         "targetMuscles": [
-            "tríceps"
+            "Tríceps"
         ],
         "secondaryMuscles": [],
         "equipments": [
-            "cable"
+            "Polea"
         ],
         "instructions": [
             "Conecte una cuerda a una polea baja. Después de seleccionar un peso adecuado, agarre la cuerda con ambas manos y de espaldas al cable.",
@@ -1147,11 +1147,11 @@
         "mainMuscleGroup": "Tríceps",
         "mechanic": "Aislamiento",
         "targetMuscles": [
-            "tríceps"
+            "Tríceps"
         ],
         "secondaryMuscles": [],
         "equipments": [
-            "máquina"
+            "Máquina"
         ],
         "instructions": [
             "Ajuste el asiento a la altura adecuada y seleccione su peso. Coloque la parte superior de sus brazos contra las almohadillas y agarre las manijas. Esta será tu posición inicial.",
@@ -1170,11 +1170,11 @@
         "mainMuscleGroup": "Tríceps",
         "mechanic": "Aislamiento",
         "targetMuscles": [
-            "tríceps"
+            "Tríceps"
         ],
         "secondaryMuscles": [],
         "equipments": [
-            "pesa"
+            "Mancuernas"
         ],
         "instructions": [
             "Acuéstese en un banco plano sosteniendo dos mancuernas directamente encima de sus hombros. Tus brazos deben estar completamente extendidos y formar un ángulo de 90 grados desde tu torso y el piso.",

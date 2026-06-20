@@ -17,6 +17,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.pdm0126.overload.ui.routes.Routes
 import com.pdm0126.overload.ui.components.OverloadScaffold
+import com.pdm0126.overload.ui.screens.detail.DetailScreen
 import com.pdm0126.overload.ui.screens.library.LibraryScreen
 
 @Composable
@@ -57,7 +58,15 @@ fun OverloadApp() {
                     PlaceholderScreen("Mis Rutinas")
                 }
                 entry<Routes.Library> {
-                    LibraryScreen()
+                    LibraryScreen(
+                        onExerciseClick = { exerciseId -> backStack.add(Routes.Detail(exerciseId)) }
+                    )
+                }
+                entry<Routes.Detail> { entry ->
+                    DetailScreen(
+                        exerciseId = entry.exerciseId,
+                        onBackClick = { backStack.removeLastOrNull() }
+                    )
                 }
                 entry<Routes.Analysis> {
                     PlaceholderScreen("Análisis y Progreso")
