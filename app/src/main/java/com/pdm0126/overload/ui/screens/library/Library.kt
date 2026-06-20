@@ -28,6 +28,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.pdm0126.overload.domain.model.Exercise
+import com.pdm0126.overload.ui.components.BookmarkButton
+import com.pdm0126.overload.ui.components.Error
 import com.pdm0126.overload.ui.components.OverloadScaffold
 import kotlinx.coroutines.launch
 
@@ -71,25 +73,23 @@ fun LibraryScreen(
 
             val isLocal = state.selectedTabIndex == 0
             OutlinedTextField(
-                value = state.searchQuery,
-                onValueChange = viewModel::onSearchQueryChanged,
+                value = state.query,
+                onValueChange = {  viewModel.onSearchQueryChanged(it) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                placeholder = { Text(if (isLocal) "Buscar en guardados..." else "Buscar en internet...") },
+                placeholder = { Text(if (isLocal) "Tu biblioteca" else "Buscar ejercicio") },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 trailingIcon = {
-                    if (state.searchQuery.isNotEmpty()) {
-                        if (isLocal) {
-                            IconButton(
-                                onClick = { viewModel.searchRemoteExercises(); focusManager.clearFocus() }
-                            ) {
-                                Icon(
-                                    Icons.Default.Cancel,
-                                    contentDescription = "Buscar",
-                                    tint = MaterialTheme.colorScheme.primary
-                                )
-                            }
+                    if (state.query.isNotEmpty()) {
+                        IconButton(
+                            onClick = { viewModel.cleanQuery(); focusManager.clearFocus() }
+                        ) {
+                            Icon(
+                                Icons.Default.Cancel,
+                                contentDescription = "Limpiar búsqueda",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
                         }
                     }
                 },
@@ -136,7 +136,7 @@ fun LibraryScreen(
                 if (isLocal) {
                     if (state.localExercises.isEmpty()) {
                         Text(
-                            text = "No tienes ejercicios guardados en este grupo.",
+                            text = "No tienes ejercicios guardados",
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.align(Alignment.Center)
                         )
@@ -157,7 +157,7 @@ fun LibraryScreen(
                     }
                 } else {
                     when {
-                        state.remoteState.isSearching -> {
+                        state.remoteState.isLoading -> {
                             CircularProgressIndicator(
                                 modifier = Modifier.align(Alignment.Center),
                                 color = MaterialTheme.colorScheme.primary
@@ -165,17 +165,15 @@ fun LibraryScreen(
                         }
 
                         state.remoteState.errorMessage != null -> {
-                            Text(
-                                text = state.remoteState.errorMessage!!,
-                                color = MaterialTheme.colorScheme.error,
-                                modifier = Modifier.align(Alignment.Center).padding(32.dp),
-                                textAlign = TextAlign.Center
+                            Error(
+                                onRetryClick = { viewModel.searchRemoteExercises() },
+                                error = state.remoteState.errorMessage
                             )
                         }
 
-                        state.remoteState.results.isEmpty() && state.searchQuery.isBlank() -> {
+                        state.remoteState.results.isEmpty() && state.query.isBlank() -> {
                             Text(
-                                text = "Busca un ejercicio en la base de datos global.",
+                                text = "...",
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.align(Alignment.Center)
                             )
@@ -188,7 +186,7 @@ fun LibraryScreen(
                                 verticalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
                                 items(state.remoteState.results, key = { it.id }) { exercise ->
-                                    val isSaved = state.savedExercisesIds.contains(exercise.id)
+                                    val isSaved = state.localExercisesIds.contains(exercise.id)
 
                                     ExerciseCard(
                                         exercise = exercise,
@@ -197,7 +195,7 @@ fun LibraryScreen(
                                             viewModel.saveExerciseToLocal(exercise)
                                             coroutineScope.launch {
                                                 snackbarHostState.showSnackbar(
-                                                    message = "${exercise.name} guardado en tu biblioteca",
+                                                    message = "Guardado en tu biblioteca",
                                                     duration = SnackbarDuration.Short
                                                 )
                                             }
@@ -220,8 +218,11 @@ fun ExerciseCard(
     onSaveClick: () -> Unit
 ) {
     Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        ),
+        modifier = Modifier
+            .fillMaxWidth(),
         shape = RoundedCornerShape(16.dp)
     ) {
         Row(
@@ -233,14 +234,23 @@ fun ExerciseCard(
             AsyncImage(
                 model = exercise.remoteImages.firstOrNull(),
                 contentDescription = exercise.name,
-                modifier = Modifier.size(72.dp).clip(RoundedCornerShape(8.dp)),
+                modifier = Modifier
+                    .size(72.dp)
+                    .clip(RoundedCornerShape(8.dp)),
                 contentScale = ContentScale.Crop
             )
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            Column(modifier = Modifier.weight(1f)) {
-                Text(text = exercise.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+            ) {
+                Text(
+                    text = exercise.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
                 Text(
                     text = "${exercise.muscleGroup.replaceFirstChar { it.uppercase() }} • ${exercise.mechanic}",
                     style = MaterialTheme.typography.bodySmall,
@@ -248,21 +258,10 @@ fun ExerciseCard(
                 )
             }
 
-            if (isSaved) {
-                IconButton(onClick = onSaveClick) {
-                    Icon(
-                        Icons.Default.SaveAlt,
-                        contentDescription = "Guardar Ejercicio",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-            } else {
-                Icon(
-                    Icons.Filled.DownloadForOffline,
-                    contentDescription = "Guardado local",
-                    tint = MaterialTheme.colorScheme.tertiary
-                )
-            }
+            BookmarkButton(
+                isBookmarked = isSaved,
+                onCheckedChange = { onSaveClick() }
+            )
         }
     }
 }

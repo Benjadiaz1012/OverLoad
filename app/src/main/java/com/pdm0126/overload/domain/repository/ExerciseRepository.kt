@@ -4,7 +4,7 @@ import com.pdm0126.overload.domain.model.Exercise
 import kotlinx.coroutines.flow.Flow
 
 interface ExerciseRepository {
-    fun getAllExercises(): Flow<List<Exercise>>
+    fun getLocalExercises(): Flow<List<Exercise>>
 
     fun getExercisesByMuscleGroup(muscleGroup: String): Flow<List<Exercise>>
 
@@ -12,5 +12,5 @@ interface ExerciseRepository {
 
     suspend fun getExerciseById(id: String): Exercise?
 
-    suspend fun searchRemoteExercises(query: String): List<Exercise>
+    suspend fun getRemoteExercises(query: String): Result<List<Exercise>>
 }

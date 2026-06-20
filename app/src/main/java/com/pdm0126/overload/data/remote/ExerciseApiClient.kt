@@ -50,7 +50,6 @@ class ExerciseApiClient {
         }
     }
     private var cachedExercises: List<ExerciseDto>? = null
-    // Función para obtener todos los ejercicios
     suspend fun fetchRemoteExercises() : List<ExerciseDto>  {
         if (cachedExercises != null) {
             return cachedExercises!!

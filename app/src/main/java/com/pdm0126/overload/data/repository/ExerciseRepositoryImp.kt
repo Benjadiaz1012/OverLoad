@@ -7,6 +7,9 @@ import com.pdm0126.overload.data.remote.ExerciseApiClient
 import com.pdm0126.overload.data.remote.dto.ExerciseDto
 import com.pdm0126.overload.domain.model.Exercise
 import com.pdm0126.overload.domain.repository.ExerciseRepository
+import io.ktor.client.call.body
+import io.ktor.client.request.get
+import io.ktor.client.request.parameter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -15,7 +18,7 @@ class ExerciseRepositoryImp(
     private val ktorClient: ExerciseApiClient
 ) : ExerciseRepository {
 
-    override fun getAllExercises(): Flow<List<Exercise>> {
+    override fun getLocalExercises(): Flow<List<Exercise>> {
         return exerciseDao.getAllExercises().map { entities ->
             entities.map { entity -> entity.toDomainModel() }
         }
@@ -35,10 +38,15 @@ class ExerciseRepositoryImp(
         return exerciseDao.getExerciseById(id)?.toDomainModel()
     }
 
-    override suspend fun searchRemoteExercises(query: String): List<Exercise> {
-        val remoteDtos : List<ExerciseDto> = ktorClient.fetchRemoteExercises()
-        return remoteDtos
-            .filter { dto -> dto.name.contains(query, ignoreCase = true) }
-            .map { dto -> dto.toDomainModel() }
+    override suspend fun getRemoteExercises(query: String): Result<List<Exercise>> {
+        try {
+            val remoteDtos: List<ExerciseDto> = ktorClient.fetchRemoteExercises()
+            val filteredDtos = remoteDtos.filter { dto -> dto.name.contains(query, ignoreCase = true) }
+            val domainModels = filteredDtos.map { dto -> dto.toDomainModel() }
+            return Result.success(domainModels)
+        }
+        catch (e: Exception) {
+            return Result.failure(e)
+        }
     }
 }
