@@ -18,7 +18,6 @@ import org.junit.Test
 import java.io.File
 import java.net.URLEncoder
 
-// DTOs Serializados
 @Serializable
 data class ApiExerciseDto(
     val name: String,
@@ -52,6 +51,39 @@ const val REMOTE_EXERCISES_URI = "https://raw.githubusercontent.com/yuhonas/free
 const val GOOGLE_TRANSLATE_URI = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=es&dt=t&q="
 
 class Scrapper {
+
+    private val muscleMap = mapOf(
+        "chest" to "Pecho",
+        "shoulders" to "Hombros",
+        "triceps" to "Tríceps",
+        "biceps" to "Bíceps",
+        "lats" to "Dorsales",
+        "middle back" to "Espalda media",
+        "lower back" to "Espalda baja",
+        "quadriceps" to "Cuadríceps",
+        "hamstrings" to "Isquiotibiales",
+        "glutes" to "Glúteos",
+        "calves" to "Pantorrillas",
+        "forearms" to "Antebrazos",
+        "traps" to "Trapecios",
+        "abdominals" to "Abdominales",
+        "abs" to "Abdominales",
+        "adductors" to "Aductores",
+        "abductors" to "Abductores",
+        "neck" to "Cuello"
+    )
+
+    private val equipmentMap = mapOf(
+        "barbell" to "Barra",
+        "dumbbell" to "Mancuernas",
+        "bodyweight" to "Peso corporal",
+        "machine" to "Máquina",
+        "cable" to "Polea",
+        "ez curl bar" to "Barra EZ",
+        "kettlebells" to "Pesas rusas",
+        "other" to "Otro"
+    )
+
     private val jsonParser = Json {
         ignoreUnknownKeys = true
         prettyPrint = true
@@ -59,7 +91,7 @@ class Scrapper {
     }
 
     @Test
-    fun ejecutarScrapperAsincrono() = runBlocking {
+    fun generateExerciseAssets() = runBlocking {
         val client = HttpClient(OkHttp) {
             install(ContentNegotiation) {
                 json(jsonParser)
@@ -67,7 +99,7 @@ class Scrapper {
         }
 
         val mappings = getExerciseMappings()
-        println("Conectando al repositorio con Ktor...")
+        println("Conectando al repositorio...")
 
         try {
             val response: HttpResponse = client.get(REMOTE_EXERCISES_URI)
@@ -76,37 +108,30 @@ class Scrapper {
                 val rawJson = response.bodyAsText()
                 val apiExercises: List<ApiExerciseDto> = jsonParser.decodeFromString(rawJson)
 
-                println("Base de datos obtenida. Total ejercicios: ${apiExercises.size}")
-                println("Iniciando Mapeo y Traducción...")
+                println("Ejercicios totales: ${apiExercises.size}")
 
                 val finalExercisesList = mutableListOf<FinalExerciseEntity>()
-                val missingExercises = mutableListOf<String>()
 
                 for (mapping in mappings) {
                     val apiMatch = apiExercises.find { it.name.trim().equals(mapping.englishName.trim(), ignoreCase = true) }
 
                     if (apiMatch != null) {
-                        println("Procesando: ${apiMatch.name}...")
+                        println("Procesando: ${apiMatch.name}")
 
-                        // Traducir el nombre directamente de la API y el resto de textos
                         val nameTranslated = translateToSpanish(client, apiMatch.name)
-                        val targetMusclesTranslated = apiMatch.primaryMuscles.map { translateToSpanish(client, it) }
-                        val secondaryMusclesTranslated = apiMatch.secondaryMuscles.map { translateToSpanish(client, it) }
-                        val equipmentsTranslated = if (apiMatch.equipment != null) listOf(translateToSpanish(client, apiMatch.equipment)) else emptyList()
+                        val targetMusclesTranslated = apiMatch.primaryMuscles.map { muscleMap[it.lowercase()] ?: translateToSpanish(client, it) }
+                        val secondaryMusclesTranslated = apiMatch.secondaryMuscles.map { muscleMap[it.lowercase()] ?: translateToSpanish(client, it) }
+                        val equipmentsTranslated = if (apiMatch.equipment != null) listOf(equipmentMap[apiMatch.equipment.lowercase()] ?: translateToSpanish(client, apiMatch.equipment)) else emptyList()
                         val instructionsTranslated = apiMatch.instructions.map { translateToSpanish(client, it) }
 
-                        // Mapear mecánica
                         val mechanicTranslated = when (apiMatch.mechanic?.lowercase()) {
                             "compound" -> "Compuesto"
                             "isolation" -> "Aislamiento"
                             else -> "N/A"
                         }
 
-                        // Construir URLs de imágenes
                         val baseUrl = "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/"
-                        val fullRemoteImages = apiMatch.images.map { relativePath ->
-                            "$baseUrl$relativePath"
-                        }
+                        val fullRemoteImages = apiMatch.images.map { "$baseUrl$it" }
 
                         finalExercisesList.add(
                             FinalExerciseEntity(
@@ -121,32 +146,20 @@ class Scrapper {
                                 remoteImagesUrls = fullRemoteImages
                             )
                         )
-                    } else {
-                        missingExercises.add(mapping.englishName)
                     }
                 }
 
-                // Guardar en assets
                 val outputJson = jsonParser.encodeToString(finalExercisesList)
                 val assetsDir = File("src/main/assets")
                 if (!assetsDir.exists()) assetsDir.mkdirs()
                 val outputFile = File(assetsDir, "basic_exercises.json")
                 outputFile.writeText(outputJson)
 
-                println("Proceso Ktor finalizado")
-                println("Archivo maestro creado en: ${outputFile.absolutePath}")
-                println("Total emparejado: ${finalExercisesList.size} / ${mappings.size}")
-
-                if (missingExercises.isNotEmpty()) {
-                    println("⚠️ Ejercicios no encontrados (ignorado por decisión de negocio):")
-                    missingExercises.forEach { println(" - $it") }
-                }
-
-            } else {
-                println("Error en la respuesta HTTP: ${response.status}")
+                println("Proceso finalizado")
+                println("Archivo creado en: ${outputFile.absolutePath}")
             }
         } catch (e: Exception) {
-            println("Excepción durante el proceso: ${e.message}")
+            println("Excepcion: ${e.message}")
         } finally {
             client.close()
         }
@@ -237,4 +250,3 @@ class Scrapper {
         )
     }
 }
-
