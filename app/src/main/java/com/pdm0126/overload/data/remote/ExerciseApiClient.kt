@@ -54,13 +54,8 @@ class ExerciseApiClient {
         if (cachedExercises != null) {
             return cachedExercises!!
         }
-        return try {
-            val response: List<ExerciseDto> = client.get("").body()
-            cachedExercises = response
-            response
-        } catch (e: Exception) {
-            e.printStackTrace()
-            emptyList()
-        }
+        val response: List<ExerciseDto> = client.get("").body()
+        cachedExercises = response
+        return response
     }
 }

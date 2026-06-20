@@ -83,7 +83,7 @@ fun LibraryScreen(
                 trailingIcon = {
                     if (state.query.isNotEmpty()) {
                         IconButton(
-                            onClick = { viewModel.cleanQuery(); focusManager.clearFocus() }
+                            onClick = { viewModel.onSearchQueryChanged(""); focusManager.clearFocus() }
                         ) {
                             Icon(
                                 Icons.Default.Cancel,

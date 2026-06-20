@@ -86,20 +86,26 @@ class LibraryViewModel(
             _remoteState.value = RemoteState(isLoading = true, errorMessage = null)
             exerciseRepository.getRemoteExercises(_query.value)
                 .onSuccess { remoteExercises ->
+                    if (remoteExercises.isEmpty()) {
+                        _remoteState.value = RemoteState(
+                            errorMessage = "No se encontraron resultados",
+                            isLoading = false
+                        )
+                    } else {
+                        _remoteState.value = RemoteState(
+                            results = remoteExercises,
+                            errorMessage = null,
+                            isLoading = false
+                        )
+                    }
+                }
+                .onFailure { error ->
                     _remoteState.value = RemoteState(
-                        results = remoteExercises,
-                        errorMessage = null,
+                        errorMessage = error.message ?: "Error desconocido",
                         isLoading = false
                     )
                 }
-                .onFailure { error ->
-                    _remoteState.value = RemoteState(errorMessage = error.message ?: "Error desconocido", isLoading = false)
-                }
         }
-    }
-
-    fun cleanQuery() {
-        onSearchQueryChanged("")
     }
 
     fun saveExerciseToLocal(exercise: Exercise) {
