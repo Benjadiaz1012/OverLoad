@@ -24,7 +24,7 @@ data class TopLevelDestination(
 val topLevelDestinations = listOf(
     TopLevelDestination("Entrenar", Icons.Filled.FitnessCenter, Icons.Outlined.FitnessCenter, Routes.Dashboard),
     TopLevelDestination("Rutinas", Icons.AutoMirrored.Filled.List, Icons.AutoMirrored.Outlined.List, Routes.Routines),
-    TopLevelDestination("Librería", Icons.AutoMirrored.Filled.MenuBook, Icons.AutoMirrored.Outlined.MenuBook, Routes.Library),
+    TopLevelDestination("Biblioteca", Icons.AutoMirrored.Filled.MenuBook, Icons.AutoMirrored.Outlined.MenuBook, Routes.Library),
     TopLevelDestination("Análisis", Icons.Filled.Analytics, Icons.Outlined.Analytics, Routes.Analysis)
 )
 

@@ -34,6 +34,11 @@ class ExerciseRepositoryImp(
         exerciseDao.insertExercise(entity)
     }
 
+    override suspend fun deleteLocalExercise(exercise: Exercise) {
+        val entity = exercise.toEntity()
+        exerciseDao.deleteExercise(entity)
+    }
+
     override suspend fun getExerciseById(id: String): Exercise? {
         return exerciseDao.getExerciseById(id)?.toDomainModel()
     }

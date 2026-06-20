@@ -41,15 +41,15 @@ fun Error(
         Icon(
             imageVector = Icons.Default.ErrorOutline,
             contentDescription = null,
-            modifier = Modifier.size(100.dp),
-            tint = MaterialTheme.colorScheme.error.copy(alpha = 0.7f)
+            modifier = Modifier.size(75.dp),
+            tint = MaterialTheme.colorScheme.error.copy(alpha = 0.8f)
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "¡Vaya! Tenemos un problema",
-            style = MaterialTheme.typography.titleLarge,
+            text = "Algo salio mal",
+            style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
         )
@@ -64,13 +64,14 @@ fun Error(
         )
 
         Spacer(modifier = Modifier.height(32.dp))
-
-        Button(
-            onClick = onRetryClick,
-            shape = RoundedCornerShape(12.dp),
-            contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp)
-        ) {
-            Text("Reintentar ahora")
+        if (error != "No se encontraron resultados") {
+            Button(
+                onClick = onRetryClick,
+                shape = RoundedCornerShape(12.dp),
+                contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp)
+            ) {
+                Text("Reintentar ahora")
+            }
         }
     }
 }

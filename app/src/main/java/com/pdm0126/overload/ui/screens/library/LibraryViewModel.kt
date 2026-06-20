@@ -108,9 +108,14 @@ class LibraryViewModel(
         }
     }
 
-    fun saveExerciseToLocal(exercise: Exercise) {
+    fun toggleBookmark(exercise: Exercise) {
         viewModelScope.launch {
-            exerciseRepository.saveRemoteExerciseToLocal(exercise)
+            val isLocal = uiState.value.localExercisesIds.contains(exercise.id)
+            if (isLocal) {
+                exerciseRepository.deleteLocalExercise(exercise)
+            } else {
+                exerciseRepository.saveRemoteExerciseToLocal(exercise)
+            }
         }
     }
 

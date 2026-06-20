@@ -10,6 +10,8 @@ interface ExerciseRepository {
 
     suspend fun saveRemoteExerciseToLocal(exercise: Exercise)
 
+    suspend fun deleteLocalExercise(exercise: Exercise)
+
     suspend fun getExerciseById(id: String): Exercise?
 
     suspend fun getRemoteExercises(query: String): Result<List<Exercise>>

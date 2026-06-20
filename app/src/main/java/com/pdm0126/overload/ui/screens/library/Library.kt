@@ -13,24 +13,28 @@ import androidx.compose.material3.*
 import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.pdm0126.overload.domain.model.Exercise
 import com.pdm0126.overload.ui.components.BookmarkButton
+import com.pdm0126.overload.ui.components.BookmarkedIcon
 import com.pdm0126.overload.ui.components.Error
 import com.pdm0126.overload.ui.components.OverloadScaffold
+import com.pdm0126.overload.ui.components.UnBookmarkedIcon
 import kotlinx.coroutines.launch
 
 @Composable
@@ -43,10 +47,35 @@ fun LibraryScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
+    val lastWasBookmark = remember { mutableStateOf(true) }
+
     OverloadScaffold(
-        title = "Librería de Ejercicios",
+        title = "Ejercicios",
         showBackButton = false,
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        snackbarHost = {
+            SnackbarHost(snackbarHostState) { data ->
+                Snackbar(
+                    containerColor = lerp(MaterialTheme.colorScheme.surface,
+                        MaterialTheme.colorScheme.primary, 0.08f),
+                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(12.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        if (lastWasBookmark.value) UnBookmarkedIcon() else BookmarkedIcon()
+
+                        Spacer(modifier = Modifier.width(12.dp))
+
+                        Text(
+                            text = data.visuals.message,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
+            }
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -78,8 +107,19 @@ fun LibraryScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                placeholder = { Text(if (isLocal) "Tu biblioteca" else "Buscar ejercicio") },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                placeholder = {
+                    Text(
+                        text = if (isLocal) "Tu biblioteca" else "Buscar ejercicio",
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                              },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                              },
                 trailingIcon = {
                     if (state.query.isNotEmpty()) {
                         IconButton(
@@ -104,10 +144,11 @@ fun LibraryScreen(
                     },
                     onDone = { focusManager.clearFocus() }
                 ),
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(8.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
+                    focusedContainerColor = MaterialTheme.colorScheme.background,
+                    unfocusedContainerColor = lerp(MaterialTheme.colorScheme.background,
+                        MaterialTheme.colorScheme.surfaceVariant, 0.08f)
                 )
             )
 
@@ -149,8 +190,18 @@ fun LibraryScreen(
                             items(state.localExercises, key = { it.id }) { exercise ->
                                 ExerciseCard(
                                     exercise = exercise,
-                                    isSaved = true,
-                                    onSaveClick = {}
+                                    isBookmarked = true,
+                                    onSaveClick = {
+                                        lastWasBookmark.value = true
+                                        viewModel.toggleBookmark(exercise)
+                                        coroutineScope.launch {
+                                            snackbarHostState.currentSnackbarData?.dismiss()
+                                            snackbarHostState.showSnackbar(
+                                                message = "Eliminado de tu biblioteca",
+                                                duration = SnackbarDuration.Short
+                                            )
+                                        }
+                                    }
                                 )
                             }
                         }
@@ -173,7 +224,7 @@ fun LibraryScreen(
 
                         state.remoteState.results.isEmpty() && state.query.isBlank() -> {
                             Text(
-                                text = "...",
+                                text = "...", // Mensaje de inicio o indicación de búsqueda vacía
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.align(Alignment.Center)
                             )
@@ -186,16 +237,18 @@ fun LibraryScreen(
                                 verticalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
                                 items(state.remoteState.results, key = { it.id }) { exercise ->
-                                    val isSaved = state.localExercisesIds.contains(exercise.id)
+                                    val isBookmarked = state.localExercisesIds.contains(exercise.id)
 
                                     ExerciseCard(
                                         exercise = exercise,
-                                        isSaved = isSaved,
+                                        isBookmarked = isBookmarked,
                                         onSaveClick = {
-                                            viewModel.saveExerciseToLocal(exercise)
+                                            lastWasBookmark.value = isBookmarked
+                                            viewModel.toggleBookmark(exercise)
                                             coroutineScope.launch {
+                                                snackbarHostState.currentSnackbarData?.dismiss()
                                                 snackbarHostState.showSnackbar(
-                                                    message = "Guardado en tu biblioteca",
+                                                    message = if (isBookmarked) "Eliminado de tu biblioteca" else "Agregado a tu biblioteca",
                                                     duration = SnackbarDuration.Short
                                                 )
                                             }
@@ -214,16 +267,13 @@ fun LibraryScreen(
 @Composable
 fun ExerciseCard(
     exercise: Exercise,
-    isSaved: Boolean,
+    isBookmarked: Boolean,
     onSaveClick: () -> Unit
 ) {
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        ),
+    OutlinedCard(
         modifier = Modifier
             .fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(8.dp)
     ) {
         Row(
             modifier = Modifier
@@ -235,7 +285,7 @@ fun ExerciseCard(
                 model = exercise.remoteImages.firstOrNull(),
                 contentDescription = exercise.name,
                 modifier = Modifier
-                    .size(72.dp)
+                    .size(90.dp)
                     .clip(RoundedCornerShape(8.dp)),
                 contentScale = ContentScale.Crop
             )
@@ -259,7 +309,7 @@ fun ExerciseCard(
             }
 
             BookmarkButton(
-                isBookmarked = isSaved,
+                isBookmarked = isBookmarked,
                 onCheckedChange = { onSaveClick() }
             )
         }
