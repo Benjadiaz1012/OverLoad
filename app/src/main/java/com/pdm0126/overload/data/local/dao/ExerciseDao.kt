@@ -1,6 +1,7 @@
 package com.pdm0126.overload.data.local.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -15,6 +16,9 @@ interface ExerciseDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertExercise(exercise: ExerciseEntity)
+
+    @Delete
+    suspend fun deleteExercise(exercise: ExerciseEntity)
 
     @Query("SELECT * FROM exercises_table")
     fun getAllExercises(): Flow<List<ExerciseEntity>>
