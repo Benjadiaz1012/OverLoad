@@ -29,7 +29,7 @@ fun OverloadScaffold(
                 TopAppBar(
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.surface,
-                        titleContentColor = MaterialTheme.colorScheme.primary, // Rojo basado
+                        titleContentColor = MaterialTheme.colorScheme.onSurface,
                         navigationIconContentColor = MaterialTheme.colorScheme.onSurface
                     ),
                     title = { Text(text = title, style = MaterialTheme.typography.titleLarge) },

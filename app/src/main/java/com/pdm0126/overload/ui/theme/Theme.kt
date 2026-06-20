@@ -12,19 +12,22 @@ import androidx.core.view.WindowCompat
 // Overload es nativamente oscuro como el universo de DC
 private val DarkColorScheme = darkColorScheme(
     primary = OverloadRed,
-    primaryContainer = OverloadLightRed,
     onPrimary = OverloadWhite,
-    secondary = OverloadMediumGray,
-    onSecondary = OverloadWhite,
+
+    secondary = OverloadLightGray,
+    onSecondary = OverloadBlack,
+
     tertiary = OverloadGold,
-    background = OverloadDarkGray,
+    onTertiary = OverloadBlack,
+
+    background = OverloadBlack,
     onBackground = OverloadWhite,
+
     surface = OverloadDarkGray,
     onSurface = OverloadWhite,
+
     surfaceVariant = OverloadMediumGray,
-    onSurfaceVariant = OverloadWhite,
-    onSecondaryContainer = OverloadAlternativeGray,
-    onSecondaryFixed = OverloadBlack
+    onSurfaceVariant = OverloadLightGray
 )
 
 @Composable

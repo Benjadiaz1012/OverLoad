@@ -55,8 +55,7 @@ fun LibraryScreen(
         snackbarHost = {
             SnackbarHost(snackbarHostState) { data ->
                 Snackbar(
-                    containerColor = lerp(MaterialTheme.colorScheme.surface,
-                        MaterialTheme.colorScheme.primary, 0.08f),
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
                     contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(12.dp)
                 ) {
@@ -85,7 +84,7 @@ fun LibraryScreen(
             SecondaryTabRow(
                 selectedTabIndex = state.selectedTabIndex,
                 containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.primary
+                contentColor = MaterialTheme.colorScheme.onSurface,
             ) {
                 Tab(
                     selected = state.selectedTabIndex == 0,
@@ -147,8 +146,7 @@ fun LibraryScreen(
                 shape = RoundedCornerShape(8.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedContainerColor = MaterialTheme.colorScheme.background,
-                    unfocusedContainerColor = lerp(MaterialTheme.colorScheme.background,
-                        MaterialTheme.colorScheme.surfaceVariant, 0.08f)
+                    unfocusedContainerColor = MaterialTheme.colorScheme.background
                 )
             )
 
