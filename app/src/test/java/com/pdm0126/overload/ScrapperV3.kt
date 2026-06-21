@@ -44,45 +44,12 @@ data class FinalExerciseEntity(
 
 data class ExerciseMapping(
     val englishName: String,
-    val mainMuscleGroup: String
 )
 
 const val REMOTE_EXERCISES_URI = "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/dist/exercises.json"
 const val GOOGLE_TRANSLATE_URI = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=es&dt=t&q="
 
 class Scrapper {
-
-    private val muscleMap = mapOf(
-        "chest" to "Pecho",
-        "shoulders" to "Hombros",
-        "triceps" to "Tríceps",
-        "biceps" to "Bíceps",
-        "lats" to "Dorsales",
-        "middle back" to "Espalda media",
-        "lower back" to "Espalda baja",
-        "quadriceps" to "Cuadríceps",
-        "hamstrings" to "Isquiotibiales",
-        "glutes" to "Glúteos",
-        "calves" to "Pantorrillas",
-        "forearms" to "Antebrazos",
-        "traps" to "Trapecios",
-        "abdominals" to "Abdominales",
-        "abs" to "Abdominales",
-        "adductors" to "Aductores",
-        "abductors" to "Abductores",
-        "neck" to "Cuello"
-    )
-
-    private val equipmentMap = mapOf(
-        "barbell" to "Barra",
-        "dumbbell" to "Mancuernas",
-        "bodyweight" to "Peso corporal",
-        "machine" to "Máquina",
-        "cable" to "Polea",
-        "ez curl bar" to "Barra EZ",
-        "kettlebells" to "Pesas rusas",
-        "other" to "Otro"
-    )
 
     private val jsonParser = Json {
         ignoreUnknownKeys = true
@@ -119,31 +86,28 @@ class Scrapper {
                         println("Procesando: ${apiMatch.name}")
 
                         val nameTranslated = translateToSpanish(client, apiMatch.name)
-                        val targetMusclesTranslated = apiMatch.primaryMuscles.map { muscleMap[it.lowercase()] ?: translateToSpanish(client, it) }
-                        val secondaryMusclesTranslated = apiMatch.secondaryMuscles.map { muscleMap[it.lowercase()] ?: translateToSpanish(client, it) }
-                        val equipmentsTranslated = if (apiMatch.equipment != null) listOf(equipmentMap[apiMatch.equipment.lowercase()] ?: translateToSpanish(client, apiMatch.equipment)) else emptyList()
                         val instructionsTranslated = apiMatch.instructions.map { translateToSpanish(client, it) }
 
-                        val mechanicTranslated = when (apiMatch.mechanic?.lowercase()) {
-                            "compound" -> "Compuesto"
-                            "isolation" -> "Aislamiento"
-                            else -> "N/A"
-                        }
+                        val mainMuscleGroup = TechnicalDictionary.getGeneralGroup(apiMatch.primaryMuscles.firstOrNull())
+                        val targetMuscles = apiMatch.primaryMuscles.map { TechnicalDictionary.getSpecificMuscle(it) }
+                        val secondaryMuscles = apiMatch.secondaryMuscles.map { TechnicalDictionary.getSpecificMuscle(it) }
+                        val equipments = if (apiMatch.equipment != null) listOf(TechnicalDictionary.getEquipment(apiMatch.equipment)) else emptyList()
+                        val mechanic = TechnicalDictionary.getMechanic(apiMatch.mechanic)
 
                         val baseUrl = "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/"
-                        val fullRemoteImages = apiMatch.images.map { "$baseUrl$it" }
+                        val remoteImages = apiMatch.images.map { "$baseUrl$it" }
 
                         finalExercisesList.add(
                             FinalExerciseEntity(
                                 exerciseId = "ex_${mapping.englishName.trim().lowercase().replace(" ", "_").replace("-", "_")}",
                                 name = nameTranslated,
-                                mainMuscleGroup = mapping.mainMuscleGroup,
-                                mechanic = mechanicTranslated,
-                                targetMuscles = targetMusclesTranslated,
-                                secondaryMuscles = secondaryMusclesTranslated,
-                                equipments = equipmentsTranslated,
+                                mainMuscleGroup = mainMuscleGroup,
+                                mechanic = mechanic,
+                                targetMuscles = targetMuscles,
+                                secondaryMuscles = secondaryMuscles,
+                                equipments = equipments,
                                 instructions = instructionsTranslated,
-                                remoteImagesUrls = fullRemoteImages
+                                remoteImagesUrls = remoteImages
                             )
                         )
                     }
@@ -196,57 +160,57 @@ class Scrapper {
 
     private fun getExerciseMappings(): List<ExerciseMapping> {
         return listOf(
-            ExerciseMapping("Barbell Bench Press - Medium Grip", "Pecho"),
-            ExerciseMapping("Barbell Incline Bench Press - Medium Grip", "Pecho"),
-            ExerciseMapping("dumbbell bench press", "Pecho"),
-            ExerciseMapping("incline dumbbell press", "Pecho"),
-            ExerciseMapping("decline dumbbell bench press", "Pecho"),
-            ExerciseMapping("machine bench press", "Pecho"),
-            ExerciseMapping("Butterfly", "Pecho"),
-            ExerciseMapping("Dumbbell Flyes", "Pecho"),
-            ExerciseMapping("Dips - Chest Version", "Pecho"),
+            ExerciseMapping("Barbell Bench Press - Medium Grip"),
+            ExerciseMapping("Barbell Incline Bench Press - Medium Grip"),
+            ExerciseMapping("dumbbell bench press"),
+            ExerciseMapping("incline dumbbell press"),
+            ExerciseMapping("decline dumbbell bench press"),
+            ExerciseMapping("machine bench press"),
+            ExerciseMapping("Butterfly"),
+            ExerciseMapping("Dumbbell Flyes"),
+            ExerciseMapping("Dips - Chest Version"),
 
-            ExerciseMapping("Pullups", "Espalda"),
-            ExerciseMapping("Wide-Grip Lat Pulldown", "Espalda"),
-            ExerciseMapping("Leverage High Row", "Espalda"),
-            ExerciseMapping("Bent-Arm Barbell Pullover", "Espalda"),
-            ExerciseMapping("Rope Straight-Arm Pulldown", "Espalda"),
-            ExerciseMapping("Bent Over Barbell Row", "Espalda"),
-            ExerciseMapping("Seated Cable Rows", "Espalda"),
-            ExerciseMapping("Leverage Iso Row", "Espalda"),
-            ExerciseMapping("Lying T-Bar Row", "Espalda"),
+            ExerciseMapping("Pullups"),
+            ExerciseMapping("Wide-Grip Lat Pulldown"),
+            ExerciseMapping("Leverage High Row"),
+            ExerciseMapping("Bent-Arm Barbell Pullover"),
+            ExerciseMapping("Rope Straight-Arm Pulldown"),
+            ExerciseMapping("Bent Over Barbell Row"),
+            ExerciseMapping("Seated Cable Rows"),
+            ExerciseMapping("Leverage Iso Row"),
+            ExerciseMapping("Lying T-Bar Row"),
 
-            ExerciseMapping("Seated Barbell Military Press", "Hombros"),
-            ExerciseMapping("Dumbbell Shoulder Press", "Hombros"),
-            ExerciseMapping("Machine Shoulder (Military) Press", "Hombros"),
-            ExerciseMapping("Side Lateral Raise", "Hombros"),
-            ExerciseMapping("Front Dumbbell Raise", "Hombros"),
-            ExerciseMapping("Cable Rear Delt Fly", "Hombros"),
+            ExerciseMapping("Seated Barbell Military Press"),
+            ExerciseMapping("Dumbbell Shoulder Press"),
+            ExerciseMapping("Machine Shoulder (Military) Press"),
+            ExerciseMapping("Side Lateral Raise"),
+            ExerciseMapping("Front Dumbbell Raise"),
+            ExerciseMapping("Cable Rear Delt Fly"),
 
-            ExerciseMapping("Barbell Full Squat", "Pierna"),
-            ExerciseMapping("Split Squat with Dumbbells", "Pierna"),
-            ExerciseMapping("Leg Press", "Pierna"),
-            ExerciseMapping("Barbell Deadlift", "Pierna"),
-            ExerciseMapping("Romanian Deadlift", "Pierna"),
-            ExerciseMapping("Barbell Hip Thrust", "Pierna"),
-            ExerciseMapping("Leg Extensions", "Pierna"),
-            ExerciseMapping("Lying Leg Curls", "Pierna"),
-            ExerciseMapping("Thigh Adductor", "Pierna"),
-            ExerciseMapping("Thigh Abductor", "Pierna"),
-            ExerciseMapping("Standing Calf Raises", "Pierna"),
+            ExerciseMapping("Barbell Full Squat"),
+            ExerciseMapping("Split Squat with Dumbbells"),
+            ExerciseMapping("Leg Press"),
+            ExerciseMapping("Barbell Deadlift"),
+            ExerciseMapping("Romanian Deadlift"),
+            ExerciseMapping("Barbell Hip Thrust"),
+            ExerciseMapping("Leg Extensions"),
+            ExerciseMapping("Lying Leg Curls"),
+            ExerciseMapping("Thigh Adductor"),
+            ExerciseMapping("Thigh Abductor"),
+            ExerciseMapping("Standing Calf Raises"),
 
-            ExerciseMapping("Dumbbell Alternate Bicep Curl", "Bíceps"),
-            ExerciseMapping("Barbell Curl", "Bíceps"),
-            ExerciseMapping("Spider Curl", "Bíceps"),
-            ExerciseMapping("Hammer Curls", "Bíceps"),
-            ExerciseMapping("Incline Inner Biceps Curl", "Bíceps"),
-            ExerciseMapping("Preacher Curl", "Bíceps"),
+            ExerciseMapping("Dumbbell Alternate Bicep Curl"),
+            ExerciseMapping("Barbell Curl"),
+            ExerciseMapping("Spider Curl"),
+            ExerciseMapping("Hammer Curls"),
+            ExerciseMapping("Incline Inner Biceps Curl"),
+            ExerciseMapping("Preacher Curl"),
 
-            ExerciseMapping("Lying Triceps Press", "Tríceps"),
-            ExerciseMapping("Triceps Pushdown", "Tríceps"),
-            ExerciseMapping("Triceps Overhead Extension with Rope", "Tríceps"),
-            ExerciseMapping("Machine Triceps Extension", "Tríceps"),
-            ExerciseMapping("Dumbbell Tricep Extension -Pronated Grip", "Tríceps")
+            ExerciseMapping("Lying Triceps Press"),
+            ExerciseMapping("Triceps Pushdown"),
+            ExerciseMapping("Triceps Overhead Extension with Rope"),
+            ExerciseMapping("Machine Triceps Extension"),
+            ExerciseMapping("Dumbbell Tricep Extension -Pronated Grip")
         )
     }
 }

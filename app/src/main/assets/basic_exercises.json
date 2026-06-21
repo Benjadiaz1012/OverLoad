@@ -253,7 +253,7 @@
             "Espalda media"
         ],
         "equipments": [
-            "solo cuerpo"
+            "Peso corporal"
         ],
         "instructions": [
             "Agarre la barra de dominadas con las palmas hacia adelante usando el agarre prescrito. Nota sobre los agarres: para un agarre amplio, las manos deben estar espaciadas a una distancia mayor que el ancho de los hombros. Para un agarre medio, las manos deben estar espaciadas a una distancia igual al ancho de los hombros y para un agarre cercano a una distancia menor que el ancho de los hombros.",
@@ -716,7 +716,7 @@
     {
         "exerciseId": "ex_barbell_deadlift",
         "name": "Peso muerto con barra",
-        "mainMuscleGroup": "Pierna",
+        "mainMuscleGroup": "Espalda",
         "mechanic": "Compuesto",
         "targetMuscles": [
             "Espalda baja"
@@ -899,7 +899,7 @@
     {
         "exerciseId": "ex_standing_calf_raises",
         "name": "Elevaciones de pantorrillas de pie",
-        "mainMuscleGroup": "Pierna",
+        "mainMuscleGroup": "Gemelos",
         "mechanic": "Aislamiento",
         "targetMuscles": [
             "Pantorrillas"
@@ -982,7 +982,7 @@
         ],
         "secondaryMuscles": [],
         "equipments": [
-            "barra de curl ez"
+            "Barra EZ"
         ],
         "instructions": [
             "Comience colocando la barra en la parte del banco del predicador en la que normalmente se sentaría. Asegúrese de alinear la barra correctamente para que esté equilibrada y no se caiga.",
@@ -1080,7 +1080,7 @@
         ],
         "secondaryMuscles": [],
         "equipments": [
-            "barra de curl ez"
+            "Barra EZ"
         ],
         "instructions": [
             "Acuéstese en un banco plano con una barra ez (mi preferencia) o una barra recta colocada en el suelo detrás de la cabeza y los pies en el suelo.",
