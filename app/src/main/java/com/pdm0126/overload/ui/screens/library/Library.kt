@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
+import com.pdm0126.overload.domain.TechnicalDictionary
 import com.pdm0126.overload.domain.model.Exercise
 import com.pdm0126.overload.ui.components.BookmarkButton
 import com.pdm0126.overload.ui.components.BookmarkedIcon
@@ -150,7 +151,7 @@ fun LibraryScreen(
                 )
             )
 
-            val muscleGroups = listOf("pecho", "espalda", "hombros", "bíceps", "tríceps", "pierna")
+            val muscleGroups = TechnicalDictionary.mainMuscleGroupsList
             LazyRow(
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(6.dp),

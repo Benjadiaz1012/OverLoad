@@ -62,7 +62,6 @@ fun ExerciseDetailContent(exercise: Exercise) {
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-        // 1. El "Motor GIF" Eficiente
         item {
             AnimatedExerciseImage(
                 imageUrls = exercise.remoteImages,
@@ -74,7 +73,7 @@ fun ExerciseDetailContent(exercise: Exercise) {
             )
         }
 
-        // Metadata Principal: Grupo muscular general, mecánica y músculos sinergistas
+        // Metadata Principal: Grupo muscular general, mecánica y músculos secundarios
         item {
             Column {
                 Text(
@@ -121,7 +120,7 @@ fun ExerciseDetailContent(exercise: Exercise) {
             item {
                 Column {
                     Text(
-                        text = "Musculos sinergistas",
+                        text = "Musculos secundarios",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold
                     )
