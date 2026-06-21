@@ -24,7 +24,7 @@ object TechnicalDictionary {
         "quadriceps" to MuscleInfo("Cuadríceps", "Pierna"),
         "hamstrings" to MuscleInfo("Isquiotibiales", "Pierna"),
         "glutes" to MuscleInfo("Glúteos", "Pierna"),
-        "calves" to MuscleInfo("Pantorrillas", "Gemelos"),
+        "calves" to MuscleInfo("Gemelos", "Gemelos"),
         "forearms" to MuscleInfo("Antebrazos", "Antebrazos"),
         "traps" to MuscleInfo("Trapecios", "Espalda"),
         "abdominals" to MuscleInfo("Abdominales", "Abdominales"),
