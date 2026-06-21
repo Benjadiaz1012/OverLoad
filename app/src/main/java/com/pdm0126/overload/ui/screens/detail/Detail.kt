@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessibilityNew
@@ -144,7 +143,7 @@ fun ExerciseDetailContent(exercise: Exercise) {
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    val mainEquipment = exercise.equipments.firstOrNull()?.replaceFirstChar { it.uppercase() } ?: "Ninguno"
+                    val mainEquipment = exercise.equipment.firstOrNull()?.replaceFirstChar { it.uppercase() } ?: "Ninguno"
 
                     QuickStat(
                         icon = Icons.Default.Settings,
@@ -194,7 +193,7 @@ fun ExerciseDetailContent(exercise: Exercise) {
             }
         }
 
-        if (exercise.equipments.size > 1) {
+        if (exercise.equipment.size > 1) {
             item {
                 Column {
                     SectionHeader(icon = Icons.Default.FitnessCenter, title = "Equipamiento detallado")
@@ -203,7 +202,7 @@ fun ExerciseDetailContent(exercise: Exercise) {
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        exercise.equipments.forEach { eq ->
+                        exercise.equipment.forEach { eq ->
                             SuggestionChip(
                                 onClick = { },
                                 label = { Text(eq.replaceFirstChar { it.uppercase() }) }

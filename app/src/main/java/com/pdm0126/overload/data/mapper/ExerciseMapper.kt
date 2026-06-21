@@ -13,7 +13,7 @@ fun ExerciseEntity.toDomainModel() : Exercise {
         mechanic = mechanic,
         targetMuscles = targetMuscles,
         secondaryMuscles = secondaryMuscles,
-        equipments = equipments,
+        equipment = equipment,
         instructions = instructions,
         remoteImages = remoteImagesUrls
     )
@@ -28,7 +28,7 @@ fun Exercise.toEntity() : ExerciseEntity {
         mechanic = mechanic,
         targetMuscles = targetMuscles,
         secondaryMuscles = secondaryMuscles,
-        equipments = equipments,
+        equipment = equipment,
         instructions = instructions,
         remoteImagesUrls = remoteImages
     )
@@ -45,7 +45,7 @@ fun ExerciseDto.toDomainModel(): Exercise {
         mechanic = TechnicalDictionary.getMechanic(mechanic),
         targetMuscles = primaryMuscles.map { muscle -> TechnicalDictionary.getSpecificMuscle(muscle) },
         secondaryMuscles = primaryMuscles.map {muscle -> TechnicalDictionary.getSpecificMuscle(muscle) },
-        equipments = if (equipment != null) listOf(TechnicalDictionary.getEquipment(equipment)) else emptyList(),
+        equipment = TechnicalDictionary.getEquipment(equipment),
         instructions = instructions,
         remoteImages = images.map { "$baseUrl$it" }
     )

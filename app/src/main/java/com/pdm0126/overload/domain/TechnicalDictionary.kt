@@ -61,7 +61,7 @@ object TechnicalDictionary {
 
     fun getEquipment(apiEquipment: String?): String {
         val key = apiEquipment?.lowercase() ?: ""
-        return equipmentMap[key] ?: apiEquipment ?: "Ninguno"
+        return equipmentMap[key] ?: apiEquipment ?: "N/A"
     }
 
     fun getMechanic(apiMechanic: String?): String {

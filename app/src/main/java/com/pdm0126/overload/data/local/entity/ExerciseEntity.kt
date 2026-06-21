@@ -14,7 +14,7 @@ data class ExerciseEntity(
     val mechanic: String,
     val targetMuscles: List<String>,
     val secondaryMuscles: List<String>,
-    val equipments: List<String>,
+    val equipment: String,
     val instructions: List<String>,
     val remoteImagesUrls: List<String>
 )
