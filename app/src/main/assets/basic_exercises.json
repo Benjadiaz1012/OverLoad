@@ -11,9 +11,7 @@
             "Hombros",
             "Tríceps"
         ],
-        "equipments": [
-            "Barra"
-        ],
+        "equipment": "Barra",
         "instructions": [
             "Recuéstese en un banco plano. Usando un agarre de ancho medio (un agarre que crea un ángulo de 90 grados en el medio del movimiento entre los antebrazos y la parte superior de los brazos), levante la barra del soporte y manténgala recta sobre usted con los brazos bloqueados. Esta será tu posición inicial.",
             "Desde la posición inicial, inhale y comience a bajar lentamente hasta que la barra toque la mitad del pecho.",
@@ -38,9 +36,7 @@
             "Hombros",
             "Tríceps"
         ],
-        "equipments": [
-            "Barra"
-        ],
+        "equipment": "Barra",
         "instructions": [
             "Recuéstese en un banco inclinado. Usando un agarre de ancho medio (un agarre que crea un ángulo de 90 grados en el medio del movimiento entre los antebrazos y la parte superior de los brazos), levante la barra del soporte y manténgala recta sobre usted con los brazos bloqueados. Esta será tu posición inicial.",
             "Mientras inhala, baje lentamente hasta que sienta la barra en la parte superior del pecho.",
@@ -65,9 +61,7 @@
             "Hombros",
             "Tríceps"
         ],
-        "equipments": [
-            "Mancuernas"
-        ],
+        "equipment": "Mancuernas",
         "instructions": [
             "Acuéstate en un banco plano con una mancuerna en cada mano apoyada sobre tus muslos. Las palmas de tus manos estarán una frente a la otra.",
             "Luego, usando los muslos para ayudar a levantar las mancuernas, levántelas una a la vez para poder sostenerlas frente a usted al ancho de los hombros.",
@@ -92,9 +86,7 @@
             "Hombros",
             "Tríceps"
         ],
-        "equipments": [
-            "Mancuernas"
-        ],
+        "equipment": "Mancuernas",
         "instructions": [
             "Recuéstese en un banco inclinado con una mancuerna en cada mano sobre los muslos. Las palmas de tus manos estarán una frente a la otra.",
             "Luego, usando los muslos para ayudar a empujar las mancuernas hacia arriba, levántelas una a la vez para poder sostenerlas al ancho de los hombros.",
@@ -121,9 +113,7 @@
             "Hombros",
             "Tríceps"
         ],
-        "equipments": [
-            "Mancuernas"
-        ],
+        "equipment": "Mancuernas",
         "instructions": [
             "Asegure sus piernas al final del banco de descenso y acuéstese con una mancuerna en cada mano encima de sus muslos. Las palmas de tu mano estarán una frente a la otra.",
             "Una vez que esté acostado, mueva las mancuernas frente a usted al ancho de los hombros.",
@@ -149,9 +139,7 @@
             "Hombros",
             "Tríceps"
         ],
-        "equipments": [
-            "Máquina"
-        ],
+        "equipment": "Máquina",
         "instructions": [
             "Siéntate en la máquina de prensa de pecho y selecciona el peso.",
             "Pisa la palanca que te proporciona la máquina ya que te ayudará a llevar las manijas hacia adelante para que puedas agarrar las manijas y extender completamente los brazos.",
@@ -175,9 +163,7 @@
             "Pecho"
         ],
         "secondaryMuscles": [],
-        "equipments": [
-            "Máquina"
-        ],
+        "equipment": "Máquina",
         "instructions": [
             "Siéntese en la máquina con la espalda apoyada sobre la almohadilla.",
             "Agarre las asas. Consejo: la parte superior de tus brazos debe estar colocada paralela al suelo; ajuste la máquina en consecuencia. Esta será tu posición inicial.",
@@ -199,9 +185,7 @@
             "Pecho"
         ],
         "secondaryMuscles": [],
-        "equipments": [
-            "Mancuernas"
-        ],
+        "equipment": "Mancuernas",
         "instructions": [
             "Acuéstate en un banco plano con una mancuerna en cada mano apoyada sobre tus muslos. Las palmas de tu mano estarán una frente a la otra.",
             "Luego, usando los muslos para ayudar a levantar las mancuernas, levántelas una a la vez para poder sostenerlas frente a usted al ancho de los hombros con las palmas de las manos una frente a la otra. Levanta las mancuernas como si las estuvieras presionando, pero detente y mantenlas justo antes de bloquearlas. Esta será tu posición inicial.",
@@ -226,9 +210,7 @@
             "Hombros",
             "Tríceps"
         ],
-        "equipments": [
-            "Otro"
-        ],
+        "equipment": "Otro",
         "instructions": [
             "Para este ejercicio necesitarás acceso a barras paralelas. Para llegar a la posición inicial, sostenga el cuerpo con los brazos extendidos (brazos bloqueados) por encima de las barras.",
             "Mientras inhala, bájese lentamente con el torso inclinado hacia adelante unos 30 grados aproximadamente y los codos ligeramente abiertos hasta que sienta un ligero estiramiento en el pecho.",
@@ -252,9 +234,7 @@
             "Bíceps",
             "Espalda media"
         ],
-        "equipments": [
-            "Peso corporal"
-        ],
+        "equipment": "Peso corporal",
         "instructions": [
             "Agarre la barra de dominadas con las palmas hacia adelante usando el agarre prescrito. Nota sobre los agarres: para un agarre amplio, las manos deben estar espaciadas a una distancia mayor que el ancho de los hombros. Para un agarre medio, las manos deben estar espaciadas a una distancia igual al ancho de los hombros y para un agarre cercano a una distancia menor que el ancho de los hombros.",
             "Mientras tiene ambos brazos extendidos frente a usted sosteniendo la barra con el ancho de agarre elegido, lleve el torso hacia atrás unos 30 grados aproximadamente mientras crea una curvatura en la parte baja de la espalda y saca el pecho. Esta es tu posición inicial.",
@@ -280,9 +260,7 @@
             "Espalda media",
             "Hombros"
         ],
-        "equipments": [
-            "Polea"
-        ],
+        "equipment": "Polea",
         "instructions": [
             "Siéntate en una máquina desplegable con una barra ancha unida a la polea superior. Asegúrese de ajustar la rodillera de la máquina a su altura. Estas almohadillas evitarán que tu cuerpo se eleve por la resistencia adherida a la barra.",
             "Agarre la barra con las palmas hacia adelante utilizando el agarre prescrito. Nota sobre los agarres: para un agarre amplio, las manos deben estar espaciadas a una distancia mayor que el ancho de los hombros. Para un agarre medio, las manos deben estar espaciadas a una distancia igual al ancho de los hombros y para un agarre cercano a una distancia menor que el ancho de los hombros.",
@@ -307,9 +285,7 @@
         "secondaryMuscles": [
             "Dorsales"
         ],
-        "equipments": [
-            "Máquina"
-        ],
+        "equipment": "Máquina",
         "instructions": [
             "Cargue un peso adecuado en los pasadores y ajuste la altura del asiento para que pueda alcanzar las manijas que están encima de usted. Ajuste la rodillera para ayudarle a mantenerse en el suelo. Sujete las manijas con un agarre en pronación. Esta será tu posición inicial.",
             "Tire de las manijas hacia su torso, retrayendo los omóplatos mientras flexiona el codo.",
@@ -335,9 +311,7 @@
             "Hombros",
             "Tríceps"
         ],
-        "equipments": [
-            "Barra"
-        ],
+        "equipment": "Barra",
         "instructions": [
             "Acuéstese en un banco plano con una barra usando el ancho de agarre de los hombros.",
             "Sostenga la barra recta sobre su pecho con los brazos doblados. Esta será tu posición inicial.",
@@ -359,9 +333,7 @@
             "Dorsales"
         ],
         "secondaryMuscles": [],
-        "equipments": [
-            "Polea"
-        ],
+        "equipment": "Polea",
         "instructions": [
             "Conecte una cuerda a una polea alta y seleccione su peso. Párate a un par de pies de la polea con los pies escalonados y toma la cuerda con ambas manos. Inclínese hacia adelante desde la cadera, manteniendo la espalda recta y los brazos extendidos frente a usted. Esta será tu posición inicial.",
             "Manteniendo los brazos rectos, extienda el hombro para tirar de la cuerda hasta los muslos.",
@@ -386,9 +358,7 @@
             "Dorsales",
             "Hombros"
         ],
-        "equipments": [
-            "Barra"
-        ],
+        "equipment": "Barra",
         "instructions": [
             "Sosteniendo una barra con un agarre en pronación (con las palmas hacia abajo), doble ligeramente las rodillas y lleve el torso hacia adelante, doblando la cintura, mientras mantiene la espalda recta hasta que quede casi paralela al suelo. Consejo: asegúrese de mantener la cabeza erguida. La barra debe colgar directamente frente a usted mientras sus brazos cuelgan perpendiculares al suelo y a su torso. Esta es tu posición inicial.",
             "Ahora, mientras mantienes el torso inmóvil, exhala y levanta la barra hacia ti. Mantenga los codos cerca del cuerpo y utilice únicamente los antebrazos para sostener el peso. En la posición más contraída, contraiga los músculos de la espalda y manténgalos así durante una breve pausa.",
@@ -413,9 +383,7 @@
             "Dorsales",
             "Hombros"
         ],
-        "equipments": [
-            "Polea"
-        ],
+        "equipment": "Polea",
         "instructions": [
             "Para este ejercicio necesitarás acceso a una máquina de remo en polea baja con barra en V. Nota: La barra en V le permitirá tener un agarre neutral donde las palmas de sus manos estén enfrentadas. Para llegar a la posición inicial, primero siéntese en la máquina y coloque los pies en la plataforma delantera o en la barra transversal proporcionada, asegurándose de que las rodillas estén ligeramente dobladas y no bloqueadas.",
             "Inclínese mientras mantiene la alineación natural de su espalda y agarre las manijas de la barra en V.",
@@ -440,9 +408,7 @@
             "Bíceps",
             "Espalda media"
         ],
-        "equipments": [
-            "Máquina"
-        ],
+        "equipment": "Máquina",
         "instructions": [
             "Cargue un peso adecuado en los pasadores y ajuste la altura del asiento para que las manijas queden al nivel del pecho. Sujete las manijas con un agarre neutral o en pronación. Esta será tu posición inicial.",
             "Tire de las manijas hacia su torso, retrayendo los omóplatos mientras flexiona el codo.",
@@ -465,9 +431,7 @@
             "Bíceps",
             "Dorsales"
         ],
-        "equipments": [
-            "Máquina"
-        ],
+        "equipment": "Máquina",
         "instructions": [
             "Cargue la máquina de remo con barra en T con el peso deseado y ajuste la altura de las piernas para que la parte superior del pecho quede en la parte superior de la almohadilla. Consejo: En algunas máquinas lo único que puedes hacer es pararte en el escalón adecuado que te permita estar a una altura que tenga la parte superior del pecho en la parte superior de la almohadilla.",
             "Acuéstese boca abajo sobre la almohadilla y agarre las asas. Puede usar las palmas hacia abajo, las palmas hacia arriba o las palmas en posición dependiendo de qué parte de su espalda desee enfatizar.",
@@ -492,9 +456,7 @@
         "secondaryMuscles": [
             "Tríceps"
         ],
-        "equipments": [
-            "Barra"
-        ],
+        "equipment": "Barra",
         "instructions": [
             "Siéntese en un banco de press militar con una barra detrás de la cabeza y pídale a un observador que le dé la barra (mejor en el manguito rotador de esta manera) o levántela usted mismo con cuidado con un agarre en pronación (con las palmas hacia adelante). Consejo: el agarre debe ser más ancho que el ancho de los hombros y debe crear un ángulo de 90 grados entre el antebrazo y la parte superior del brazo a medida que la barra desciende.",
             "Una vez que levante la barra con la longitud de agarre correcta, levante la barra por encima de su cabeza bloqueando los brazos. Sosténgalo aproximadamente al nivel de los hombros y ligeramente por delante de su cabeza. Esta es tu posición inicial.",
@@ -518,9 +480,7 @@
         "secondaryMuscles": [
             "Tríceps"
         ],
-        "equipments": [
-            "Mancuernas"
-        ],
+        "equipment": "Mancuernas",
         "instructions": [
             "Mientras sostiene una mancuerna en cada mano, siéntese en un banco de press militar o en un banco utilitario que tenga respaldo para la espalda. Coloque las mancuernas en posición vertical sobre sus muslos.",
             "Ahora levante las mancuernas hasta la altura de los hombros, una a la vez, usando los muslos para ayudar a impulsarlas a su posición.",
@@ -545,9 +505,7 @@
         "secondaryMuscles": [
             "Tríceps"
         ],
-        "equipments": [
-            "Máquina"
-        ],
+        "equipment": "Máquina",
         "instructions": [
             "Siéntate en la máquina de press de hombros y selecciona el peso.",
             "Agarre las manijas a los lados mientras mantiene los codos doblados y alineados con su torso. Esta será tu posición inicial.",
@@ -569,9 +527,7 @@
             "Hombros"
         ],
         "secondaryMuscles": [],
-        "equipments": [
-            "Mancuernas"
-        ],
+        "equipment": "Mancuernas",
         "instructions": [
             "Elija un par de mancuernas y párese con el torso recto y las mancuernas a su lado con los brazos extendidos y las palmas de la mano hacia usted. Esta será tu posición inicial.",
             "Mientras mantiene el torso en una posición estacionaria (sin balancearse), levante las mancuernas hacia su costado con una ligera flexión del codo y las manos ligeramente inclinadas hacia adelante, como si estuviera vertiendo agua en un vaso. Continúe subiendo hasta que sus brazos queden paralelos al suelo. Exhala mientras ejecutas este movimiento y haz una pausa de un segundo en la parte superior.",
@@ -592,9 +548,7 @@
             "Hombros"
         ],
         "secondaryMuscles": [],
-        "equipments": [
-            "Mancuernas"
-        ],
+        "equipment": "Mancuernas",
         "instructions": [
             "Elija un par de mancuernas y párese con el torso recto y las mancuernas frente a los muslos con los brazos extendidos y las palmas de las manos hacia los muslos. Esta será tu posición inicial.",
             "Mientras mantiene el torso inmóvil (sin balancearse), levante la mancuerna izquierda hacia el frente con una ligera flexión del codo y las palmas de las manos siempre hacia abajo. Continúe subiendo hasta que su brazo esté ligeramente por encima del paralelo al suelo. Exhala mientras ejecutas esta parte del movimiento y haz una pausa por un segundo en la parte superior. Inhala después de la segunda pausa.",
@@ -615,9 +569,7 @@
             "Hombros"
         ],
         "secondaryMuscles": [],
-        "equipments": [
-            "Polea"
-        ],
+        "equipment": "Polea",
         "instructions": [
             "Ajuste las poleas a la altura adecuada y ajuste el peso. Las poleas deben estar por encima de tu cabeza.",
             "Agarra la polea izquierda con la mano derecha y la polea derecha con la mano izquierda, cruzándolas frente a ti. Esta será tu posición inicial.",
@@ -643,9 +595,7 @@
             "Isquiotibiales",
             "Espalda baja"
         ],
-        "equipments": [
-            "Barra"
-        ],
+        "equipment": "Barra",
         "instructions": [
             "Este ejercicio se realiza mejor dentro de una rejilla para sentadillas por motivos de seguridad. Para comenzar, primero coloque la barra sobre una rejilla justo por encima del nivel de los hombros. Una vez elegida la altura correcta y cargada la barra, colóquese debajo de la barra y coloque la parte posterior de los hombros (ligeramente debajo del cuello) sobre ella.",
             "Sujétate de la barra con ambos brazos a cada lado y levántala del rack empujando primero con las piernas y al mismo tiempo enderezando el torso.",
@@ -671,9 +621,7 @@
             "Glúteos",
             "Isquiotibiales"
         ],
-        "equipments": [
-            "Mancuernas"
-        ],
+        "equipment": "Mancuernas",
         "instructions": [
             "Colóquese en una postura escalonada con el pie trasero elevado y el pie delantero hacia adelante.",
             "Sostenga una mancuerna en cada mano, dejándolas colgar a los lados. Esta será tu posición inicial.",
@@ -698,9 +646,7 @@
             "Glúteos",
             "Isquiotibiales"
         ],
-        "equipments": [
-            "Máquina"
-        ],
+        "equipment": "Máquina",
         "instructions": [
             "Usando una máquina de prensa de piernas, siéntese en la máquina y coloque las piernas en la plataforma directamente frente a usted en una postura de pie media (al ancho de los hombros). (Nota: para los propósitos de esta discusión, usaremos la postura media descrita anteriormente, que apunta al desarrollo general; sin embargo, puede elegir cualquiera de las tres posturas descritas en la sección de posicionamiento de los pies).",
             "Baje las barras de seguridad que sujetan la plataforma con peso en su lugar y presione la plataforma hacia arriba hasta que sus piernas estén completamente extendidas frente a usted. Consejo: asegúrese de no bloquear las rodillas. Tu torso y tus piernas deben formar un ángulo perfecto de 90 grados. Esta será tu posición inicial.",
@@ -731,9 +677,7 @@
             "Cuadríceps",
             "Trapecios"
         ],
-        "equipments": [
-            "Barra"
-        ],
+        "equipment": "Barra",
         "instructions": [
             "Párate frente a una barra cargada.",
             "Mientras mantiene la espalda lo más recta posible, doble las rodillas, inclínese hacia adelante y agarre la barra con un agarre por encima de la cabeza medio (al ancho de los hombros). Esta será la posición inicial del ejercicio. Consejo: si le resulta difícil sujetarse a la barra con este agarre, alterne el agarre o utilice muñequeras.",
@@ -759,9 +703,7 @@
             "Glúteos",
             "Espalda baja"
         ],
-        "equipments": [
-            "Barra"
-        ],
+        "equipment": "Barra",
         "instructions": [
             "Coloque una barra frente a usted en el suelo y agárela usando un agarre en pronación (con las palmas hacia abajo) un poco más ancho que el ancho de los hombros. Consejo: Dependiendo del peso utilizado, es posible que necesites muñequeras para realizar el ejercicio y también una plataforma elevada para permitir un mejor rango de movimiento.",
             "Doble ligeramente las rodillas y mantenga las espinillas verticales, las caderas hacia atrás y la espalda recta. Esta será tu posición inicial.",
@@ -786,9 +728,7 @@
             "Gemelos",
             "Isquiotibiales"
         ],
-        "equipments": [
-            "Barra"
-        ],
+        "equipment": "Barra",
         "instructions": [
             "Comience sentado en el suelo con un banco directamente detrás de usted. Coloque una barra cargada sobre sus piernas. Usar una barra de grasa o tener una almohadilla en la barra puede reducir en gran medida las molestias causadas por este ejercicio.",
             "Gire la barra para que quede directamente encima de sus caderas e inclínese hacia atrás contra el banco de modo que sus omóplatos queden cerca de la parte superior.",
@@ -808,9 +748,7 @@
             "Cuadríceps"
         ],
         "secondaryMuscles": [],
-        "equipments": [
-            "Máquina"
-        ],
+        "equipment": "Máquina",
         "instructions": [
             "Para este ejercicio necesitarás utilizar una máquina de extensión de piernas. Primero elige tu peso y siéntate en la máquina con las piernas debajo de la almohadilla (los pies apuntando hacia adelante) y las manos sujetando las barras laterales. Esta será tu posición inicial. Consejo: deberá ajustar la almohadilla para que caiga sobre la parte inferior de la pierna (justo encima de los pies). Además, asegúrese de que sus piernas formen un ángulo de 90 grados entre la parte inferior y superior de la pierna. Si el ángulo es inferior a 90 grados, significa que la rodilla está sobre los dedos del pie, lo que a su vez crea una tensión indebida en la articulación de la rodilla. Si la máquina está diseñada de esa manera, busca otra máquina o simplemente asegúrate de que cuando comiences a ejecutar el ejercicio dejes de bajar una vez que alcances el ángulo de 90 grados.",
             "Usando tus cuádriceps, extiende las piernas al máximo mientras exhalas. Asegúrese de que el resto del cuerpo permanezca estacionario en el asiento. Pausa un segundo en la posición contraída.",
@@ -831,9 +769,7 @@
             "Isquiotibiales"
         ],
         "secondaryMuscles": [],
-        "equipments": [
-            "Máquina"
-        ],
+        "equipment": "Máquina",
         "instructions": [
             "Ajuste la palanca de la máquina para que se ajuste a su altura y acuéstese boca abajo en la máquina de curl de piernas con la almohadilla de la palanca en la parte posterior de las piernas (solo unos centímetros debajo de las pantorrillas). Consejo: Utilice preferentemente una máquina de curl de piernas que esté en ángulo en lugar de plana, ya que una posición en ángulo es más favorable para el reclutamiento de los isquiotibiales.",
             "Manteniendo el torso plano sobre el banco, asegúrese de que las piernas estén completamente estiradas y agarre las manijas laterales de la máquina. Coloque los dedos de los pies rectos (o también puede utilizar cualquiera de las otras dos posturas descritas en la sección de posicionamiento de los pies). Esta será tu posición inicial.",
@@ -857,9 +793,7 @@
             "Glúteos",
             "Isquiotibiales"
         ],
-        "equipments": [
-            "Máquina"
-        ],
+        "equipment": "Máquina",
         "instructions": [
             "Para comenzar, siéntese en la máquina de aductores y seleccione un peso con el que se sienta cómodo. Cuando sus piernas estén colocadas correctamente sobre las almohadillas de la máquina, agarre las manijas de cada lado. Toda la parte superior de tu cuerpo (desde la cintura hacia arriba) debe estar estacionaria. Esta es la posición inicial.",
             "Presione lentamente contra la máquina con las piernas para acercarlas mientras exhala.",
@@ -882,9 +816,7 @@
         "secondaryMuscles": [
             "Glúteos"
         ],
-        "equipments": [
-            "Máquina"
-        ],
+        "equipment": "Máquina",
         "instructions": [
             "Para comenzar, siéntese en la máquina abductora y seleccione un peso con el que se sienta cómodo. Cuando sus piernas estén colocadas correctamente, agarre las manijas de cada lado. Toda la parte superior de tu cuerpo (desde la cintura hacia arriba) debe estar estacionaria. Esta es la posición inicial.",
             "Presione lentamente contra la máquina con las piernas para alejarlas mientras exhala.",
@@ -905,9 +837,7 @@
             "Gemelos"
         ],
         "secondaryMuscles": [],
-        "equipments": [
-            "Máquina"
-        ],
+        "equipment": "Máquina",
         "instructions": [
             "Ajuste la palanca acolchada de la máquina de elevación de pantorrillas para adaptarla a su altura.",
             "Coloque los hombros debajo de las almohadillas provistas y coloque los dedos de los pies mirando hacia adelante (o usando cualquiera de las otras dos posiciones descritas al comienzo del capítulo). Las puntas de los pies deben estar aseguradas encima del bloque de pantorrilla con los talones extendiéndose fuera de él. Empuje la palanca hacia arriba extendiendo las caderas y las rodillas hasta que el torso quede erguido. Las rodillas deben mantenerse ligeramente flexionadas; nunca bloqueado. Los dedos de los pies deben mirar hacia adelante, hacia afuera o hacia adentro como se describe al comienzo del capítulo. Esta será tu posición inicial.",
@@ -931,9 +861,7 @@
         "secondaryMuscles": [
             "Antebrazos"
         ],
-        "equipments": [
-            "Mancuernas"
-        ],
+        "equipment": "Mancuernas",
         "instructions": [
             "Párese (torso erguido) con una mancuerna en cada mano sostenida con los brazos extendidos. Los codos deben estar cerca del torso y las palmas de las manos deben mirar hacia los muslos.",
             "Mientras sostiene la parte superior del brazo inmóvil, doble el peso correcto mientras gira la palma de las manos hasta que queden mirando hacia adelante. En este punto, continúa contrayendo el bíceps mientras exhalas hasta que esté completamente contraído y las mancuernas estén al nivel de los hombros. Mantén la posición contraída por un segundo mientras aprietas el bíceps. Consejo: Sólo deben moverse los antebrazos.",
@@ -957,9 +885,7 @@
         "secondaryMuscles": [
             "Antebrazos"
         ],
-        "equipments": [
-            "Barra"
-        ],
+        "equipment": "Barra",
         "instructions": [
             "Párese con el torso erguido mientras sostiene una barra con un agarre a la altura de los hombros. Las palmas de las manos deben mirar hacia adelante y los codos deben estar cerca del torso. Esta será tu posición inicial.",
             "Mientras mantiene inmóvil la parte superior de los brazos, doble las pesas hacia adelante mientras contrae los bíceps mientras exhala. Consejo: Sólo deben moverse los antebrazos.",
@@ -981,9 +907,7 @@
             "Bíceps"
         ],
         "secondaryMuscles": [],
-        "equipments": [
-            "Barra EZ"
-        ],
+        "equipment": "Barra EZ",
         "instructions": [
             "Comience colocando la barra en la parte del banco del predicador en la que normalmente se sentaría. Asegúrese de alinear la barra correctamente para que esté equilibrada y no se caiga.",
             "Muévase hacia la parte delantera del banco del predicador (la parte donde generalmente se encuentran los brazos) y colóquese en una inclinación de 45 grados con el torso y el estómago presionados contra el lado frontal del banco del predicador.",
@@ -1007,9 +931,7 @@
             "Bíceps"
         ],
         "secondaryMuscles": [],
-        "equipments": [
-            "Mancuernas"
-        ],
+        "equipment": "Mancuernas",
         "instructions": [
             "Ponte de pie con el torso erguido y una mancuerna en cada mano sostenida con los brazos extendidos. Los codos deben estar cerca del torso.",
             "Las palmas de las manos deben mirar hacia tu torso. Esta será tu posición inicial.",
@@ -1031,9 +953,7 @@
             "Bíceps"
         ],
         "secondaryMuscles": [],
-        "equipments": [
-            "Mancuernas"
-        ],
+        "equipment": "Mancuernas",
         "instructions": [
             "Sostenga una mancuerna en cada mano y recuéstese en un banco inclinado.",
             "Las mancuernas deben estar con los brazos extendidos colgando a los costados y las palmas de las manos deben mirar hacia afuera. Esta será tu posición inicial.",
@@ -1055,9 +975,7 @@
             "Bíceps"
         ],
         "secondaryMuscles": [],
-        "equipments": [
-            "Barra"
-        ],
+        "equipment": "Barra",
         "instructions": [
             "Para realizar este movimiento necesitarás un banco de predicador y una barra E-Z. Agarre la barra de curl E-Z por el mango interior cercano (pida a alguien que le entregue la barra, lo cual es preferible) o agarre la barra del soporte de la barra frontal proporcionado por la mayoría de los bancos de predicadores). Las palmas de tus manos deben mirar hacia adelante y deben estar ligeramente inclinadas hacia adentro debido a la forma de la barra.",
             "Con la parte superior de los brazos colocada contra la almohadilla del banco del predicador y el pecho contra ella, sostenga la barra E-Z Curl a la altura de los hombros. Esta será tu posición inicial.",
@@ -1079,9 +997,7 @@
             "Tríceps"
         ],
         "secondaryMuscles": [],
-        "equipments": [
-            "Barra EZ"
-        ],
+        "equipment": "Barra EZ",
         "instructions": [
             "Acuéstese en un banco plano con una barra ez (mi preferencia) o una barra recta colocada en el suelo detrás de la cabeza y los pies en el suelo.",
             "Agarre la barra detrás de usted, usando un agarre medio por encima de la cabeza (en pronación), y levante la barra frente a usted con los brazos extendidos. Consejo: Los brazos deben estar perpendiculares al torso y al suelo. Los codos deben estar metidos. Esta es la posición inicial.",
@@ -1103,9 +1019,7 @@
             "Tríceps"
         ],
         "secondaryMuscles": [],
-        "equipments": [
-            "Polea"
-        ],
+        "equipment": "Polea",
         "instructions": [
             "Conecte una barra recta o en ángulo a una polea alta y agarre con un agarre por encima de la cabeza (con las palmas hacia abajo) al ancho de los hombros.",
             "De pie, con el torso recto y una ligera inclinación hacia adelante, acerque la parte superior de los brazos al cuerpo y perpendicular al suelo. Los antebrazos deben apuntar hacia la polea mientras sostienen la barra. Esta es tu posición inicial.",
@@ -1127,9 +1041,7 @@
             "Tríceps"
         ],
         "secondaryMuscles": [],
-        "equipments": [
-            "Polea"
-        ],
+        "equipment": "Polea",
         "instructions": [
             "Conecte una cuerda a una polea baja. Después de seleccionar un peso adecuado, agarre la cuerda con ambas manos y de espaldas al cable.",
             "Coloque las manos detrás de la cabeza con los codos apuntando hacia arriba. Sus codos deben comenzar flexionados y puede escalonar su postura e inclinarse suavemente hacia afuera de la máquina para crear una mayor estabilidad. Esta será tu posición inicial.",
@@ -1150,9 +1062,7 @@
             "Tríceps"
         ],
         "secondaryMuscles": [],
-        "equipments": [
-            "Máquina"
-        ],
+        "equipment": "Máquina",
         "instructions": [
             "Ajuste el asiento a la altura adecuada y seleccione su peso. Coloque la parte superior de sus brazos contra las almohadillas y agarre las manijas. Esta será tu posición inicial.",
             "Realice el movimiento extendiendo el codo, alejando el antebrazo de la parte superior del brazo.",
@@ -1173,9 +1083,7 @@
             "Tríceps"
         ],
         "secondaryMuscles": [],
-        "equipments": [
-            "Mancuernas"
-        ],
+        "equipment": "Mancuernas",
         "instructions": [
             "Acuéstese en un banco plano sosteniendo dos mancuernas directamente encima de sus hombros. Tus brazos deben estar completamente extendidos y formar un ángulo de 90 grados desde tu torso y el piso.",
             "Las palmas de las manos deben mirar hacia adelante y los codos deben estar doblados hacia adentro. Esta será su posición inicial.",

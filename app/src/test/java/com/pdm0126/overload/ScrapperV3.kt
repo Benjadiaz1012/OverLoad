@@ -37,7 +37,7 @@ data class FinalExerciseEntity(
     val mechanic: String,
     val targetMuscles: List<String>,
     val secondaryMuscles: List<String>,
-    val equipments: List<String>,
+    val equipment: String,
     val instructions: List<String>,
     val remoteImagesUrls: List<String>
 )
@@ -91,7 +91,7 @@ class Scrapper {
                         val mainMuscleGroup = TechnicalDictionary.getGeneralGroup(apiMatch.primaryMuscles.firstOrNull())
                         val targetMuscles = apiMatch.primaryMuscles.map { TechnicalDictionary.getSpecificMuscle(it) }
                         val secondaryMuscles = apiMatch.secondaryMuscles.map { TechnicalDictionary.getSpecificMuscle(it) }
-                        val equipments = if (apiMatch.equipment != null) listOf(TechnicalDictionary.getEquipment(apiMatch.equipment)) else emptyList()
+                        val equipment = if (apiMatch.equipment != null) TechnicalDictionary.getEquipment(apiMatch.equipment) else "N/A"
                         val mechanic = TechnicalDictionary.getMechanic(apiMatch.mechanic)
 
                         val baseUrl = "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/"
@@ -105,7 +105,7 @@ class Scrapper {
                                 mechanic = mechanic,
                                 targetMuscles = targetMuscles,
                                 secondaryMuscles = secondaryMuscles,
-                                equipments = equipments,
+                                equipment = equipment,
                                 instructions = instructionsTranslated,
                                 remoteImagesUrls = remoteImages
                             )

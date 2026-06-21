@@ -1,4 +1,4 @@
-package com.pdm0126.overload
+package com.pdm0126.overload.domain
 
 object TechnicalDictionary {
 
@@ -7,6 +7,7 @@ object TechnicalDictionary {
         val generalGroup: String
     )
 
+    // Lista pública para los chips de filtro en la UI
     val mainMuscleGroupsList = listOf(
         "Pecho", "Hombros", "Espalda", "Tríceps", "Bíceps",
         "Pierna", "Gemelos", "Antebrazos", "Abdominales"
