@@ -2,6 +2,7 @@ package com.pdm0126.overload.data.mapper
 
 import com.pdm0126.overload.data.local.entity.ExerciseEntity
 import com.pdm0126.overload.data.remote.dto.ExerciseDto
+import com.pdm0126.overload.domain.TechnicalDictionary
 import com.pdm0126.overload.domain.model.Exercise
 
 fun ExerciseEntity.toDomainModel() : Exercise {
@@ -35,25 +36,16 @@ fun Exercise.toEntity() : ExerciseEntity {
 
 fun ExerciseDto.toDomainModel(): Exercise {
     val baseUrl = "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/"
-
     val generatedId = "ex_${name.trim().lowercase().replace(" ", "_").replace("-", "_")}"
-    val mappedMuscle = when(primaryMuscles.firstOrNull()?.lowercase()) {
-        "chest" -> "Pecho"
-        "middle back", "lats", "lower back" -> "Espalda"
-        "shoulders" -> "Hombros"
-        "quadriceps", "hamstrings", "calves", "glutes", "upper legs", "lower legs" -> "Pierna"
-        "biceps" -> "Bíceps"
-        "triceps" -> "Tríceps"
-        else -> "General"
-    }
+
     return Exercise(
         id = generatedId,
         name = name,
-        muscleGroup = mappedMuscle,
-        mechanic = if (mechanic?.lowercase() == "compound") "Compuesto" else "Aislamiento",
-        targetMuscles = primaryMuscles,
-        secondaryMuscles = secondaryMuscles,
-        equipments = if (equipment != null) listOf(equipment) else emptyList(),
+        muscleGroup = TechnicalDictionary.getGeneralGroup(primaryMuscles.first()),
+        mechanic = TechnicalDictionary.getMechanic(mechanic),
+        targetMuscles = primaryMuscles.map { muscle -> TechnicalDictionary.getSpecificMuscle(muscle) },
+        secondaryMuscles = primaryMuscles.map {muscle -> TechnicalDictionary.getSpecificMuscle(muscle) },
+        equipments = if (equipment != null) listOf(TechnicalDictionary.getEquipment(equipment)) else emptyList(),
         instructions = instructions,
         remoteImages = images.map { "$baseUrl$it" }
     )
