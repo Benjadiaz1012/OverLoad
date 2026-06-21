@@ -110,8 +110,8 @@ class LibraryViewModel(
 
     fun toggleBookmark(exercise: Exercise) {
         viewModelScope.launch {
-            val isLocal = uiState.value.localExercisesIds.contains(exercise.id)
-            if (isLocal) {
+            val isBookmarked = uiState.value.localExercisesIds.contains(exercise.id)
+            if (isBookmarked) {
                 exerciseRepository.deleteLocalExercise(exercise)
             } else {
                 exerciseRepository.saveRemoteExerciseToLocal(exercise)

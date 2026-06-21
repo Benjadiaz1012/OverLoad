@@ -1,5 +1,6 @@
 package com.pdm0126.overload.ui.screens.detail
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,9 +18,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.pdm0126.overload.domain.model.Exercise
+import com.pdm0126.overload.ui.components.BookmarkButton
+import com.pdm0126.overload.ui.components.BookmarkedIcon
 import com.pdm0126.overload.ui.components.Error
 import com.pdm0126.overload.ui.components.OverloadScaffold
+import com.pdm0126.overload.ui.components.UnBookmarkedIcon
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun DetailScreen(
@@ -32,10 +37,53 @@ fun DetailScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+
     OverloadScaffold(
         title = state.exercise?.name ?: "Detalles",
         showBackButton = true,
-        onBackClick = onBackClick
+        onBackClick = onBackClick,
+        snackbarHost = {
+            SnackbarHost(snackbarHostState) { data ->
+                Snackbar(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(12.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        if (!state.isBookmarked) UnBookmarkedIcon() else BookmarkedIcon()
+
+                        Spacer(modifier = Modifier.width(12.dp))
+
+                        Text(
+                            text = data.visuals.message,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
+            }
+        },
+        actions = {
+            if (state.exercise != null) {
+                BookmarkButton(
+                    isBookmarked = state.isBookmarked,
+                    onCheckedChange = {
+                        viewModel.toggleBookmark()
+                        coroutineScope.launch {
+                            snackbarHostState.currentSnackbarData?.dismiss()
+                            snackbarHostState.showSnackbar(
+                                message = if (state.isBookmarked) "Eliminado de tu biblioteca" else "Agregado a tu biblioteca",
+                                duration = SnackbarDuration.Short
+                            )
+                        }
+                    }
+                )
+            }
+        }
     ) { paddingValues ->
         Box(
             modifier = Modifier.fillMaxSize().padding(paddingValues)
@@ -55,80 +103,82 @@ fun DetailScreen(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ExerciseDetailContent(exercise: Exercise) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(24.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item {
             AnimatedExerciseImage(
                 imageUrls = exercise.remoteImages,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(300.dp)
-                    .clip(RoundedCornerShape(16.dp))
+                    .aspectRatio(1f)
+                    .clip(RoundedCornerShape(8.dp))
                     .background(MaterialTheme.colorScheme.surfaceVariant)
             )
         }
-
-        // Metadata Principal: Grupo muscular general, mecánica y músculos secundarios
         item {
             Column {
                 Text(
-                    text = "Clasificación",
-                    style = MaterialTheme.typography.titleLarge,
+                    text = "Tipo de movimiento",
+                    style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
                 )
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    AssistChip(
-                        onClick = { },
-                        label = { Text(text = exercise.muscleGroup.replaceFirstChar { it.uppercase() }) },
-                        colors = AssistChipDefaults.assistChipColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-                    )
-                    AssistChip(
-                        onClick = { },
-                        label = { Text(exercise.mechanic.replaceFirstChar { it.uppercase() }) },
-                        colors = AssistChipDefaults.assistChipColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-                    )
-                }
+                Spacer(modifier = Modifier.height(4.dp))
+                AssistChip(
+                    onClick = { },
+                    label = { Text(exercise.mechanic.replaceFirstChar { it.uppercase() }) },
+                    colors = AssistChipDefaults.assistChipColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+                )
+                HorizontalDivider(
+                    modifier = Modifier
+                        .padding(vertical = 8.dp),
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                )
             }
         }
-        if (exercise.targetMuscles.isNotEmpty()) {
+
+        if (exercise.targetMuscles.isNotEmpty() || exercise.secondaryMuscles.isNotEmpty()) {
             item {
                 Column {
                     Text(
-                        text = "Musculos objetivo",
+                        text = "Músculos implicados",
                         style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = exercise.targetMuscles.joinToString(", ") { it.replaceFirstChar { char -> char.uppercase() } },
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-        }
-        if (exercise.secondaryMuscles.isNotEmpty()) {
-            item {
-                Column {
-                    Text(
-                        text = "Musculos secundarios",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = exercise.secondaryMuscles.joinToString(", ") { it.replaceFirstChar { char -> char.uppercase() } },
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        exercise.targetMuscles.forEach { muscle ->
+                            SuggestionChip(
+                                onClick = { },
+                                label = { Text(muscle.replaceFirstChar { it.uppercase() }) },
+                                colors = SuggestionChipDefaults.suggestionChipColors(
+                                    containerColor = MaterialTheme.colorScheme.primary,
+                                    labelColor = MaterialTheme.colorScheme.onPrimary
+                                )
+                            )
+                        }
+                        exercise.secondaryMuscles.forEach { muscle ->
+                            SuggestionChip(
+                                onClick = { },
+                                label = { Text(muscle.replaceFirstChar { it.uppercase() }) }
+                            )
+                        }
+                    }
+                    HorizontalDivider(
+                        modifier = Modifier
+                            .padding(vertical = 8.dp),
+                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
                     )
                 }
             }
@@ -136,28 +186,75 @@ fun ExerciseDetailContent(exercise: Exercise) {
         if (exercise.equipments.isNotEmpty()) {
             item {
                 Column {
-                    Text(text = "Equipamiento", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-                    Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = exercise.equipments.joinToString(", ") { it.replaceFirstChar { char -> char.uppercase() } },
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        text = "Equipamiento",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        exercise.equipments.forEach { eq ->
+                            SuggestionChip(
+                                onClick = { },
+                                label = { Text(eq.replaceFirstChar { it.uppercase() }) }
+                            )
+                        }
+                    }
+                    HorizontalDivider(
+                        modifier = Modifier
+                            .padding(vertical = 8.dp),
+                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
                     )
                 }
             }
         }
         if (exercise.instructions.isNotEmpty()) {
             item {
-                Text(
-                    text = "Instrucciones",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
-                )
+                InstructionsCard(instructions = exercise.instructions)
             }
-            itemsIndexed(exercise.instructions) { index, instruction ->
+        }
+    }
+}
+
+
+@Composable
+fun InstructionsCard(instructions: List<String>) {
+    var isExpanded by remember { mutableStateOf(false) }
+    val threshold = 3
+    val showToggleButton = instructions.size > threshold
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .animateContentSize(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        ),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(
+                text = "Instrucciones",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            val instructionsToShow =
+                if (isExpanded || !showToggleButton) instructions else instructions.take(threshold)
+
+            instructionsToShow.forEachIndexed { index, instruction ->
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 12.dp),
                     verticalAlignment = Alignment.Top
                 ) {
                     Text(
@@ -170,7 +267,24 @@ fun ExerciseDetailContent(exercise: Exercise) {
                     Text(
                         text = instruction,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            if (showToggleButton) {
+                HorizontalDivider(
+                    modifier = Modifier
+                        .padding(vertical = 8.dp),
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                )
+                TextButton(
+                    onClick = { isExpanded = !isExpanded },
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                ) {
+                    Text(
+                        text = if (isExpanded) "Mostrar menos" else "Leer todos los pasos (${instructions.size})",
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
             }
@@ -210,6 +324,6 @@ fun AnimatedExerciseImage(
         model = imageUrls[currentIndex],
         contentDescription = "Ejecución del ejercicio",
         modifier = modifier,
-        contentScale = ContentScale.Fit
+        contentScale = ContentScale.Crop
     )
 }

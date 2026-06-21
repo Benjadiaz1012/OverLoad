@@ -638,7 +638,7 @@
             "Cuadríceps"
         ],
         "secondaryMuscles": [
-            "Pantorrillas",
+            "Gemelos",
             "Glúteos",
             "Isquiotibiales",
             "Espalda baja"
@@ -694,7 +694,7 @@
             "Cuadríceps"
         ],
         "secondaryMuscles": [
-            "Pantorrillas",
+            "Gemelos",
             "Glúteos",
             "Isquiotibiales"
         ],
@@ -722,7 +722,7 @@
             "Espalda baja"
         ],
         "secondaryMuscles": [
-            "Pantorrillas",
+            "Gemelos",
             "Antebrazos",
             "Glúteos",
             "Isquiotibiales",
@@ -755,7 +755,7 @@
             "Isquiotibiales"
         ],
         "secondaryMuscles": [
-            "Pantorrillas",
+            "Gemelos",
             "Glúteos",
             "Espalda baja"
         ],
@@ -783,7 +783,7 @@
             "Glúteos"
         ],
         "secondaryMuscles": [
-            "Pantorrillas",
+            "Gemelos",
             "Isquiotibiales"
         ],
         "equipments": [
@@ -902,7 +902,7 @@
         "mainMuscleGroup": "Gemelos",
         "mechanic": "Aislamiento",
         "targetMuscles": [
-            "Pantorrillas"
+            "Gemelos"
         ],
         "secondaryMuscles": [],
         "equipments": [
