@@ -44,7 +44,7 @@ fun ExerciseDto.toDomainModel(): Exercise {
         muscleGroup = TechnicalDictionary.getGeneralGroup(primaryMuscles.first()),
         mechanic = TechnicalDictionary.getMechanic(mechanic),
         targetMuscles = primaryMuscles.map { muscle -> TechnicalDictionary.getSpecificMuscle(muscle) },
-        secondaryMuscles = primaryMuscles.map {muscle -> TechnicalDictionary.getSpecificMuscle(muscle) },
+        secondaryMuscles = secondaryMuscles.map {muscle -> TechnicalDictionary.getSpecificMuscle(muscle) },
         equipment = TechnicalDictionary.getEquipment(equipment),
         instructions = instructions,
         remoteImages = images.map { "$baseUrl$it" }

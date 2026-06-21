@@ -122,7 +122,7 @@ fun ExerciseDetailContent(exercise: Exercise) {
                 imageUrls = exercise.remoteImages,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(1f)
+                    .aspectRatio(1f, true)
                     .clip(RoundedCornerShape(8.dp))
                     .background(MaterialTheme.colorScheme.surfaceVariant)
                     .border(
@@ -143,8 +143,6 @@ fun ExerciseDetailContent(exercise: Exercise) {
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    val mainEquipment = exercise.equipment.firstOrNull()?.replaceFirstChar { it.uppercase() } ?: "Ninguno"
-
                     QuickStat(
                         icon = Icons.Default.Settings,
                         label = "Mecánica",
@@ -153,7 +151,7 @@ fun ExerciseDetailContent(exercise: Exercise) {
                     QuickStat(
                         icon = Icons.Default.FitnessCenter,
                         label = "Equipo Principal",
-                        value = mainEquipment
+                        value = exercise.equipment
                     )
                 }
             }
@@ -192,30 +190,18 @@ fun ExerciseDetailContent(exercise: Exercise) {
                 }
             }
         }
-
-        if (exercise.equipment.size > 1) {
-            item {
-                Column {
-                    SectionHeader(icon = Icons.Default.FitnessCenter, title = "Equipamiento detallado")
-                    Spacer(modifier = Modifier.height(16.dp))
-                    FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        exercise.equipment.forEach { eq ->
-                            SuggestionChip(
-                                onClick = { },
-                                label = { Text(eq.replaceFirstChar { it.uppercase() }) }
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
         if (exercise.instructions.isNotEmpty()) {
             item {
                 InstructionsCard(instructions = exercise.instructions)
+            }
+        }
+        else {
+            item {
+                Text(
+                    text = "No hay instrucciones disponibles",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     }
@@ -367,6 +353,6 @@ fun AnimatedExerciseImage(
         model = imageUrls[currentIndex],
         contentDescription = "Ejecución del ejercicio",
         modifier = modifier,
-        contentScale = ContentScale.Fit
+        contentScale = ContentScale.Crop
     )
 }
