@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -330,7 +331,7 @@ fun BlueprintSelectionContent(
         ) {
             item {
                 Text(
-                    text = "Selecciona una plantilla base. podrás modificar los días y nombres en el siguiente paso",
+                    text = "Selecciona una plantilla base. Podrás modificar los días y nombres en el siguiente paso",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium
                 )
@@ -392,13 +393,18 @@ fun BlueprintSelectionContent(
                         }
 
                         Spacer(modifier = Modifier.height(12.dp))
-                        Text(text = blueprint.description, style = MaterialTheme.typography.bodyMedium)
+                        Text(
+                            text = blueprint.description,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .background(MaterialTheme.colorScheme.background, RoundedCornerShape(8.dp)).padding(12.dp),
+                                .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(8.dp)).padding(12.dp)
+                                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
+                                .padding(12.dp),
                             horizontalArrangement = Arrangement.SpaceAround
                         ) {
                             Column(
@@ -424,14 +430,14 @@ fun BlueprintSelectionContent(
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                                 Text(
-                                    text = "x${blueprint.maxFrequencyPerMuscle}/semana",
+                                    text = if (blueprint.id == "blank") "Personalizada" else ("x${blueprint.maxFrequencyPerMuscle}/semana"),
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold
                                 )
                             }
                         }
 
-                        if (blueprint.tags.isNotEmpty()) {
+                        /*if (blueprint.tags.isNotEmpty()) {
                             Spacer(modifier = Modifier.height(16.dp))
                             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                 blueprint.tags.forEach { tag ->
@@ -443,7 +449,7 @@ fun BlueprintSelectionContent(
                                     )
                                 }
                             }
-                        }
+                        }*/
                     }
                 }
             }
@@ -523,7 +529,7 @@ fun MicrocycleDraftContent(
                         Box(
                             modifier = Modifier
                                 .size(40.dp)
-                                .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(8.dp)),
+                                .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(8.dp)),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
@@ -571,7 +577,7 @@ fun MicrocycleDraftContent(
                 ) {
                     Icon(Icons.Default.Add, contentDescription = null)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(if (canAddMore) "Añadir un Día extra" else "Límite de 9 días alcanzado")
+                    Text(if (canAddMore) "Añadir Día" else "Límite de 9 días alcanzado")
                 }
             }
         }

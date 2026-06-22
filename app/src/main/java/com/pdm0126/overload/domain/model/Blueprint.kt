@@ -159,7 +159,7 @@ object BlueprintCatalog {
             description = "Construye tu propio microciclo desde cero, definiendo tus propios días y agrupaciones.",
             defaultDays = emptyList(),
             minMicrocycleDays = 1,
-            maxMicrocycleDays = 9, // Máximo permitido por la arquitectura
+            maxMicrocycleDays = 9,
             maxFrequencyPerMuscle = 0,
             level = ExperienceLevel.ANY,
             goal = TrainingGoal.CUSTOM,
