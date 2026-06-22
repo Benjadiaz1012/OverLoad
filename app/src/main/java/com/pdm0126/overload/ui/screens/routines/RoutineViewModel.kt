@@ -23,99 +23,52 @@ class RoutineViewModel(
         viewModelScope.launch {
             routineRepository.getAllMicrocycles().collect { microcycles ->
                 val activeId = microcycles.find { it.isActive }?.microcycleId
+                val sortedMicrocycles = microcycles.sortedByDescending { it.isActive }
                 _uiState.update { it.copy(
-                    savedMicrocycles = microcycles,
+                    savedMicrocycles = sortedMicrocycles,
                     activeMicrocycleId = activeId
                 ) }
             }
         }
     }
 
-    // Funciones del borrador en memoria
-
     fun startCreating() {
-        _uiState.update { state ->
-            state.copy(isCreating = true, draftName = "", selectedBlueprint = null, draftDays = emptyList())
-        }
+        _uiState.update { it.copy(isCreating = true) }
     }
 
     fun cancelCreating() {
-        _uiState.update { state ->
-            state.copy(isCreating = false)
-        } // Se desecha el borrador al instante
+        _uiState.update { it.copy(isCreating = false) }
     }
 
-    fun updateDraftName(name: String) {
-        _uiState.update { state ->
-            state.copy(draftName = name)
-        }
-    }
-
-    fun selectBlueprint(blueprint: Blueprint) {
-        val initialDays = blueprint.defaultDays.map { DraftDay(focus = it) }
-        _uiState.update {  state ->
-            state.copy(
-            selectedBlueprint = blueprint,
-            draftDays = initialDays
-        ) }
-    }
-
-    fun addDraftDay(focus: String = "Nuevo Día") {
-        val currentDays = _uiState.value.draftDays
-        if (currentDays.size < 9) { // Límite funcional definido en la arquitectura
-            _uiState.update { state ->
-                state.copy(
-                    draftDays = currentDays + DraftDay(focus = "Día ${currentDays.size + 1}") // Mas genérico
-                )
-            }
-        }
-    }
-
-    fun removeDraftDay(tempId: String) {
-        _uiState.update { state ->
-            state.copy(draftDays = state.draftDays.filterNot { it.tempId == tempId })
-        }
-    }
-
-    fun updateDraftDayFocus(tempId: String, newFocus: String) {
-        _uiState.update { state ->
-            state.copy(draftDays = state.draftDays.map {
-                if (it.tempId == tempId) it.copy(focus = newFocus) else it
-            })
-        }
-    }
-
-    // Guardar en la base de datos
-    fun saveDraftToDatabase() {
-        val state = _uiState.value
-        if (state.draftName.isBlank() || state.draftDays.isEmpty()) return
-
+    fun createMicrocycleFromBlueprint(blueprint: Blueprint) {
         viewModelScope.launch {
+            val state = _uiState.value
             val isFirst = state.savedMicrocycles.isEmpty()
-            val blueprintName = state.selectedBlueprint?.name ?: "Personalizado"
 
+            // Creamos usando el nombre base del Blueprint
             val newMicrocycleId = routineRepository.createMicrocycle(
-                name = state.draftName,
-                blueprintType = blueprintName,
+                name = "Nuevo: ${blueprint.name}",
+                blueprintType = blueprint.name,
                 isActive = isFirst
             )
-            state.draftDays.forEachIndexed { index, draftDay ->
+
+            // Insertamos los días predeterminados directamente
+            blueprint.defaultDays.forEachIndexed { index, dayName ->
                 routineRepository.addDayToMicrocycle(
                     microcycleId = newMicrocycleId,
                     order = index + 1,
-                    focus = draftDay.focus
+                    focus = dayName
                 )
             }
 
-            // Limpiamos y salimos del modo creación
+            // Volvemos a la lista automáticamente
             cancelCreating()
         }
     }
 
     fun addDayToSavedMicrocycle(microcycleId: Long) {
-        // Buscamos el microciclo actual en la RAM
         val microcycle = _uiState.value.savedMicrocycles.find { it.microcycleId == microcycleId } ?: return
-        if (microcycle.days.size >= 9) return // Respetamos el límite de 9 días
+        if (microcycle.days.size >= 9) return
 
         viewModelScope.launch {
             val nextOrder = (microcycle.days.maxOfOrNull { it.order } ?: 0) + 1
@@ -132,10 +85,23 @@ class RoutineViewModel(
             routineRepository.deleteDay(dayId)
         }
     }
+
     fun updateMicrocycleName(microcycleId: Long, newName: String) {
         if (newName.isBlank()) return
         viewModelScope.launch {
             routineRepository.updateMicrocycleName(microcycleId, newName.trim())
+        }
+    }
+
+    fun setActiveMicrocycle(microcycleId: Long) {
+        viewModelScope.launch {
+            routineRepository.updateActiveMicrocycle(microcycleId)
+        }
+    }
+
+    fun deleteMicrocycle(microcycleId: Long) {
+        viewModelScope.launch {
+            routineRepository.deleteMicrocycle(microcycleId)
         }
     }
 

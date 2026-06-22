@@ -46,6 +46,8 @@ interface RoutineDao {
     suspend fun updateDayFocus(dayId: Long, newFocus: String)
     @Query("UPDATE microcycles_table SET name = :newName WHERE microcycleId = :microcycleId")
     suspend fun updateMicrocycleName(microcycleId: Long, newName: String)
+    @Query("DELETE FROM microcycles_table WHERE microcycleId = :microcycleId")
+    suspend fun deleteMicrocycle(microcycleId: Long)
 
     // Consultas principales
     // Con @Transaction room lee nuestras clases de relación y arma el arbol completo
@@ -60,4 +62,16 @@ interface RoutineDao {
     @Transaction
     @Query("SELECT * FROM days_table WHERE dayId = :dayId LIMIT 1")
     fun getDayWithSlots(dayId: Long): Flow<DayWithSlots?>
+
+    @Transaction
+    suspend fun updateActiveMicrocycle(microcycleId: Long) {
+        clearAllActiveMicrocycles()
+        setActiveMicrocycleById(microcycleId)
+    }
+
+    @Query("UPDATE microcycles_table SET isActive = 0")
+    suspend fun clearAllActiveMicrocycles()
+
+    @Query("UPDATE microcycles_table SET isActive = 1 WHERE microcycleId = :microcycleId")
+    suspend fun setActiveMicrocycleById(microcycleId: Long)
 }

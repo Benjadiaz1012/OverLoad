@@ -37,6 +37,10 @@ class RoutineRepositoryImp(
         routineDao.updateSlotTargetSets(slotId, targetSets)
     }
 
+    override suspend fun deleteMicrocycle(microcycleId: Long) {
+        routineDao.deleteMicrocycle(microcycleId)
+    }
+
     override suspend fun deleteDay(dayId: Long) {
         routineDao.deleteDay(dayId)
     }
@@ -77,5 +81,8 @@ class RoutineRepositoryImp(
 
     override suspend fun removeExerciseSlot(slotId: Long) {
         routineDao.deleteSlotById(slotId)
+    }
+    override suspend fun updateActiveMicrocycle(microcycleId: Long) {
+        routineDao.updateActiveMicrocycle(microcycleId)
     }
 }
