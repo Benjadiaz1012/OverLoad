@@ -19,6 +19,7 @@ import com.pdm0126.overload.ui.routes.Routes
 import com.pdm0126.overload.ui.components.OverloadScaffold
 import com.pdm0126.overload.ui.screens.detail.DetailScreen
 import com.pdm0126.overload.ui.screens.library.LibraryScreen
+import com.pdm0126.overload.ui.screens.routines.RoutinesScreen
 
 @Composable
 fun OverloadApp() {
@@ -55,7 +56,7 @@ fun OverloadApp() {
                     PlaceholderScreen("Dashboard (Entrenar)")
                 }
                 entry<Routes.Routines> {
-                    PlaceholderScreen("Mis Rutinas")
+                    RoutinesScreen()
                 }
                 entry<Routes.Library> {
                     LibraryScreen(
