@@ -10,16 +10,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
+import com.pdm0126.overload.OverloadApplication
 import com.pdm0126.overload.ui.routes.Routes
 import com.pdm0126.overload.ui.components.OverloadScaffold
 import com.pdm0126.overload.ui.screens.detail.DetailScreen
 import com.pdm0126.overload.ui.screens.library.LibraryScreen
 import com.pdm0126.overload.ui.screens.routines.RoutinesScreen
+import com.pdm0126.overload.ui.screens.routines.editor.DayEditorScreen
+import com.pdm0126.overload.ui.screens.routines.editor.DayEditorViewModel
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
 
 @Composable
 fun OverloadApp() {
@@ -56,7 +64,12 @@ fun OverloadApp() {
                     PlaceholderScreen("Dashboard (Entrenar)")
                 }
                 entry<Routes.Routines> {
-                    RoutinesScreen()
+                    RoutinesScreen(
+                        onNavigateToDayEditor = { dayId ->
+                            // Cuando el usuario toca un día, abrimos el DayEditor de ese día
+                            backStack.add(Routes.DayEditor(dayId))
+                        }
+                    )
                 }
                 entry<Routes.Library> {
                     LibraryScreen(
@@ -67,6 +80,34 @@ fun OverloadApp() {
                     DetailScreen(
                         exerciseId = entry.exerciseId,
                         onBackClick = { backStack.removeLastOrNull() }
+                    )
+                }
+                entry<Routes.DayEditor> { entry ->
+                    DayEditorScreen(
+                        dayId = entry.dayId,
+                        onBackClick = { backStack.removeLastOrNull() },
+                        onNavigateToLibrarySelection = {
+                            // Navegamos a la librería pasándole el ID del día actual
+                            backStack.add(Routes.LibrarySelection(entry.dayId))
+                        }
+                    )
+                }
+
+                // Librería en modo selección
+                entry<Routes.LibrarySelection> { entry ->
+                    val dayEditorViewModel: DayEditorViewModel = viewModel(
+                        factory = DayEditorViewModel.provideFactory(entry.dayId),
+                        key = entry.dayId.toString()
+                    )
+
+                    LibraryScreen(
+                        isSelectionMode = true,
+                        onExerciseClick = { exerciseId -> backStack.add(Routes.Detail(exerciseId)) },
+
+                        onExerciseSelect = { exercise ->
+                            dayEditorViewModel.addExerciseToSlot(exercise.id)
+                            backStack.removeLastOrNull()
+                        }
                     )
                 }
                 entry<Routes.Analysis> {

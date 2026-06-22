@@ -5,6 +5,7 @@ import com.pdm0126.overload.data.local.entity.DayEntity
 import com.pdm0126.overload.data.local.entity.MicrocycleEntity
 import com.pdm0126.overload.data.local.entity.SlotEntity
 import com.pdm0126.overload.data.mapper.toDomainModel
+import com.pdm0126.overload.domain.model.RoutineDay
 import com.pdm0126.overload.domain.model.RoutineMicrocycle
 import com.pdm0126.overload.domain.repository.RoutineRepository
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +27,10 @@ class RoutineRepositoryImp(
         return routineDao.getAllMicrocycles().map { list ->
             list.map { it.toDomainModel() }
         }
+    }
+
+    override fun getRoutineDay(dayId: Long): Flow<RoutineDay?> {
+        return routineDao.getDayWithSlots(dayId).map { it?.toDomainModel() }
     }
 
     override suspend fun createMicrocycle(name: String, blueprintType: String, isActive: Boolean): Long {

@@ -40,7 +40,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun LibraryScreen(
     viewModel: LibraryViewModel = viewModel(factory = LibraryViewModel.Factory),
-    onExerciseClick: (String) -> Unit
+    isSelectionMode: Boolean = false,
+    onExerciseClick: (String) -> Unit,
+    onExerciseSelect: (Exercise) -> Unit = {},
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
@@ -190,6 +192,7 @@ fun LibraryScreen(
                                 ExerciseCard(
                                     exercise = exercise,
                                     isBookmarked = true,
+                                    isSelectionMode = isSelectionMode,
                                     onBookmarkClick = {
                                         lastWasBookmark.value = true
                                         viewModel.toggleBookmark(exercise)
@@ -201,7 +204,8 @@ fun LibraryScreen(
                                             )
                                         }
                                     },
-                                    onExerciseClick = { onExerciseClick(exercise.id) }
+                                    onExerciseClick = { onExerciseClick(exercise.id) },
+                                    onSelectClick = { onExerciseSelect(exercise) }
                                 )
                             }
                         }
@@ -242,6 +246,7 @@ fun LibraryScreen(
                                     ExerciseCard(
                                         exercise = exercise,
                                         isBookmarked = isBookmarked,
+                                        isSelectionMode = isSelectionMode,
                                         onBookmarkClick = {
                                             lastWasBookmark.value = isBookmarked
                                             viewModel.toggleBookmark(exercise)
@@ -253,7 +258,13 @@ fun LibraryScreen(
                                                 )
                                             }
                                         },
-                                        onExerciseClick = { onExerciseClick(exercise.id) }
+                                        onExerciseClick = { onExerciseClick(exercise.id) },
+                                        onSelectClick = {
+                                            if (!isBookmarked) {
+                                                viewModel.toggleBookmark(exercise)
+                                            }
+                                            onExerciseSelect(exercise)
+                                        }
                                     )
                                 }
                             }
@@ -269,8 +280,10 @@ fun LibraryScreen(
 fun ExerciseCard(
     exercise: Exercise,
     isBookmarked: Boolean,
+    isSelectionMode: Boolean,
     onBookmarkClick: () -> Unit,
-    onExerciseClick: () -> Unit
+    onExerciseClick: () -> Unit,
+    onSelectClick: () -> Unit
 ) {
     OutlinedCard(
         modifier = Modifier
@@ -311,10 +324,21 @@ fun ExerciseCard(
                 )
             }
 
-            BookmarkButton(
-                isBookmarked = isBookmarked,
-                onCheckedChange = { onBookmarkClick() }
-            )
+            if (isSelectionMode) {
+                IconButton(onClick = onSelectClick) {
+                    Icon(
+                        imageVector = Icons.Default.AddCircleOutline,
+                        contentDescription = "Seleccionar",
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+            } else {
+                BookmarkButton(
+                    isBookmarked = isBookmarked,
+                    onCheckedChange = { onBookmarkClick() }
+                )
+            }
         }
     }
 }

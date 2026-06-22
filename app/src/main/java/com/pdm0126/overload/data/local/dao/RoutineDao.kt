@@ -9,6 +9,7 @@ import androidx.room.Update
 import com.pdm0126.overload.data.local.entity.DayEntity
 import com.pdm0126.overload.data.local.entity.MicrocycleEntity
 import com.pdm0126.overload.data.local.entity.SlotEntity
+import com.pdm0126.overload.data.local.relation.DayWithSlots
 import com.pdm0126.overload.data.local.relation.MicrocycleWithDays
 import kotlinx.coroutines.flow.Flow
 
@@ -44,4 +45,8 @@ interface RoutineDao {
     @Transaction
     @Query("SELECT * FROM microcycles_table")
     fun getAllMicrocycles(): Flow<List<MicrocycleWithDays>>
+
+    @Transaction
+    @Query("SELECT * FROM days_table WHERE dayId = :dayId LIMIT 1")
+    fun getDayWithSlots(dayId: Long): Flow<DayWithSlots?>
 }
