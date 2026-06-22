@@ -14,6 +14,10 @@ private val DarkColorScheme = darkColorScheme(
     primary = OverloadRed,
     onPrimary = OverloadWhite,
 
+
+    primaryContainer = OverloadRedBright,
+    onPrimaryContainer = OverloadWhite,
+
     secondary = OverloadLightGray,
     onSecondary = OverloadBlack,
 

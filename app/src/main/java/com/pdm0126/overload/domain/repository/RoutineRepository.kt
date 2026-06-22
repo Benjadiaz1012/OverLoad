@@ -8,8 +8,10 @@ interface RoutineRepository {
 
     fun getActiveMicrocycle(): Flow<RoutineMicrocycle?>
     fun getAllMicrocycles(): Flow<List<RoutineMicrocycle>>
-
     fun getRoutineDay(dayId: Long): Flow<RoutineDay?>
+    suspend fun updateSlotTargetSets(slotId: Long, targetSets: Int)
+
+    suspend fun deleteDay(dayId: Long)
     suspend fun createMicrocycle(name: String, blueprintType: String, isActive: Boolean = true): Long
     suspend fun addDayToMicrocycle(microcycleId: Long, order: Int, focus: String): Long
     suspend fun addExerciseSlot(dayId: Long, exerciseId: String, order: Int, targetSets: Int): Long

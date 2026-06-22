@@ -41,8 +41,17 @@ class DayEditorViewModel(
                 dayId = dayId,
                 exerciseId = exerciseId,
                 order = nextOrder,
-                targetSets = 3 // Por defecto asignamos 3 series sugeridas
+                targetSets = 3
             )
+        }
+    }
+
+    fun updateTargetSets(slotId: Long, currentSets: Int, change: Int) {
+        val newSets = currentSets + change
+        if (newSets in 1..10) {
+            viewModelScope.launch {
+                routineRepository.updateSlotTargetSets(slotId, newSets)
+            }
         }
     }
 

@@ -36,6 +36,12 @@ interface RoutineDao {
     @Query("DELETE FROM slots_table WHERE slotId = :slotId")
     suspend fun deleteSlotById(slotId: Long)
 
+    @Query("UPDATE slots_table SET targetSets = :targetSets WHERE slotId = :slotId")
+    suspend fun updateSlotTargetSets(slotId: Long, targetSets: Int)
+
+    @Query("DELETE FROM days_table WHERE dayId = :dayId")
+    suspend fun deleteDay(dayId: Long)
+
     // Consultas principales
     // Con @Transaction room lee nuestras clases de relación y arma el arbol completo
     @Transaction

@@ -33,6 +33,14 @@ class RoutineRepositoryImp(
         return routineDao.getDayWithSlots(dayId).map { it?.toDomainModel() }
     }
 
+    override suspend fun updateSlotTargetSets(slotId: Long, targetSets: Int) {
+        routineDao.updateSlotTargetSets(slotId, targetSets)
+    }
+
+    override suspend fun deleteDay(dayId: Long) {
+        routineDao.deleteDay(dayId)
+    }
+
     override suspend fun createMicrocycle(name: String, blueprintType: String, isActive: Boolean): Long {
         val newMicrocycle = MicrocycleEntity(
             name = name,

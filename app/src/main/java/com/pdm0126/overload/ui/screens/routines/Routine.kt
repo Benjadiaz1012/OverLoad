@@ -18,8 +18,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -56,7 +58,9 @@ fun RoutinesScreen(
                 RoutinesListContent(
                     state = state,
                     onStartCreating = viewModel::startCreating,
-                    onDayClick = onNavigateToDayEditor // <-- Pasamos el gatillo
+                    onDayClick = onNavigateToDayEditor,
+                    onAddDay = viewModel::addDayToSavedMicrocycle,
+                    onDeleteDay = viewModel::deleteDayFromSavedMicrocycle
                 )
             }
             WizardStep.BLUEPRINTS -> {
@@ -87,18 +91,20 @@ fun RoutinesScreen(
 fun RoutinesListContent(
     state: RoutinesUiState,
     onStartCreating: () -> Unit,
-    onDayClick: (Long) -> Unit
+    onDayClick: (Long) -> Unit,
+    onAddDay: (Long) -> Unit,
+    onDeleteDay: (Long) -> Unit
 ) {
     OverloadScaffold(
         title = "Mis Rutinas",
         floatingActionButton = {
-            ExtendedFloatingActionButton(
+            FloatingActionButton(
                 onClick = onStartCreating,
-                icon = { Icon(Icons.Default.Add, contentDescription = "Nueva Rutina") },
-                text = { Text("Crear") },
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            )
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Nueva Rutina")
+            }
         }
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
@@ -129,7 +135,9 @@ fun RoutinesListContent(
                     items(state.savedMicrocycles, key = { it.microcycleId }) { microcycle ->
                         SavedMicrocycleCard(
                             microcycle = microcycle,
-                            onDayClick = onDayClick
+                            onDayClick = onDayClick,
+                            onAddDayClick = onAddDay,
+                            onDeleteDayClick = onDeleteDay
                         )
                     }
                 }
@@ -141,7 +149,9 @@ fun RoutinesListContent(
 @Composable
 fun SavedMicrocycleCard(
     microcycle: RoutineMicrocycle,
-    onDayClick: (Long) -> Unit
+    onDayClick: (Long) -> Unit,
+    onAddDayClick: (Long) -> Unit,
+    onDeleteDayClick: (Long) -> Unit
 ) {
     // Controla si la tarjeta muestra solo el resumen o la lista completa de días
     var isExpanded by remember { mutableStateOf(false) }
@@ -149,14 +159,12 @@ fun SavedMicrocycleCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .animateContentSize(), // Animación fluida al expandir/contraer
+            .animateContentSize(), // Animación macabra al expandir/contraer
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
         shape = RoundedCornerShape(16.dp),
-        onClick = { isExpanded = !isExpanded } // Al tocar la tarjeta, se expande
+        onClick = { isExpanded = !isExpanded }
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-
-            // --- CABECERA DE LA TARJETA ---
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -195,67 +203,107 @@ fun SavedMicrocycleCard(
                 )
             }
 
-            // --- CONTENIDO EXPANDIDO (LOS DÍAS) ---
             if (isExpanded) {
                 Spacer(modifier = Modifier.height(16.dp))
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text(
-                    text = "Editar Días de Entrenamiento",
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
+                if (isExpanded) {
 
-                microcycle.days.forEach { day ->
-                    OutlinedCard(
-                        onClick = { onDayClick(day.dayId) }, // ¡Viaje al Lienzo!
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-                        colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surface),
-                        border = CardDefaults.outlinedCardBorder(true)
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(12.dp).fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "Editar Días",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier
+                            .padding(bottom = 8.dp)
+                    )
+                    microcycle.days.forEachIndexed { index, day ->
+                        OutlinedCard(
+                            onClick = { onDayClick(day.dayId) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 8.dp),
+                            colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surface),
+                            border = CardDefaults.outlinedCardBorder(true)
                         ) {
-                            // Círculo del número de día
-                            Box(
+                            Row(
                                 modifier = Modifier
-                                    .size(36.dp)
-                                    .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(8.dp)),
-                                contentAlignment = Alignment.Center
+                                    .padding(12.dp)
+                                    .fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(
-                                    text = "${day.order}",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                    fontWeight = FontWeight.Bold
-                                )
+
+                                Box(
+                                    modifier = Modifier
+                                        .size(36.dp)
+                                        .background(MaterialTheme.colorScheme.surface,RoundedCornerShape(8.dp)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "${index + 1}",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+
+                                Spacer(modifier = Modifier.width(16.dp))
+
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = day.focus,
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                    Text(
+                                        text = "${day.slots.size} ejercicios",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+
+                                Row {
+                                    IconButton(
+                                        onClick = { onDayClick(day.dayId) },
+                                        modifier = Modifier.size(32.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Edit,
+                                            contentDescription = "Editar Día",
+                                            tint = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    IconButton(
+                                        onClick = { onDeleteDayClick(day.dayId) },
+                                        modifier = Modifier.size(32.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.DeleteOutline,
+                                            contentDescription = "Borrar Día",
+                                            tint = MaterialTheme.colorScheme.error,
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    }
+                                }
                             }
+                        }
+                    }
 
-                            Spacer(modifier = Modifier.width(16.dp))
-
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = day.focus,
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                                Text(
-                                    text = "${day.slots.size} ejercicios asignados",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-
-                            Icon(
-                                imageVector = Icons.Default.Edit,
-                                contentDescription = "Editar Día",
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(20.dp)
-                            )
+                    if (microcycle.days.size < 9) {
+                        OutlinedButton(
+                            onClick = { onAddDayClick(microcycle.microcycleId) },
+                            modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Icon(Icons.Default.Add, contentDescription = null)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Añadir Día")
                         }
                     }
                 }
@@ -264,7 +312,6 @@ fun SavedMicrocycleCard(
     }
 }
 
-// SELECCIÓN DE BLUEPRINT (SISTEMA BASE)
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun BlueprintSelectionContent(
@@ -283,7 +330,7 @@ fun BlueprintSelectionContent(
         ) {
             item {
                 Text(
-                    text = "Selecciona una plantilla base. No te preocupes, podrás modificar los días y nombres en el siguiente paso.",
+                    text = "Selecciona una plantilla base. podrás modificar los días y nombres en el siguiente paso",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium
                 )
@@ -298,7 +345,6 @@ fun BlueprintSelectionContent(
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
 
-                        // Cabecera: Nombre y Badges
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
@@ -320,7 +366,6 @@ fun BlueprintSelectionContent(
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        // Badges de Nivel y Objetivo
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             AssistChip(
                                 onClick = {},
@@ -350,7 +395,6 @@ fun BlueprintSelectionContent(
                         Text(text = blueprint.description, style = MaterialTheme.typography.bodyMedium)
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Frecuencia y Días
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -387,7 +431,6 @@ fun BlueprintSelectionContent(
                             }
                         }
 
-                        // Tags
                         if (blueprint.tags.isNotEmpty()) {
                             Spacer(modifier = Modifier.height(16.dp))
                             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -428,17 +471,15 @@ fun MicrocycleDraftContent(
         showBackButton = true,
         onBackClick = onBackToBlueprints,
         floatingActionButton = {
-            ExtendedFloatingActionButton(
+            FloatingActionButton(
                 onClick = onSave,
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.Save,
-                        contentDescription = "Guardar")
-                       },
-                text = { Text("Crear") },
-                containerColor = if (canSave) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
-                contentColor = if (canSave) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
-            )
+                containerColor = if (canSave) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
+                contentColor = if (canSave) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Save,
+                    contentDescription = "Guardar")
+            }
         }
     ) { paddingValues ->
         LazyColumn(
@@ -448,13 +489,12 @@ fun MicrocycleDraftContent(
                 .padding(paddingValues),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Nombre de la Rutina
             item {
                 OutlinedTextField(
                     value = state.draftName,
                     onValueChange = onNameChange,
                     label = { Text("Nombre del Microciclo") },
-                    placeholder = { Text("Ej: Volumen Invierno 2026") },
+                    placeholder = { Text("Ej: Volumen - 2026") },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
                     singleLine = true
@@ -467,7 +507,6 @@ fun MicrocycleDraftContent(
                 )
             }
 
-            // Lista de Días (Tarjetas Editables)
             itemsIndexed(state.draftDays, key = { _, day -> day.tempId }) { index, day ->
                 Card(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
@@ -506,7 +545,7 @@ fun MicrocycleDraftContent(
                             textStyle = MaterialTheme.typography.bodyLarge,
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = MaterialTheme.colorScheme.primary,
-                                unfocusedBorderColor = androidx.compose.ui.graphics.Color.Transparent
+                                unfocusedBorderColor = Color.Transparent
                             )
                         )
 
@@ -522,9 +561,8 @@ fun MicrocycleDraftContent(
                 }
             }
 
-            // Botón Agregar Día
             item {
-                val canAddMore = state.draftDays.size < 9 // Límite funcional
+                val canAddMore = state.draftDays.size < 9
                 OutlinedButton(
                     onClick = onAddDay,
                     modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),

@@ -90,8 +90,6 @@ class RoutineViewModel(
         if (state.draftName.isBlank() || state.draftDays.isEmpty()) return
 
         viewModelScope.launch {
-            // Guardamos el Microciclo Padre
-            // Si es el primero que crea, lo marcamos como activo por defecto
             val isFirst = state.savedMicrocycles.isEmpty()
             val blueprintName = state.selectedBlueprint?.name ?: "Personalizado"
 
@@ -100,8 +98,6 @@ class RoutineViewModel(
                 blueprintType = blueprintName,
                 isActive = isFirst
             )
-
-            // Insertamos cada día en orden secuencial
             state.draftDays.forEachIndexed { index, draftDay ->
                 routineRepository.addDayToMicrocycle(
                     microcycleId = newMicrocycleId,
@@ -112,6 +108,27 @@ class RoutineViewModel(
 
             // Limpiamos y salimos del modo creación
             cancelCreating()
+        }
+    }
+
+    fun addDayToSavedMicrocycle(microcycleId: Long) {
+        // Buscamos el microciclo actual en la RAM
+        val microcycle = _uiState.value.savedMicrocycles.find { it.microcycleId == microcycleId } ?: return
+        if (microcycle.days.size >= 9) return // Respetamos el límite de 9 días
+
+        viewModelScope.launch {
+            val nextOrder = (microcycle.days.maxOfOrNull { it.order } ?: 0) + 1
+            routineRepository.addDayToMicrocycle(
+                microcycleId = microcycleId,
+                order = nextOrder,
+                focus = "Día $nextOrder"
+            )
+        }
+    }
+
+    fun deleteDayFromSavedMicrocycle(dayId: Long) {
+        viewModelScope.launch {
+            routineRepository.deleteDay(dayId)
         }
     }
 
