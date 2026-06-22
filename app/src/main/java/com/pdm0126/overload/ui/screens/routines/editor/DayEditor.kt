@@ -9,10 +9,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.DeleteOutline
+import androidx.compose.material.icons.filled.DriveFileRenameOutline
 import androidx.compose.material.icons.filled.RemoveCircleOutline
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,10 +40,27 @@ fun DayEditorScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
+    var showRenameDialog by rememberSaveable { mutableStateOf(false) }
+    var newDayName by rememberSaveable { mutableStateOf("") }
+
     OverloadScaffold(
         title = state.day?.focus ?: "Cargando...",
         showBackButton = true,
         onBackClick = onBackClick,
+        actions = {
+            if (state.day != null) {
+                IconButton(onClick = {
+                    newDayName = state.day!!.focus
+                    showRenameDialog = true
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.DriveFileRenameOutline,
+                        contentDescription = "Renombrar Día",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+        },
         floatingActionButton = {
             if (state.day != null && state.day!!.slots.size < 12) {
                 FloatingActionButton(
@@ -160,6 +181,34 @@ fun DayEditorScreen(
                     }
                 }
             }
+        }
+        if (showRenameDialog) {
+            AlertDialog(
+                onDismissRequest = { showRenameDialog = false },
+                title = { Text("Renombrar Día") },
+                text = {
+                    OutlinedTextField(
+                        value = newDayName,
+                        onValueChange = { newDayName = it },
+                        label = { Text("Nuevo nombre") },
+                        singleLine = true,
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                },
+                confirmButton = {
+                    Button(onClick = {
+                        viewModel.updateDayName(newDayName)
+                        showRenameDialog = false
+                    }) {
+                        Text("Guardar")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showRenameDialog = false }) {
+                        Text("Cancelar")
+                    }
+                }
+            )
         }
     }
 }

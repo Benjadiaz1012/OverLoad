@@ -59,6 +59,13 @@ class DayEditorViewModel(
         viewModelScope.launch { routineRepository.removeExerciseSlot(slotId) }
     }
 
+    fun updateDayName(newName: String) {
+        if (newName.isBlank()) return
+        viewModelScope.launch {
+            routineRepository.updateDayFocus(dayId, newName.trim())
+        }
+    }
+
     companion object {
         fun provideFactory(dayId: Long) = viewModelFactory {
             initializer {

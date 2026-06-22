@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -61,7 +62,8 @@ fun RoutinesScreen(
                     onStartCreating = viewModel::startCreating,
                     onDayClick = onNavigateToDayEditor,
                     onAddDay = viewModel::addDayToSavedMicrocycle,
-                    onDeleteDay = viewModel::deleteDayFromSavedMicrocycle
+                    onDeleteDay = viewModel::deleteDayFromSavedMicrocycle,
+                    onRenameMicrocycle = viewModel::updateMicrocycleName
                 )
             }
             WizardStep.BLUEPRINTS -> {
@@ -94,7 +96,8 @@ fun RoutinesListContent(
     onStartCreating: () -> Unit,
     onDayClick: (Long) -> Unit,
     onAddDay: (Long) -> Unit,
-    onDeleteDay: (Long) -> Unit
+    onDeleteDay: (Long) -> Unit,
+    onRenameMicrocycle: (Long, String) -> Unit
 ) {
     OverloadScaffold(
         title = "Mis Rutinas",
@@ -108,7 +111,11 @@ fun RoutinesListContent(
             }
         }
     ) { paddingValues ->
-        Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
             if (state.savedMicrocycles.isEmpty()) {
                 Column(
                     modifier = Modifier.align(Alignment.Center),
@@ -138,7 +145,8 @@ fun RoutinesListContent(
                             microcycle = microcycle,
                             onDayClick = onDayClick,
                             onAddDayClick = onAddDay,
-                            onDeleteDayClick = onDeleteDay
+                            onDeleteDayClick = onDeleteDay,
+                            onRenameClick = onRenameMicrocycle
                         )
                     }
                 }
@@ -152,10 +160,14 @@ fun SavedMicrocycleCard(
     microcycle: RoutineMicrocycle,
     onDayClick: (Long) -> Unit,
     onAddDayClick: (Long) -> Unit,
-    onDeleteDayClick: (Long) -> Unit
+    onDeleteDayClick: (Long) -> Unit,
+    onRenameClick: (Long, String) -> Unit
 ) {
     // Controla si la tarjeta muestra solo el resumen o la lista completa de días
-    var isExpanded by remember { mutableStateOf(false) }
+    var isExpanded by rememberSaveable { mutableStateOf(false) }
+
+    var showRenameDialog by rememberSaveable { mutableStateOf(false) }
+    var newMicrocycleName by rememberSaveable { mutableStateOf("") }
 
     Card(
         modifier = Modifier
@@ -179,6 +191,22 @@ fun SavedMicrocycleCard(
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary
                         )
+
+                        IconButton(
+                            onClick = {
+                                newMicrocycleName = microcycle.name
+                                showRenameDialog = true
+                            },
+                            modifier = Modifier.size(32.dp).padding(start = 4.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = "Renombrar",
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+
                         if (microcycle.isActive) {
                             Spacer(modifier = Modifier.width(8.dp))
                             Icon(
@@ -191,12 +219,11 @@ fun SavedMicrocycleCard(
                     }
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Sistema Base: ${microcycle.blueprintType} • ${microcycle.days.size} días",
+                        text = "Sistema Base: ${microcycle.blueprintType}\nLongitud: ${microcycle.days.size}",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                // Flecha indicadora de expansión
                 Icon(
                     imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                     contentDescription = "Expandir",
@@ -207,7 +234,6 @@ fun SavedMicrocycleCard(
             if (isExpanded) {
                 Spacer(modifier = Modifier.height(16.dp))
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                Spacer(modifier = Modifier.height(16.dp))
 
                 if (isExpanded) {
 
@@ -235,7 +261,7 @@ fun SavedMicrocycleCard(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
 
-                                Box(
+                                /*Box(
                                     modifier = Modifier
                                         .size(36.dp)
                                         .background(MaterialTheme.colorScheme.surface,RoundedCornerShape(8.dp)),
@@ -247,9 +273,9 @@ fun SavedMicrocycleCard(
                                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                                         fontWeight = FontWeight.Bold
                                     )
-                                }
+                                }*/
 
-                                Spacer(modifier = Modifier.width(16.dp))
+                                //Spacer(modifier = Modifier.width(16.dp))
 
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
@@ -310,6 +336,34 @@ fun SavedMicrocycleCard(
                 }
             }
         }
+    }
+    if (showRenameDialog) {
+        AlertDialog(
+            onDismissRequest = { showRenameDialog = false },
+            title = { Text("Renombrar Rutina") },
+            text = {
+                OutlinedTextField(
+                    value = newMicrocycleName,
+                    onValueChange = { newMicrocycleName = it },
+                    label = { Text("Nuevo nombre") },
+                    singleLine = true,
+                    shape = RoundedCornerShape(12.dp)
+                )
+            },
+            confirmButton = {
+                Button(onClick = {
+                    onRenameClick(microcycle.microcycleId, newMicrocycleName)
+                    showRenameDialog = false
+                }) {
+                    Text("Guardar")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showRenameDialog = false }) {
+                    Text("Cancelar")
+                }
+            }
+        )
     }
 }
 
@@ -525,7 +579,7 @@ fun MicrocycleDraftContent(
                             .fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Indicador de Día
+                        /*// Indicador de Día
                         Box(
                             modifier = Modifier
                                 .size(40.dp)
@@ -538,9 +592,9 @@ fun MicrocycleDraftContent(
                                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                                 fontWeight = FontWeight.Bold
                             )
-                        }
+                        }*/
 
-                        Spacer(modifier = Modifier.width(16.dp))
+                        //Spacer(modifier = Modifier.width(16.dp))
 
                         // Input del Enfoque
                         OutlinedTextField(

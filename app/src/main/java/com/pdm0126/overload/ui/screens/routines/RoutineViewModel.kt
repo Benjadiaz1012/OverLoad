@@ -52,7 +52,6 @@ class RoutineViewModel(
     }
 
     fun selectBlueprint(blueprint: Blueprint) {
-        // Al seleccionar, precargamos el esqueleto en memoria
         val initialDays = blueprint.defaultDays.map { DraftDay(focus = it) }
         _uiState.update {  state ->
             state.copy(
@@ -65,7 +64,9 @@ class RoutineViewModel(
         val currentDays = _uiState.value.draftDays
         if (currentDays.size < 9) { // Límite funcional definido en la arquitectura
             _uiState.update { state ->
-                state.copy(draftDays = currentDays + DraftDay(focus = focus))
+                state.copy(
+                    draftDays = currentDays + DraftDay(focus = "Día ${currentDays.size + 1}") // Mas genérico
+                )
             }
         }
     }
@@ -129,6 +130,12 @@ class RoutineViewModel(
     fun deleteDayFromSavedMicrocycle(dayId: Long) {
         viewModelScope.launch {
             routineRepository.deleteDay(dayId)
+        }
+    }
+    fun updateMicrocycleName(microcycleId: Long, newName: String) {
+        if (newName.isBlank()) return
+        viewModelScope.launch {
+            routineRepository.updateMicrocycleName(microcycleId, newName.trim())
         }
     }
 

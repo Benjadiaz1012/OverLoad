@@ -40,6 +40,12 @@ class RoutineRepositoryImp(
     override suspend fun deleteDay(dayId: Long) {
         routineDao.deleteDay(dayId)
     }
+    override suspend fun updateDayFocus(dayId: Long, newFocus: String) {
+        routineDao.updateDayFocus(dayId, newFocus)
+    }
+    override suspend fun updateMicrocycleName(microcycleId: Long, newName: String) {
+        routineDao.updateMicrocycleName(microcycleId, newName)
+    }
 
     override suspend fun createMicrocycle(name: String, blueprintType: String, isActive: Boolean): Long {
         val newMicrocycle = MicrocycleEntity(

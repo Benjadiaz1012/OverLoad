@@ -42,6 +42,11 @@ interface RoutineDao {
     @Query("DELETE FROM days_table WHERE dayId = :dayId")
     suspend fun deleteDay(dayId: Long)
 
+    @Query("UPDATE days_table SET focus = :newFocus WHERE dayId = :dayId")
+    suspend fun updateDayFocus(dayId: Long, newFocus: String)
+    @Query("UPDATE microcycles_table SET name = :newName WHERE microcycleId = :microcycleId")
+    suspend fun updateMicrocycleName(microcycleId: Long, newName: String)
+
     // Consultas principales
     // Con @Transaction room lee nuestras clases de relación y arma el arbol completo
     @Transaction
