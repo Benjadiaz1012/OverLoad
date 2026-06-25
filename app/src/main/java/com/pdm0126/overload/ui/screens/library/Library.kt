@@ -1,6 +1,5 @@
 package com.pdm0126.overload.ui.screens.library
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -9,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.material3.SecondaryTabRow
@@ -30,12 +30,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.pdm0126.overload.domain.TechnicalDictionary
 import com.pdm0126.overload.domain.model.Exercise
-import com.pdm0126.overload.ui.components.BookmarkButton
 import com.pdm0126.overload.ui.components.BookmarkedIcon
 import com.pdm0126.overload.ui.components.Error
 import com.pdm0126.overload.ui.components.OverloadScaffold
 import com.pdm0126.overload.ui.components.UnBookmarkedIcon
-import kotlinx.coroutines.launch
 
 @Composable
 fun LibraryScreen(
@@ -191,9 +189,9 @@ fun LibraryScreen(
                             items(state.localExercises, key = { it.id }) { exercise ->
                                 ExerciseCard(
                                     exercise = exercise,
-                                    isBookmarked = true,
+                                    /*isBookmarked = true,*/
                                     isSelectionMode = isSelectionMode,
-                                    onBookmarkClick = {
+                                    /*onBookmarkClick = {
                                         lastWasBookmark.value = true
                                         viewModel.toggleBookmark(exercise)
                                         coroutineScope.launch {
@@ -203,7 +201,7 @@ fun LibraryScreen(
                                                 duration = SnackbarDuration.Short
                                             )
                                         }
-                                    },
+                                    },*/
                                     onExerciseClick = { onExerciseClick(exercise.id) },
                                     onSelectClick = { onExerciseSelect(exercise) }
                                 )
@@ -241,13 +239,13 @@ fun LibraryScreen(
                                 verticalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
                                 items(state.remoteState.results, key = { it.id }) { exercise ->
-                                    val isBookmarked = state.localExercisesIds.contains(exercise.id)
+                                    //val isBookmarked = state.localExercisesIds.contains(exercise.id)
 
                                     ExerciseCard(
                                         exercise = exercise,
-                                        isBookmarked = isBookmarked,
+                                        /*isBookmarked = isBookmarked,*/
                                         isSelectionMode = isSelectionMode,
-                                        onBookmarkClick = {
+                                        /*onBookmarkClick = {
                                             lastWasBookmark.value = isBookmarked
                                             viewModel.toggleBookmark(exercise)
                                             coroutineScope.launch {
@@ -257,12 +255,10 @@ fun LibraryScreen(
                                                     duration = SnackbarDuration.Short
                                                 )
                                             }
-                                        },
+                                        },*/
                                         onExerciseClick = { onExerciseClick(exercise.id) },
                                         onSelectClick = {
-                                            if (!isBookmarked) {
-                                                viewModel.toggleBookmark(exercise)
-                                            }
+                                            viewModel.addExercise(exercise)
                                             onExerciseSelect(exercise)
                                         }
                                     )
@@ -279,16 +275,16 @@ fun LibraryScreen(
 @Composable
 fun ExerciseCard(
     exercise: Exercise,
-    isBookmarked: Boolean,
+    /*isBookmarked: Boolean,*/
     isSelectionMode: Boolean,
-    onBookmarkClick: () -> Unit,
+    /*onBookmarkClick: () -> Unit,*/
     onExerciseClick: () -> Unit,
     onSelectClick: () -> Unit
 ) {
     OutlinedCard(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onExerciseClick() },
+            /*.clickable { onExerciseClick() }*/,
         shape = RoundedCornerShape(8.dp)
     ) {
         Row(
@@ -334,10 +330,18 @@ fun ExerciseCard(
                     )
                 }
             } else {
-                BookmarkButton(
+                IconButton(onClick = onExerciseClick) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                        contentDescription = "Ver más",
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+                /*BookmarkButton(
                     isBookmarked = isBookmarked,
                     onCheckedChange = { onBookmarkClick() }
-                )
+                )*/
             }
         }
     }

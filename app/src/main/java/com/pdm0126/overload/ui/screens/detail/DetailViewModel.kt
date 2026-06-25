@@ -33,8 +33,8 @@ class DetailViewModel(
                 var exercise = exerciseRepository.getExerciseById(exerciseId)
                 val isBookmarked = exercise != null
                 // Si el usuario tocó un ejercicio de la pestaña "Explorar" que aún no guarda,
-                // getExerciseById devolverá null porque no está en Room.
-                // Entonces, lo buscamos en la lista que ya trajimos de internet (caché).
+                // getExerciseById devolverá null porque no está en Room
+                // Entonces, lo buscamos en la lista que ya trajimos de internet (caché)
                 if (exercise == null) {
                     val remoteCache = exerciseRepository.getRemoteExercises("").getOrNull()
                     exercise = remoteCache?.find { it.id == exerciseId }

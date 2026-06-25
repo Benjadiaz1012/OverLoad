@@ -108,14 +108,18 @@ class LibraryViewModel(
         }
     }
 
-    fun toggleBookmark(exercise: Exercise) {
+    // Para el selection mode
+    fun addExercise(exercise: Exercise) {
         viewModelScope.launch {
-            val isBookmarked = uiState.value.localExercisesIds.contains(exercise.id)
+            if (!uiState.value.localExercisesIds.contains(exercise.id)) {
+                exerciseRepository.saveRemoteExerciseToLocal(exercise)
+            }
+            /*val isBookmarked = uiState.value.localExercisesIds.contains(exercise.id)
             if (isBookmarked) {
                 exerciseRepository.deleteLocalExercise(exercise)
             } else {
                 exerciseRepository.saveRemoteExerciseToLocal(exercise)
-            }
+            }*/
         }
     }
 

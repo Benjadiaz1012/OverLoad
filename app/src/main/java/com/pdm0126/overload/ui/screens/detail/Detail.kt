@@ -114,7 +114,7 @@ fun DetailScreen(
 fun ExerciseDetailContent(exercise: Exercise) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
+        //contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item {
@@ -122,8 +122,7 @@ fun ExerciseDetailContent(exercise: Exercise) {
                 imageUrls = exercise.remoteImages,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(1f, true)
-                    .clip(RoundedCornerShape(8.dp))
+                    .aspectRatio(1.1f)
                     .background(MaterialTheme.colorScheme.surfaceVariant)
                     .border(
                         width = 1.dp,
@@ -134,74 +133,75 @@ fun ExerciseDetailContent(exercise: Exercise) {
         }
 
         item {
-            Card(
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-                shape = RoundedCornerShape(16.dp),
-                modifier = Modifier.fillMaxWidth()
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    QuickStat(
-                        icon = Icons.Default.Settings,
-                        label = "Mecánica",
-                        value = exercise.mechanic.replaceFirstChar { it.uppercase() }
-                    )
-                    QuickStat(
-                        icon = Icons.Default.FitnessCenter,
-                        label = "Equipo Principal",
-                        value = exercise.equipment
-                    )
-                }
-            }
-        }
-
-        if (exercise.targetMuscles.isNotEmpty() || exercise.secondaryMuscles.isNotEmpty()) {
-            item {
-                Column {
-                    SectionHeader(
-                        icon = Icons.Default.AccessibilityNew, title = "Músculos implicados"
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        exercise.targetMuscles.forEach { muscle ->
-                            SuggestionChip(
-                                onClick = { },
-                                label = { Text(muscle.replaceFirstChar { it.uppercase() }, fontWeight = FontWeight.Bold) },
-                                colors = SuggestionChipDefaults.suggestionChipColors(
-                                    containerColor = MaterialTheme.colorScheme.primary,
-                                    labelColor = MaterialTheme.colorScheme.onPrimary
-                                ),
-                                border = null
-                            )
-                        }
-                        exercise.secondaryMuscles.forEach { muscle ->
-                            SuggestionChip(
-                                onClick = { },
-                                label = { Text(muscle.replaceFirstChar { it.uppercase() }) }
-                            )
+                        QuickStat(
+                            icon = Icons.Default.Settings,
+                            label = "Mecánica",
+                            value = exercise.mechanic.replaceFirstChar { it.uppercase() }
+                        )
+                        QuickStat(
+                            icon = Icons.Default.FitnessCenter,
+                            label = "Equipo Principal",
+                            value = exercise.equipment
+                        )
+                    }
+                }
+                if (exercise.targetMuscles.isNotEmpty() || exercise.secondaryMuscles.isNotEmpty()) {
+                    Column {
+                        SectionHeader(
+                            icon = Icons.Default.AccessibilityNew, title = "Músculos implicados"
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            exercise.targetMuscles.forEach { muscle ->
+                                SuggestionChip(
+                                    onClick = { },
+                                    label = { Text(muscle.replaceFirstChar { it.uppercase() }, fontWeight = FontWeight.Bold) },
+                                    colors = SuggestionChipDefaults.suggestionChipColors(
+                                        containerColor = MaterialTheme.colorScheme.primary,
+                                        labelColor = MaterialTheme.colorScheme.onPrimary
+                                    ),
+                                    border = null
+                                )
+                            }
+                            exercise.secondaryMuscles.forEach { muscle ->
+                                SuggestionChip(
+                                    onClick = { },
+                                    label = { Text(muscle.replaceFirstChar { it.uppercase() }) }
+                                )
+                            }
                         }
                     }
                 }
-            }
-        }
-        if (exercise.instructions.isNotEmpty()) {
-            item {
-                InstructionsCard(instructions = exercise.instructions)
-            }
-        }
-        else {
-            item {
-                Text(
-                    text = "No hay instrucciones disponibles",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                if (exercise.instructions.isNotEmpty()) {
+                    InstructionsCard(instructions = exercise.instructions)
+                }
+                else {
+                    Text(
+                        text = "No hay instrucciones disponibles",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }
@@ -313,7 +313,7 @@ fun InstructionsCard(instructions: List<String>) {
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
                     Text(
-                        text = if (isExpanded) "Ocultar" else "Leer todos los pasos (${instructions.size})",
+                        text = if (isExpanded) "Ocultar" else "Ver más (${instructions.size - threshold})",
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
