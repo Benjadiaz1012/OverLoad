@@ -23,6 +23,7 @@ import com.pdm0126.overload.ui.routes.Routes
 import com.pdm0126.overload.ui.components.OverloadScaffold
 import com.pdm0126.overload.ui.screens.detail.DetailScreen
 import com.pdm0126.overload.ui.screens.library.LibraryScreen
+import com.pdm0126.overload.ui.screens.routines.BlueprintSelectionScreen
 import com.pdm0126.overload.ui.screens.routines.RoutinesScreen
 import com.pdm0126.overload.ui.screens.routines.editor.DayEditorScreen
 import com.pdm0126.overload.ui.screens.routines.editor.DayEditorViewModel
@@ -65,10 +66,15 @@ fun OverloadApp() {
                 }
                 entry<Routes.Routines> {
                     RoutinesScreen(
-                        onNavigateToDayEditor = { dayId ->
-                            // Cuando el usuario toca un día, abrimos el DayEditor de ese día
-                            backStack.add(Routes.DayEditor(dayId))
-                        }
+                        onNavigateToDayEditor = { dayId -> backStack.add(Routes.DayEditor(dayId)) },
+                        onNavigateToCreateRoutine = { backStack.add(Routes.BlueprintSelection) }
+                    )
+                }
+
+                entry<Routes.BlueprintSelection> {
+                    BlueprintSelectionScreen(
+                        onBackClick = { backStack.removeLastOrNull() },
+                        onRoutineCreated = { backStack.removeLastOrNull() }
                     )
                 }
                 entry<Routes.Library> {

@@ -32,13 +32,13 @@ class RoutineViewModel(
         }
     }
 
-    fun startCreating() {
+    /*fun startCreating() {
         _uiState.update { it.copy(isCreating = true) }
     }
 
     fun cancelCreating() {
         _uiState.update { it.copy(isCreating = false) }
-    }
+    }*/
 
     fun createMicrocycleFromBlueprint(blueprint: Blueprint) {
         viewModelScope.launch {
@@ -60,9 +60,6 @@ class RoutineViewModel(
                     focus = dayName
                 )
             }
-
-            // Volvemos a la lista automáticamente
-            cancelCreating()
         }
     }
 

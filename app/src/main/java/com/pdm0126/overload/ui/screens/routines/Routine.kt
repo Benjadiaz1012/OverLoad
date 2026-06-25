@@ -36,66 +36,21 @@ private enum class WizardStep { LIST, BLUEPRINTS }
 @Composable
 fun RoutinesScreen(
     viewModel: RoutineViewModel = viewModel(factory = RoutineViewModel.Factory),
-    onNavigateToDayEditor: (Long) -> Unit
+    onNavigateToDayEditor: (Long) -> Unit,
+    onNavigateToCreateRoutine: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-
-    var blueprintToConfirm by rememberSaveable { mutableStateOf<Blueprint?>(null) }
-
-    val currentStep = if (!state.isCreating) WizardStep.LIST else WizardStep.BLUEPRINTS
-
-    AnimatedContent(
-        targetState = currentStep,
-        transitionSpec = {
-            fadeIn(animationSpec = tween(300)) togetherWith fadeOut(animationSpec = tween(300))
-        },
-        label = "wizard_transition"
-    ) { step ->
-        when (step) {
-            WizardStep.LIST -> {
-                RoutinesListContent(
-                    state = state,
-                    onStartCreating = viewModel::startCreating,
-                    onDayClick = onNavigateToDayEditor,
-                    onAddDayClick = viewModel::addDayToSavedMicrocycle,
-                    onDeleteDayClick = viewModel::deleteDayFromSavedMicrocycle,
-                    onRenameMicrocycle = viewModel::updateMicrocycleName,
-                    onSetActiveClick = viewModel::setActiveMicrocycle,
-                    onDeleteMicrocycleClick = viewModel::deleteMicrocycle
-                )
-            }
-            WizardStep.BLUEPRINTS -> {
-                BlueprintSelectionContent(
-                    onBackClick = viewModel::cancelCreating,
-                    onBlueprintSelected = { blueprint ->
-                        blueprintToConfirm = blueprint
-                    }
-                )
-            }
-        }
-    }
-
-    if (blueprintToConfirm != null) {
-        AlertDialog(
-            onDismissRequest = { blueprintToConfirm = null },
-            title = { Text("Crear Nueva Rutina") },
-            text = { Text("¿Deseas crear un nuevo microciclo basado en el sistema ${blueprintToConfirm!!.name}?") },
-            confirmButton = {
-                Button(onClick = {
-                    viewModel.createMicrocycleFromBlueprint(blueprintToConfirm!!)
-                    blueprintToConfirm = null
-                }) {
-                    Text("Crear")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { blueprintToConfirm = null }) {
-                    Text("Cancelar")
-                }
-            }
-        )
-    }
+    RoutinesListContent(
+        state = state,
+        onStartCreating = onNavigateToCreateRoutine,
+        onDayClick = onNavigateToDayEditor,
+        onAddDayClick = viewModel::addDayToSavedMicrocycle,
+        onDeleteDayClick = viewModel::deleteDayFromSavedMicrocycle,
+        onRenameMicrocycle = viewModel::updateMicrocycleName,
+        onSetActiveClick = viewModel::setActiveMicrocycle,
+        onDeleteMicrocycleClick = viewModel::deleteMicrocycle
+    )
 }
 
 @Composable
@@ -433,10 +388,13 @@ fun SavedMicrocycleCard(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun BlueprintSelectionContent(
+fun BlueprintSelectionScreen(
+    viewModel: RoutineViewModel = viewModel(factory = RoutineViewModel.Factory),
     onBackClick: () -> Unit,
-    onBlueprintSelected: (Blueprint) -> Unit
+    onRoutineCreated: () -> Unit
 ) {
+    var blueprintToConfirm by rememberSaveable { mutableStateOf<Blueprint?>(null) }
+
     OverloadScaffold(
         title = "Elige un Sistema",
         showBackButton = true,
@@ -457,7 +415,7 @@ fun BlueprintSelectionContent(
 
             items(BlueprintCatalog.systems) { blueprint ->
                 Card(
-                    onClick = { onBlueprintSelected(blueprint) },
+                    onClick = { blueprintToConfirm = blueprint },
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                     shape = RoundedCornerShape(16.dp),
                     modifier = Modifier.fillMaxWidth()
@@ -490,7 +448,8 @@ fun BlueprintSelectionContent(
                                 onClick = {},
                                 label = { Text(blueprint.level.label) },
                                 leadingIcon = {
-                                    Icon(imageVector = Icons.Default.SignalCellularAlt,
+                                    Icon(
+                                        imageVector = Icons.Default.SignalCellularAlt,
                                         contentDescription = null,
                                         modifier = Modifier.size(16.dp)
                                     )
@@ -524,7 +483,9 @@ fun BlueprintSelectionContent(
                                 .padding(12.dp),
                             horizontalArrangement = Arrangement.SpaceAround
                         ) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
                                 Text(
                                     text = "Longitud",
                                     style = MaterialTheme.typography.labelMedium,
@@ -536,9 +497,12 @@ fun BlueprintSelectionContent(
                                     fontWeight = FontWeight.Bold
                                 )
                             }
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
                                 Text(
-                                    text = "Frecuencia", style = MaterialTheme.typography.labelMedium,
+                                    text = "Frecuencia",
+                                    style = MaterialTheme.typography.labelMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                                 Text(
@@ -552,6 +516,27 @@ fun BlueprintSelectionContent(
                 }
             }
         }
+    }
+    if (blueprintToConfirm != null) {
+        AlertDialog(
+            onDismissRequest = { blueprintToConfirm = null },
+            title = { Text("Crear Nueva Rutina") },
+            text = { Text("¿Deseas crear un nuevo microciclo basado en el sistema ${blueprintToConfirm!!.name}?") },
+            confirmButton = {
+                Button(onClick = {
+                    viewModel.createMicrocycleFromBlueprint(blueprintToConfirm!!)
+                    blueprintToConfirm = null
+                    onRoutineCreated()
+                }) {
+                    Text("Crear")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { blueprintToConfirm = null }) {
+                    Text("Cancelar")
+                }
+            }
+        )
     }
 }
 

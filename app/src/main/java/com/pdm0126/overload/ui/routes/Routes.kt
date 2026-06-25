@@ -11,6 +11,8 @@ sealed class Routes : NavKey {
     @Serializable
     data object Library : Routes()
     @Serializable
+    data object BlueprintSelection : Routes()
+    @Serializable
     data class Detail(val exerciseId: String) : Routes()
 
     @Serializable
