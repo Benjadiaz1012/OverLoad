@@ -9,9 +9,12 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.pdm0126.overload.OverloadApplication
 import com.pdm0126.overload.domain.repository.RoutineRepository
 import com.pdm0126.overload.domain.repository.WorkoutRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class DashboardViewModel(
     private val routineRepository: RoutineRepository,
     private val workoutRepository: WorkoutRepository
@@ -21,27 +24,67 @@ class DashboardViewModel(
     val uiState: StateFlow<DashboardUiState> = _uiState.asStateFlow()
 
     init {
-        // Observamos combinadamente la rutina activa Y la sesión activa
         viewModelScope.launch {
+            // 1. Observamos la rutina y la sesión al mismo tiempo
             combine(
                 routineRepository.getActiveMicrocycle(),
                 workoutRepository.getActiveSession()
             ) { microcycle, session ->
-                DashboardUiState(
-                    isLoading = false,
-                    activeMicrocycle = microcycle,
-                    activeSession = session
-                )
-            }.collect { newState ->
-                _uiState.value = newState
+                Pair(microcycle, session)
             }
+                // 2. Si hay sesión, encadenamos la búsqueda de los ejercicios y el progreso en vivo
+                .flatMapLatest { (microcycle, session) ->
+                    if (session != null) {
+                        combine(
+                            routineRepository.getRoutineDay(session.dayId),
+                            workoutRepository.getSetsForSession(session.sessionId)
+                        ) { day, sets ->
+                            DashboardUiState(
+                                isLoading = false,
+                                activeMicrocycle = microcycle,
+                                activeSession = session,
+                                activeDay = day,
+                                sessionSets = sets
+                            )
+                        }
+                    } else {
+                        // Si no hay sesión, devolvemos el estado base de forma segura
+                        flowOf(
+                            DashboardUiState(
+                                isLoading = false,
+                                activeMicrocycle = microcycle,
+                                activeSession = null,
+                                activeDay = null,
+                                sessionSets = emptyList()
+                            )
+                        )
+                    }
+                }
+                // 3. Emitimos el estado consolidado a la UI
+                .collect { newState ->
+                    _uiState.value = newState
+                }
         }
     }
 
     fun startWorkout(dayId: Long) {
+        viewModelScope.launch { workoutRepository.startSession(dayId) }
+    }
+
+    fun endWorkout() {
+        val sessionId = _uiState.value.activeSession?.sessionId ?: return
+        viewModelScope.launch { workoutRepository.endSession(sessionId) }
+    }
+
+    fun logSet(slotId: Long, exerciseId: String, setNumber: Int, weightKg: Float, reps: Int, rir: Int?, isRirEnabled: Boolean) {
+        val sessionId = _uiState.value.activeSession?.sessionId ?: return
         viewModelScope.launch {
-            workoutRepository.startSession(dayId)
+            workoutRepository.logSet(sessionId, slotId, exerciseId, setNumber, weightKg, reps, rir, isRirEnabled)
         }
+    }
+
+    fun deleteSet(setId: Long) {
+        viewModelScope.launch { workoutRepository.deleteSet(setId) }
     }
 
     companion object {
