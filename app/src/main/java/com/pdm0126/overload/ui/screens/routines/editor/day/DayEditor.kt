@@ -63,13 +63,13 @@ fun DayEditorScreen(
         },
         floatingActionButton = {
             if (state.day != null && state.day!!.slots.size < 12) {
-                ExtendedFloatingActionButton(
+                FloatingActionButton(
                     onClick = onNavigateToLibrarySelection,
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary,
-                    icon = { Icon(imageVector = Icons.Default.Add, contentDescription = null) },
-                    text = { Text("Agregar Ejercicio") }
-                )
+                ) {
+                    Icon(imageVector = Icons.Default.Add, contentDescription = null)
+                }
             }
         }
     ) { paddingValues ->
@@ -89,21 +89,19 @@ fun DayEditorScreen(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     itemsIndexed(state.day!!.slots, key = { _, slot -> slot.slotId }) { index, slot ->
-                        // Estado individual para el menú desplegable de este elemento
                         var expandedDropdown by remember { mutableStateOf(false) }
 
                         Column(modifier = Modifier.fillMaxWidth()) {
                             Row(
                                 modifier = Modifier.padding(vertical = 12.dp).fillMaxWidth(),
-                                verticalAlignment = Alignment.Top // ALINEACIÓN SUPERIOR (Maneja textos largos)
+                                verticalAlignment = Alignment.Top
                             ) {
-                                // 1. ZONA IZQUIERDA CLICKABLE (Navega al detalle)
                                 Row(
                                     modifier = Modifier
                                         .weight(1f)
                                         .clip(RoundedCornerShape(8.dp))
                                         .clickable { onNavigateToExerciseDetail(slot.exercise.id) }
-                                        .padding(end = 12.dp, top = 4.dp, bottom = 4.dp) // Pequeño padding para el ripple
+                                        .padding(end = 12.dp, top = 4.dp, bottom = 4.dp)
                                 ) {
                                     Text(
                                         text = "${index + 1}",
@@ -119,7 +117,6 @@ fun DayEditorScreen(
                                             style = MaterialTheme.typography.titleMedium,
                                             fontWeight = FontWeight.Bold,
                                             color = MaterialTheme.colorScheme.onSurface
-                                            // maxLines y overflow ELIMINADOS
                                         )
                                         Spacer(modifier = Modifier.height(2.dp))
                                         Text(

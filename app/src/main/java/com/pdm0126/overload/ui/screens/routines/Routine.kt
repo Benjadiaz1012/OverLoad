@@ -51,13 +51,13 @@ fun RoutinesListContent(
     OverloadScaffold(
         title = "Mis Rutinas",
         floatingActionButton = {
-            ExtendedFloatingActionButton(
+            FloatingActionButton(
                 onClick = onStartCreating,
-                icon = { Icon(Icons.Default.Add, contentDescription = "Nueva Rutina") },
-                text = { Text("Crear") },
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
-            )
+            ) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = "Nueva Rutina")
+            }
         }
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
@@ -74,7 +74,7 @@ fun RoutinesListContent(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "No tienes rutinas.\nCrea tu primer microciclo",
+                        text = "No tienes rutinas",
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -255,7 +255,7 @@ fun BlueprintSelectionScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text(
-                                    text = "Longitud",
+                                    text = "Duración",
                                     style = MaterialTheme.typography.labelMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )

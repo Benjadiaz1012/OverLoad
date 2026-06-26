@@ -32,14 +32,12 @@ fun DashboardScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    // SOLUCIÓN AL CRASHEO: Tomamos una "fotografía" inmutable del estado.
-    // Esto garantiza que si la base de datos se actualiza ultrarrápido al "Finalizar",
-    // estas variables locales no se volverán nulas a la mitad del renderizado de la UI.
     val isLoading = uiState.isLoading
     val activeMicrocycle = uiState.activeMicrocycle
     val activeSession = uiState.activeSession
     val activeDay = uiState.activeDay
     val sessionSets = uiState.sessionSets
+    val lastSetsMap = uiState.lastSets
 
     var showEndWorkoutDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -49,7 +47,10 @@ fun DashboardScreen(
         actions = {
             if (activeSession != null) {
                 IconButton(onClick = { showEndWorkoutDialog = true }) {
-                    Icon(Icons.Default.StopCircle, contentDescription = "Finalizar", tint = MaterialTheme.colorScheme.error)
+                    Icon(
+                        imageVector = Icons.Default.StopCircle,
+                        contentDescription = "Finalizar",
+                        tint = MaterialTheme.colorScheme.primary)
                 }
             }
         }
@@ -60,21 +61,21 @@ fun DashboardScreen(
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
 
-                // --- ESTADO 3: ENTRENAMIENTO EN PROGRESO (LA BESTIA) ---
-                // Al validar que no sean nulos, el compilador hace un 'Smart Cast' seguro
                 activeSession != null && activeDay != null -> {
                     LazyColumn(
                         contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 120.dp),
                         modifier = Modifier.fillMaxSize()
                     ) {
                         itemsIndexed(activeDay.slots, key = { _, slot -> slot.slotId }) { index, slot ->
-                            // Filtramos solo las series que le pertenecen a este ejercicio
-                            val slotSets = sessionSets.filter { it.slotId == slot.slotId }
 
-                            ActiveSlotCard(
+                            val slotSets = sessionSets.filter { it.slotId == slot.slotId }
+                            val historicalSets = lastSetsMap[slot.slotId] ?: emptyList()
+
+                            ActiveSlotItem(
                                 index = index + 1,
                                 slot = slot,
                                 loggedSets = slotSets,
+                                lastSets = historicalSets,
                                 onLogSet = viewModel::logSet,
                                 onDeleteSet = viewModel::deleteSet
                             )
@@ -84,53 +85,61 @@ fun DashboardScreen(
                             Button(
                                 onClick = { showEndWorkoutDialog = true },
                                 modifier = Modifier.fillMaxWidth().padding(top = 24.dp),
-                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                                 shape = RoundedCornerShape(12.dp)
                             ) {
-                                Icon(Icons.Default.Stop, contentDescription = null)
+                                Icon(
+                                    imageVector = Icons.Default.Stop,
+                                    contentDescription = null
+                                )
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Text("Finalizar Entrenamiento", fontWeight = FontWeight.Bold)
+                                Text(
+                                    text = "Finalizar Entrenamiento",
+                                    fontWeight = FontWeight.Bold
+                                )
                             }
                         }
                     }
                 }
 
-                // --- ESTADO 1: NO HAY RUTINA ---
+
                 activeMicrocycle == null -> {
                     Column(
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .padding(32.dp),
+                        modifier = Modifier.align(Alignment.Center).padding(32.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "No tienes ninguna rutina seleccionada.",
+                            text = "Sin Rutinas",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "Ve a la pestaña 'Mis Rutinas', crea un microciclo y presiona el botón 'Activar' para comenzar a entrenar.",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center
                         )
                     }
                 }
 
-                // --- ESTADO 2: LOBBY ---
                 else -> {
-                    // Safe call natural porque cayó en el else (significa que activeMicrocycle no es nulo)
                     LazyColumn(
                         contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 100.dp),
                         modifier = Modifier.fillMaxSize()
                     ) {
                         item {
                             Column(modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)) {
-                                Text("Plan actual", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
-                                Text(activeMicrocycle.name, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+                                Text(
+                                    text = "Plan actual",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                                Text(
+                                    text = activeMicrocycle.name,
+                                    style = MaterialTheme.typography.headlineMedium,
+                                    fontWeight = FontWeight.Bold
+                                )
                                 Spacer(modifier = Modifier.height(8.dp))
-                                Text("¿Qué toca entrenar hoy?", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(
+                                    text = "¿Qué toca entrenar hoy?",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
                             }
                         }
 
@@ -148,21 +157,36 @@ fun DashboardScreen(
                                         text = "${index + 1}",
                                         style = MaterialTheme.typography.titleMedium,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
-                                        fontWeight = FontWeight.Bold,
-                                        modifier = Modifier.width(28.dp)
+                                        fontWeight = FontWeight.Bold, modifier = Modifier.width(28.dp)
                                     )
-                                    Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
-                                        Text(day.focus, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                    Column(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .padding(end = 12.dp)
+                                    ) {
+                                        Text(
+                                            text = day.focus,
+                                            style = MaterialTheme.typography.titleMedium,
+                                            fontWeight = FontWeight.Bold,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
                                         Spacer(modifier = Modifier.height(2.dp))
-                                        Text("${day.slots.size} ejercicios programados", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                        Text(
+                                            text = "${day.slots.size} ejercicios programados",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
                                     }
                                     Box(
                                         modifier = Modifier
                                             .size(40.dp)
-                                            .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(12.dp)),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Icon(Icons.Default.PlayArrow, contentDescription = "Iniciar", tint = MaterialTheme.colorScheme.onPrimaryContainer)
+                                            .background(MaterialTheme.colorScheme.primaryContainer,RoundedCornerShape(12.dp)), contentAlignment = Alignment.Center) {
+                                        Icon(
+                                            imageVector = Icons.Default.PlayArrow,
+                                            contentDescription = "Iniciar",
+                                            tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                        )
                                     }
                                 }
                                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
@@ -173,32 +197,28 @@ fun DashboardScreen(
             }
         }
 
-        // --- DIÁLOGO FINALIZAR ---
         if (showEndWorkoutDialog) {
             AlertDialog(
                 onDismissRequest = { showEndWorkoutDialog = false },
                 title = { Text("Finalizar Sesión") },
-                text = { Text("¿Estás seguro de que deseas dar por terminado este entrenamiento? Los datos registrados se guardarán en tu historial.") },
+                text = { Text("¿Estás seguro de que deseas dar por terminado este entrenamiento? Los datos registrados se guardarán en tu historial") },
                 confirmButton = {
-                    Button(onClick = {
-                        viewModel.endWorkout()
-                        showEndWorkoutDialog = false
-                    }) { Text("Finalizar") }
+                    Button(onClick = { viewModel.endWorkout(); showEndWorkoutDialog = false }) { Text("Finalizar") }
                 },
                 dismissButton = {
-                    TextButton(onClick = { showEndWorkoutDialog = false }) { Text("Continuar Entrenando") }
+                    TextButton(onClick = { showEndWorkoutDialog = false }) { Text("Cancelar") }
                 }
             )
         }
     }
 }
 
-// --- COMPONENTE: TARJETA DE EJERCICIO EN VIVO ---
 @Composable
-fun ActiveSlotCard(
+fun ActiveSlotItem(
     index: Int,
     slot: RoutineSlot,
     loggedSets: List<WorkoutSet>,
+    lastSets: List<WorkoutSet>,
     onLogSet: (Long, String, Int, Float, Int, Int?, Boolean) -> Unit,
     onDeleteSet: (Long) -> Unit
 ) {
@@ -212,146 +232,198 @@ fun ActiveSlotCard(
     val nextSetNumber = (loggedSets.maxOfOrNull { it.setNumber } ?: 0) + 1
     val isCompleted = loggedSets.size >= slot.targetSets
 
-    OutlinedCard(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-        colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surface),
-        border = CardDefaults.outlinedCardBorder(true)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            // CABECERA
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(bottom = 12.dp)) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp),
+            verticalAlignment = Alignment.Top
+        ) {
+            Text(
+                text = "$index",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.width(28.dp)
+            )
+
+            Column(modifier = Modifier.weight(1f)) {
+
                 Text(
-                    text = "$index.",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.primary,
+                    text = slot.exercise.name,
+                    style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.width(32.dp)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(text = slot.exercise.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                    Text(
-                        text = "Objetivo: ${slot.targetSets} Series",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = "Objetivo: ${slot.targetSets} Series",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
 
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // SERIES YA REGISTRADAS
-            if (loggedSets.isNotEmpty()) {
-                loggedSets.forEach { set ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = "${set.setNumber}",
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.width(24.dp)
-                        )
-                        Text("${set.weightKg} kg", modifier = Modifier.weight(1f), textAlign = TextAlign.Center, fontWeight = FontWeight.Bold)
-                        Text("${set.reps} reps", modifier = Modifier.weight(1f), textAlign = TextAlign.Center, fontWeight = FontWeight.Bold)
-
-                        Text(
-                            text = if (set.isRirEnabled) "RIR ${set.rir}" else "-",
-                            modifier = Modifier.weight(1f),
-                            textAlign = TextAlign.Center,
-                            color = MaterialTheme.colorScheme.tertiary,
-                            fontWeight = FontWeight.Bold
-                        )
-
-                        IconButton(onClick = { onDeleteSet(set.setId) }, modifier = Modifier.size(28.dp)) {
-                            Icon(Icons.Default.Close, contentDescription = "Borrar Serie", tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(16.dp))
+                if (lastSets.isNotEmpty() && !isCompleted) {
+                    val refSet = lastSets.find { it.setNumber == nextSetNumber } ?: lastSets.lastOrNull()
+                    if (refSet != null) {
+                        val rirText = if (refSet.isRirEnabled) "RIR ${refSet.rir}" else "Fijo"
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.History,
+                                contentDescription = null,
+                                modifier = Modifier.size(14.dp),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "Objetivo a superar: ${refSet.weightKg}kg × ${refSet.reps} reps · $rirText",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold
+                            )
                         }
                     }
                 }
-                Spacer(modifier = Modifier.height(8.dp))
-            }
 
-            // LÓGICA CONDICIONAL DE BLOQUEO
-            if (isCompleted) {
-                // Banner de éxito
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.tertiaryContainer, RoundedCornerShape(8.dp))
-                        .padding(12.dp),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(Icons.Default.CheckCircle, contentDescription = null, tint = MaterialTheme.colorScheme.onTertiaryContainer)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("¡Ejercicio Completado!", color = MaterialTheme.colorScheme.onTertiaryContainer, fontWeight = FontWeight.Bold)
-                }
-            } else {
-                // INPUT PARA LA SIGUIENTE SERIE
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    OutlinedTextField(
-                        value = weightInput,
-                        onValueChange = { weightInput = it },
-                        label = { Text("Kg") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        modifier = Modifier.weight(1f),
-                        singleLine = true
-                    )
+                Spacer(modifier = Modifier.height(12.dp))
 
-                    OutlinedTextField(
-                        value = repsInput,
-                        onValueChange = { repsInput = it },
-                        label = { Text("Reps") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.weight(1f),
-                        singleLine = true
-                    )
-
-                    Box(modifier = Modifier.weight(1f)) {
-                        OutlinedButton(
-                            onClick = { showRirMenu = true },
-                            contentPadding = PaddingValues(0.dp),
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(4.dp)
+                if (loggedSets.isNotEmpty()) {
+                    loggedSets.forEach { set ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text(if (isRirEnabled) "RIR $rirInput" else "Fijo", maxLines = 1, style = MaterialTheme.typography.labelSmall)
-                        }
-                        DropdownMenu(expanded = showRirMenu, onDismissRequest = { showRirMenu = false }) {
-                            DropdownMenuItem(
-                                text = { Text("Fijo (Sin RIR)") },
-                                onClick = { isRirEnabled = false; showRirMenu = false }
+                            Text(
+                                text = "${set.setNumber}",
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.width(24.dp)
                             )
-                            (0..5).forEach { rirVal ->
-                                DropdownMenuItem(
-                                    text = { Text("RIR $rirVal") },
-                                    onClick = { isRirEnabled = true; rirInput = rirVal; showRirMenu = false }
+                            Text(
+                                text = "${set.weightKg} kg",
+                                modifier = Modifier.weight(1f),
+                                textAlign = TextAlign.Center,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = "${set.reps} reps",
+                                modifier = Modifier.weight(1f),
+                                textAlign = TextAlign.Center,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = if (set.isRirEnabled) "RIR ${set.rir}" else "-",
+                                modifier = Modifier.weight(1f),
+                                textAlign = TextAlign.Center,
+                                color = MaterialTheme.colorScheme.tertiary,
+                                fontWeight = FontWeight.Bold
+                            )
+
+                            IconButton(
+                                onClick = { onDeleteSet(set.setId) },
+                                modifier = Modifier.size(28.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "Borrar Serie",
+                                    tint = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier.size(16.dp)
                                 )
                             }
                         }
                     }
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
 
-                    IconButton(
-                        onClick = {
-                            val w = weightInput.toFloatOrNull()
-                            val r = repsInput.toIntOrNull()
-                            if (w != null && r != null) {
-                                val finalRir = if (isRirEnabled) rirInput else null
-                                onLogSet(slot.slotId, slot.exercise.id, nextSetNumber, w, r, finalRir, isRirEnabled)
-                                repsInput = ""
-                            }
-                        },
-                        modifier = Modifier.background(MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp))
+                if (isCompleted) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp))
+                            .padding(12.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(Icons.Default.Check, contentDescription = "Guardar", tint = MaterialTheme.colorScheme.onPrimary)
+                        Icon(
+                            imageVector = Icons.Default.CheckCircle,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onTertiaryContainer)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Ejercicio Completado",
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                } else {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        OutlinedTextField(
+                            value = weightInput,
+                            onValueChange = { weightInput = it },
+                            label = { Text("Kg") },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                            modifier = Modifier.weight(1f),
+                            singleLine = true
+                        )
+
+                        OutlinedTextField(
+                            value = repsInput,
+                            onValueChange = { repsInput = it },
+                            label = { Text("Reps") },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            modifier = Modifier.weight(1f),
+                            singleLine = true
+                        )
+
+                        Box(modifier = Modifier.weight(1f)) {
+                            OutlinedButton(
+                                onClick = { showRirMenu = true },
+                                contentPadding = PaddingValues(0.dp),
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(4.dp)
+                            ) {
+                                Text(
+                                    text = if (isRirEnabled) "RIR $rirInput" else "Fijo",
+                                    maxLines = 1,
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
+                            DropdownMenu(expanded = showRirMenu, onDismissRequest = { showRirMenu = false }) {
+                                DropdownMenuItem(text = { Text("Fijo (Sin RIR)") }, onClick = { isRirEnabled = false; showRirMenu = false })
+                                (0..5).forEach { rirVal ->
+                                    DropdownMenuItem(text = { Text("RIR $rirVal") }, onClick = { isRirEnabled = true; rirInput = rirVal; showRirMenu = false })
+                                }
+                            }
+                        }
+
+                        IconButton(
+                            onClick = {
+                                val weight = weightInput.toFloatOrNull()
+                                val rir = repsInput.toIntOrNull()
+                                if (weight != null && rir != null) {
+                                    val finalRir = if (isRirEnabled) rirInput else null
+                                    onLogSet(slot.slotId, slot.exercise.id, nextSetNumber, weight, rir, finalRir, isRirEnabled)
+                                    repsInput = ""
+                                }
+                            },
+                            modifier = Modifier
+                                .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp))
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Check,
+                                contentDescription = "Guardar",
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
                     }
                 }
             }
         }
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
     }
 }

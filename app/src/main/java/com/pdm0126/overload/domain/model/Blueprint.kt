@@ -20,21 +20,17 @@ data class Blueprint(
     val description: String,
     val defaultDays: List<String>,
 
-    // Cambiamos Strings por valores numéricos que la lógica de la app pueda entender
-    val minMicrocycleDays: Int, // Mínimo recomendado para un microciclo
-    val maxMicrocycleDays: Int, // Máximo recomendado para un microciclo
-    val maxFrequencyPerMuscle: Int, // Máxima frecuencia considerando el máximo recomendado de días por microciclo
+    val minMicrocycleDays: Int,
+    val maxMicrocycleDays: Int,
+    val maxFrequencyPerMuscle: Int,
 
-    // Uso de Enums
     val level: ExperienceLevel,
     val goal: TrainingGoal,
 
-    // NUEVO: Arrays para guiar al usuario visualmente en la UI
     val tags: List<String> = emptyList(),
     val pros: List<String> = emptyList(),
     val considerations: List<String> = emptyList()
 ) {
-    // Helper para la UI: devuelve un texto formateado si lo necesitas pintar directo
     val formattedMicrocycle: String
         get() = if (minMicrocycleDays == maxMicrocycleDays) "$minMicrocycleDays días"
         else "De $minMicrocycleDays a $maxMicrocycleDays días"
@@ -70,7 +66,7 @@ object BlueprintCatalog {
             name = "Arnold Split",
             description = "La división legendaria de la era dorada. Agrupa músculos antagonistas (pecho y espalda juntos) para un bombeo masivo, dejando los brazos y hombros para su propio día.",
             defaultDays = listOf("Pecho & Espalda", "Hombros & Brazos", "Piernas"),
-            minMicrocycleDays = 6,
+            minMicrocycleDays = 3,
             maxMicrocycleDays = 6,
             maxFrequencyPerMuscle = 2,
             level = ExperienceLevel.ADVANCED,
@@ -91,7 +87,7 @@ object BlueprintCatalog {
             name = "Torso / Pierna",
             description = "Alterna el cuerpo en dos mitades. Es matemáticamente una de las rutinas más eficientes para el atleta natural que busca ganar fuerza e hipertrofia.",
             defaultDays = listOf("Torso Fuerza", "Pierna Fuerza", "Torso Hipertrofia", "Pierna Hipertrofia"),
-            minMicrocycleDays = 4,
+            minMicrocycleDays = 2,
             maxMicrocycleDays = 4,
             maxFrequencyPerMuscle = 2,
             level = ExperienceLevel.INTERMEDIATE,
