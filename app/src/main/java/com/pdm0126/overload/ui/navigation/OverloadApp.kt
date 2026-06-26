@@ -27,6 +27,7 @@ import com.pdm0126.overload.ui.screens.routines.BlueprintSelectionScreen
 import com.pdm0126.overload.ui.screens.routines.RoutinesScreen
 import com.pdm0126.overload.ui.screens.routines.editor.DayEditorScreen
 import com.pdm0126.overload.ui.screens.routines.editor.DayEditorViewModel
+import com.pdm0126.overload.ui.screens.routines.editor.RoutineEditorScreen
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
@@ -66,8 +67,16 @@ fun OverloadApp() {
                 }
                 entry<Routes.Routines> {
                     RoutinesScreen(
-                        onNavigateToDayEditor = { dayId -> backStack.add(Routes.DayEditor(dayId)) },
-                        onNavigateToCreateRoutine = { backStack.add(Routes.BlueprintSelection) }
+                        onNavigateToCreateRoutine = { backStack.add(Routes.BlueprintSelection) },
+                        onNavigateToRoutineEditor = { microcycleId -> backStack.add(Routes.RoutineEditor(microcycleId)) }
+                    )
+                }
+
+                entry<Routes.RoutineEditor> { entry ->
+                    RoutineEditorScreen(
+                        microcycleId = entry.microcycleId,
+                        onBackClick = { backStack.removeLastOrNull() },
+                        onNavigateToDayEditor = { dayId -> backStack.add(Routes.DayEditor(dayId)) }
                     )
                 }
 

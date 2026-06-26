@@ -1,5 +1,6 @@
 package com.pdm0126.overload.ui.screens.library
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -189,19 +190,7 @@ fun LibraryScreen(
                             items(state.localExercises, key = { it.id }) { exercise ->
                                 ExerciseCard(
                                     exercise = exercise,
-                                    /*isBookmarked = true,*/
                                     isSelectionMode = isSelectionMode,
-                                    /*onBookmarkClick = {
-                                        lastWasBookmark.value = true
-                                        viewModel.toggleBookmark(exercise)
-                                        coroutineScope.launch {
-                                            snackbarHostState.currentSnackbarData?.dismiss()
-                                            snackbarHostState.showSnackbar(
-                                                message = "Eliminado de tu biblioteca",
-                                                duration = SnackbarDuration.Short
-                                            )
-                                        }
-                                    },*/
                                     onExerciseClick = { onExerciseClick(exercise.id) },
                                     onSelectClick = { onExerciseSelect(exercise) }
                                 )
@@ -243,19 +232,7 @@ fun LibraryScreen(
 
                                     ExerciseCard(
                                         exercise = exercise,
-                                        /*isBookmarked = isBookmarked,*/
                                         isSelectionMode = isSelectionMode,
-                                        /*onBookmarkClick = {
-                                            lastWasBookmark.value = isBookmarked
-                                            viewModel.toggleBookmark(exercise)
-                                            coroutineScope.launch {
-                                                snackbarHostState.currentSnackbarData?.dismiss()
-                                                snackbarHostState.showSnackbar(
-                                                    message = if (isBookmarked) "Eliminado de tu biblioteca" else "Agregado a tu biblioteca",
-                                                    duration = SnackbarDuration.Short
-                                                )
-                                            }
-                                        },*/
                                         onExerciseClick = { onExerciseClick(exercise.id) },
                                         onSelectClick = {
                                             viewModel.addExercise(exercise)
@@ -275,16 +252,14 @@ fun LibraryScreen(
 @Composable
 fun ExerciseCard(
     exercise: Exercise,
-    /*isBookmarked: Boolean,*/
     isSelectionMode: Boolean,
-    /*onBookmarkClick: () -> Unit,*/
     onExerciseClick: () -> Unit,
     onSelectClick: () -> Unit
 ) {
     OutlinedCard(
         modifier = Modifier
             .fillMaxWidth()
-            /*.clickable { onExerciseClick() }*/,
+            .clickable { if (isSelectionMode) onExerciseClick() },
         shape = RoundedCornerShape(8.dp)
     ) {
         Row(

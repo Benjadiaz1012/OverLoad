@@ -1,11 +1,6 @@
 package com.pdm0126.overload.ui.screens.routines
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -31,25 +27,19 @@ import com.pdm0126.overload.domain.model.BlueprintCatalog
 import com.pdm0126.overload.domain.model.RoutineMicrocycle
 import com.pdm0126.overload.ui.components.OverloadScaffold
 
-private enum class WizardStep { LIST, BLUEPRINTS }
 
 @Composable
 fun RoutinesScreen(
     viewModel: RoutineViewModel = viewModel(factory = RoutineViewModel.Factory),
-    onNavigateToDayEditor: (Long) -> Unit,
-    onNavigateToCreateRoutine: () -> Unit
+    onNavigateToCreateRoutine: () -> Unit,
+    onNavigateToRoutineEditor: (Long) -> Unit
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     RoutinesListContent(
         state = state,
         onStartCreating = onNavigateToCreateRoutine,
-        onDayClick = onNavigateToDayEditor,
-        onAddDayClick = viewModel::addDayToSavedMicrocycle,
-        onDeleteDayClick = viewModel::deleteDayFromSavedMicrocycle,
-        onRenameMicrocycle = viewModel::updateMicrocycleName,
-        onSetActiveClick = viewModel::setActiveMicrocycle,
-        onDeleteMicrocycleClick = viewModel::deleteMicrocycle
+        onNavigateToRoutineEditor = onNavigateToRoutineEditor
     )
 }
 
@@ -57,12 +47,7 @@ fun RoutinesScreen(
 fun RoutinesListContent(
     state: RoutinesUiState,
     onStartCreating: () -> Unit,
-    onDayClick: (Long) -> Unit,
-    onAddDayClick: (Long) -> Unit,
-    onDeleteDayClick: (Long) -> Unit,
-    onRenameMicrocycle: (Long, String) -> Unit,
-    onSetActiveClick: (Long) -> Unit,
-    onDeleteMicrocycleClick: (Long) -> Unit
+    onNavigateToRoutineEditor: (Long) -> Unit
 ) {
     OverloadScaffold(
         title = "Mis Rutinas",
@@ -70,7 +55,7 @@ fun RoutinesListContent(
             ExtendedFloatingActionButton(
                 onClick = onStartCreating,
                 icon = { Icon(Icons.Default.Add, contentDescription = "Nueva Rutina") },
-                text = { Text("Crear Microciclo") },
+                text = { Text("Crear") },
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
             )
@@ -90,7 +75,7 @@ fun RoutinesListContent(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "No tienes rutinas activas.\n¡Crea tu primer microciclo!",
+                        text = "No tienes rutinas.\nCrea tu primer microciclo",
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -104,12 +89,7 @@ fun RoutinesListContent(
                     items(state.savedMicrocycles, key = { it.microcycleId }) { microcycle ->
                         SavedMicrocycleCard(
                             microcycle = microcycle,
-                            onDayClick = onDayClick,
-                            onAddDayClick = onAddDayClick,
-                            onDeleteDayClick = onDeleteDayClick,
-                            onRenameClick = onRenameMicrocycle,
-                            onSetActiveClick = onSetActiveClick,
-                            onDeleteMicrocycleClick = onDeleteMicrocycleClick
+                            onNavigateToRoutineEditor = onNavigateToRoutineEditor
                         )
                     }
                 }
@@ -121,19 +101,9 @@ fun RoutinesListContent(
 @Composable
 fun SavedMicrocycleCard(
     microcycle: RoutineMicrocycle,
-    onDayClick: (Long) -> Unit,
-    onAddDayClick: (Long) -> Unit,
-    onDeleteDayClick: (Long) -> Unit,
-    onRenameClick: (Long, String) -> Unit,
-    onSetActiveClick: (Long) -> Unit,
-    onDeleteMicrocycleClick: (Long) -> Unit
+    onNavigateToRoutineEditor: (Long) -> Unit
 ) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
-
-    var showRenameDialog by rememberSaveable { mutableStateOf(false) }
-    var newMicrocycleName by rememberSaveable { mutableStateOf("") }
-
-    var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
@@ -151,34 +121,14 @@ fun SavedMicrocycleCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            text = microcycle.name,
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.weight(1f, fill = false),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-
-                        if (isExpanded) {
-                            IconButton(
-                                onClick = {
-                                    newMicrocycleName = microcycle.name
-                                    showRenameDialog = true
-                                },
-                                modifier = Modifier.size(32.dp).padding(start = 4.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Edit,
-                                    contentDescription = "Renombrar",
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                            }
-                        }
-                    }
+                    Text(
+                        text = microcycle.name,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "Sistema Base: ${microcycle.blueprintType}\nLongitud: ${microcycle.days.size}",
@@ -207,63 +157,33 @@ fun SavedMicrocycleCard(
                     )
                 }
             }
-
             if (isExpanded) {
                 Spacer(modifier = Modifier.height(16.dp))
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                // Único botón de acción que redirige al editor
+                Button(
+                    onClick = { onNavigateToRoutineEditor(microcycle.microcycleId) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
-                    if (!microcycle.isActive) {
-                        Button(
-                            onClick = { onSetActiveClick(microcycle.microcycleId) },
-                            modifier = Modifier.weight(1f),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.tertiary,
-                                contentColor = MaterialTheme.colorScheme.onTertiary
-                            ),
-                            shape = RoundedCornerShape(12.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Star,
-                                contentDescription = null,
-                                modifier = Modifier.size(20.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text("Activar", fontWeight = FontWeight.Bold)
-                        }
-                    }
-
-                    OutlinedButton(
-                        onClick = { showDeleteDialog = true },
-                        modifier = if (microcycle.isActive) Modifier.fillMaxWidth() else Modifier.weight(1f),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error),
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.5f)),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.DeleteOutline,
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Eliminar", fontWeight = FontWeight.Bold)
-                    }
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Editar",
+                        fontWeight = FontWeight.Bold
+                    )
                 }
-
-                Text(
-                    text = "Editar Días",
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
 
                 microcycle.days.forEachIndexed { index, day ->
                     OutlinedCard(
-                        onClick = { onDayClick(day.dayId) },
                         modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                         colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surface),
                         border = CardDefaults.outlinedCardBorder(true)
@@ -287,102 +207,11 @@ fun SavedMicrocycleCard(
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
-
-                            Row {
-                                IconButton(
-                                    onClick = { onDayClick(day.dayId) },
-                                    modifier = Modifier.size(32.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Edit,
-                                        contentDescription = "Editar Día",
-                                        tint = MaterialTheme.colorScheme.primary,
-                                        modifier = Modifier.size(20.dp)
-                                    )
-                                }
-                                Spacer(modifier = Modifier.width(8.dp))
-                                IconButton(
-                                    onClick = { onDeleteDayClick(day.dayId) },
-                                    modifier = Modifier.size(32.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.DeleteOutline,
-                                        contentDescription = "Borrar Día",
-                                        tint = MaterialTheme.colorScheme.error,
-                                        modifier = Modifier.size(20.dp)
-                                    )
-                                }
-                            }
                         }
-                    }
-                }
-
-                if (microcycle.days.size < 9) {
-                    OutlinedButton(
-                        onClick = { onAddDayClick(microcycle.microcycleId) },
-                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Icon(Icons.Default.Add, contentDescription = null)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Añadir Día")
                     }
                 }
             }
         }
-    }
-    if (showRenameDialog) {
-        AlertDialog(
-            onDismissRequest = { showRenameDialog = false },
-            title = { Text("Renombrar Rutina") },
-            text = {
-                OutlinedTextField(
-                    value = newMicrocycleName,
-                    onValueChange = { newMicrocycleName = it },
-                    label = { Text("Nuevo nombre") },
-                    singleLine = true,
-                    shape = RoundedCornerShape(12.dp)
-                )
-            },
-            confirmButton = {
-                Button(onClick = {
-                    onRenameClick(microcycle.microcycleId, newMicrocycleName)
-                    showRenameDialog = false
-                }) {
-                    Text("Guardar")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showRenameDialog = false }) {
-                    Text("Cancelar")
-                }
-            }
-        )
-    }
-
-    if (showDeleteDialog) {
-        AlertDialog(
-            onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Eliminar Rutina") },
-            text = { Text("¿Estás seguro de que deseas eliminar \"${microcycle.name}\"? Esta acción borrará todos sus días y ejercicios asignados. No se puede deshacer.") },
-            icon = { Icon(Icons.Default.DeleteOutline, contentDescription = null, tint = MaterialTheme.colorScheme.error) },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        onDeleteMicrocycleClick(microcycle.microcycleId)
-                        showDeleteDialog = false
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-                ) {
-                    Text("Eliminar")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDeleteDialog = false }) {
-                    Text("Cancelar")
-                }
-            }
-        )
     }
 }
 
@@ -435,7 +264,7 @@ fun BlueprintSelectionScreen(
                                 modifier = Modifier.weight(1f)
                             )
                             Icon(
-                                imageVector = Icons.Default.ArrowForwardIos,
+                                imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
                                 contentDescription = "Seleccionar",
                                 tint = MaterialTheme.colorScheme.primary
                             )

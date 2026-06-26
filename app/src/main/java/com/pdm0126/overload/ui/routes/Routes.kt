@@ -9,6 +9,8 @@ sealed class Routes : NavKey {
     @Serializable
     data object Routines : Routes()
     @Serializable
+    data class RoutineEditor(val microcycleId: Long) : Routes()
+    @Serializable
     data object Library : Routes()
     @Serializable
     data object BlueprintSelection : Routes()

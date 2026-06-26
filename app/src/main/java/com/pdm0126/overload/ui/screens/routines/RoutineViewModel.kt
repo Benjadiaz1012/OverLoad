@@ -31,15 +31,6 @@ class RoutineViewModel(
             }
         }
     }
-
-    /*fun startCreating() {
-        _uiState.update { it.copy(isCreating = true) }
-    }
-
-    fun cancelCreating() {
-        _uiState.update { it.copy(isCreating = false) }
-    }*/
-
     fun createMicrocycleFromBlueprint(blueprint: Blueprint) {
         viewModelScope.launch {
             val state = _uiState.value
