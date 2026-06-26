@@ -18,6 +18,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.pdm0126.overload.ui.routes.Routes
 import com.pdm0126.overload.ui.components.OverloadScaffold
+import com.pdm0126.overload.ui.screens.dashboard.DashboardScreen
 import com.pdm0126.overload.ui.screens.detail.DetailScreen
 import com.pdm0126.overload.ui.screens.library.LibraryScreen
 import com.pdm0126.overload.ui.screens.routines.BlueprintSelectionScreen
@@ -58,7 +59,7 @@ fun OverloadApp() {
             onBack = { backStack.removeLastOrNull() },
             entryProvider = entryProvider {
                 entry<Routes.Dashboard> {
-                    PlaceholderScreen("Dashboard (Entrenar)")
+                    DashboardScreen()
                 }
                 entry<Routes.Routines> {
                     RoutinesScreen(
