@@ -60,6 +60,10 @@ interface RoutineDao {
     fun getAllMicrocycles(): Flow<List<MicrocycleWithDays>>
 
     @Transaction
+    @Query("SELECT * FROM microcycles_table WHERE microcycleId = :microcycleId")
+    fun getMicrocycleById(microcycleId: Long): Flow<MicrocycleWithDays?>
+
+    @Transaction
     @Query("SELECT * FROM days_table WHERE dayId = :dayId LIMIT 1")
     fun getDayWithSlots(dayId: Long): Flow<DayWithSlots?>
 

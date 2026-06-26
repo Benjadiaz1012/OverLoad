@@ -1,4 +1,4 @@
-package com.pdm0126.overload.ui.screens.routines.editor
+package com.pdm0126.overload.ui.screens.routines.editor.routine
 
 import com.pdm0126.overload.ui.screens.routines.RoutineViewModel
 import androidx.compose.foundation.BorderStroke
@@ -22,16 +22,19 @@ import com.pdm0126.overload.ui.components.OverloadScaffold
 @Composable
 fun RoutineEditorScreen(
     microcycleId: Long,
-    viewModel: RoutineViewModel = viewModel(factory = RoutineViewModel.Factory),
+    viewModel: RoutineEditorViewModel = viewModel(
+        factory = RoutineEditorViewModel.provideFactory(microcycleId),
+        key = microcycleId.toString()
+    ),
     onBackClick: () -> Unit,
     onNavigateToDayEditor: (Long) -> Unit
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val microcycle = state.savedMicrocycles.find { it.microcycleId == microcycleId }
+    val microcycle = state.microcycle
 
     // Seguridad: Si eliminamos la rutina, regresamos a la pantalla anterior automáticamente
     LaunchedEffect(microcycle) {
-        if (microcycle == null && state.savedMicrocycles.isNotEmpty()) {
+        if (!state.isLoading && microcycle == null) {
             onBackClick()
         }
     }
@@ -120,7 +123,7 @@ fun RoutineEditorScreen(
                         ) {
                             if (!microcycle.isActive) {
                                 Button(
-                                    onClick = { viewModel.setActiveMicrocycle(microcycle.microcycleId) },
+                                    onClick = { viewModel.setActive() },
                                     modifier = Modifier.weight(1f),
                                     colors = ButtonDefaults.buttonColors(
                                         containerColor = MaterialTheme.colorScheme.tertiary,
@@ -211,7 +214,7 @@ fun RoutineEditorScreen(
                                         }
                                         Spacer(modifier = Modifier.width(8.dp))
                                         IconButton(
-                                            onClick = { viewModel.deleteDayFromSavedMicrocycle(day.dayId) },
+                                            onClick = { viewModel.deleteDay(day.dayId) },
                                             modifier = Modifier.size(32.dp)
                                         ) {
                                             Icon(
@@ -228,7 +231,7 @@ fun RoutineEditorScreen(
 
                         if (microcycle.days.size < 9) {
                             OutlinedButton(
-                                onClick = { viewModel.addDayToSavedMicrocycle(microcycle.microcycleId) },
+                                onClick = { viewModel.addDay() },
                                 modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
                                 shape = RoundedCornerShape(12.dp)
                             ) {
@@ -257,7 +260,7 @@ fun RoutineEditorScreen(
                 },
                 confirmButton = {
                     Button(onClick = {
-                        viewModel.updateMicrocycleName(microcycle.microcycleId, newMicrocycleName)
+                        viewModel.renameRoutine(newMicrocycleName)
                         showRenameDialog = false
                     }) {
                         Text("Guardar")
@@ -282,7 +285,7 @@ fun RoutineEditorScreen(
                 confirmButton = {
                     Button(
                         onClick = {
-                            viewModel.deleteMicrocycle(microcycle.microcycleId)
+                            viewModel.deleteRoutine()
                             showDeleteDialog = false
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)

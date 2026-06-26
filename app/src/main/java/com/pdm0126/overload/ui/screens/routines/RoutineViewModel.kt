@@ -36,14 +36,11 @@ class RoutineViewModel(
             val state = _uiState.value
             val isFirst = state.savedMicrocycles.isEmpty()
 
-            // Creamos usando el nombre base del Blueprint
             val newMicrocycleId = routineRepository.createMicrocycle(
                 name = "Nuevo: ${blueprint.name}",
                 blueprintType = blueprint.name,
                 isActive = isFirst
             )
-
-            // Insertamos los días predeterminados directamente
             blueprint.defaultDays.forEachIndexed { index, dayName ->
                 routineRepository.addDayToMicrocycle(
                     microcycleId = newMicrocycleId,
@@ -51,45 +48,6 @@ class RoutineViewModel(
                     focus = dayName
                 )
             }
-        }
-    }
-
-    fun addDayToSavedMicrocycle(microcycleId: Long) {
-        val microcycle = _uiState.value.savedMicrocycles.find { it.microcycleId == microcycleId } ?: return
-        if (microcycle.days.size >= 9) return
-
-        viewModelScope.launch {
-            val nextOrder = (microcycle.days.maxOfOrNull { it.order } ?: 0) + 1
-            routineRepository.addDayToMicrocycle(
-                microcycleId = microcycleId,
-                order = nextOrder,
-                focus = "Día $nextOrder"
-            )
-        }
-    }
-
-    fun deleteDayFromSavedMicrocycle(dayId: Long) {
-        viewModelScope.launch {
-            routineRepository.deleteDay(dayId)
-        }
-    }
-
-    fun updateMicrocycleName(microcycleId: Long, newName: String) {
-        if (newName.isBlank()) return
-        viewModelScope.launch {
-            routineRepository.updateMicrocycleName(microcycleId, newName.trim())
-        }
-    }
-
-    fun setActiveMicrocycle(microcycleId: Long) {
-        viewModelScope.launch {
-            routineRepository.updateActiveMicrocycle(microcycleId)
-        }
-    }
-
-    fun deleteMicrocycle(microcycleId: Long) {
-        viewModelScope.launch {
-            routineRepository.deleteMicrocycle(microcycleId)
         }
     }
 

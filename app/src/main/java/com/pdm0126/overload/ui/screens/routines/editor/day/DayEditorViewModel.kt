@@ -1,4 +1,4 @@
-package com.pdm0126.overload.ui.screens.routines.editor
+package com.pdm0126.overload.ui.screens.routines.editor.day
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY

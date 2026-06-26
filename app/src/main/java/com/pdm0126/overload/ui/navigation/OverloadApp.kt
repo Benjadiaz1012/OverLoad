@@ -10,26 +10,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
-import com.pdm0126.overload.OverloadApplication
 import com.pdm0126.overload.ui.routes.Routes
 import com.pdm0126.overload.ui.components.OverloadScaffold
 import com.pdm0126.overload.ui.screens.detail.DetailScreen
 import com.pdm0126.overload.ui.screens.library.LibraryScreen
 import com.pdm0126.overload.ui.screens.routines.BlueprintSelectionScreen
 import com.pdm0126.overload.ui.screens.routines.RoutinesScreen
-import com.pdm0126.overload.ui.screens.routines.editor.DayEditorScreen
-import com.pdm0126.overload.ui.screens.routines.editor.DayEditorViewModel
-import com.pdm0126.overload.ui.screens.routines.editor.RoutineEditorScreen
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.launch
+import com.pdm0126.overload.ui.screens.routines.editor.day.DayEditorScreen
+import com.pdm0126.overload.ui.screens.routines.editor.day.DayEditorViewModel
+import com.pdm0126.overload.ui.screens.routines.editor.routine.RoutineEditorScreen
 
 @Composable
 fun OverloadApp() {
