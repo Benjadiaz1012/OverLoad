@@ -1,9 +1,8 @@
 package com.pdm0126.overload.ui.screens.routines
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -87,10 +86,12 @@ fun RoutinesListContent(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     items(state.savedMicrocycles, key = { it.microcycleId }) { microcycle ->
-                        SavedMicrocycleCard(
+                        MicrocycleCard(
                             microcycle = microcycle,
                             onNavigateToRoutineEditor = onNavigateToRoutineEditor
                         )
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
             }
@@ -99,117 +100,55 @@ fun RoutinesListContent(
 }
 
 @Composable
-fun SavedMicrocycleCard(
+fun MicrocycleCard(
     microcycle: RoutineMicrocycle,
     onNavigateToRoutineEditor: (Long) -> Unit
 ) {
-    var isExpanded by rememberSaveable { mutableStateOf(false) }
-
-    Card(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .animateContentSize(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-        shape = RoundedCornerShape(16.dp),
-        onClick = { isExpanded = !isExpanded }
+            .clickable { onNavigateToRoutineEditor(microcycle.microcycleId) }
+            .padding(16.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = microcycle.name,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "Sistema Base: ${microcycle.blueprintType}\nLongitud: ${microcycle.days.size}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(12.dp))
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    if (microcycle.isActive) {
-                        Icon(
-                            imageVector = Icons.Default.CheckCircle,
-                            contentDescription = "Activa",
-                            tint = MaterialTheme.colorScheme.tertiary,
-                            modifier = Modifier.size(22.dp)
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                    }
-
-                    Icon(
-                        imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                        contentDescription = "Expandir",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = microcycle.name,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Sistema Base: ${microcycle.blueprintType}\nDuración: ${microcycle.days.size} días",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
-            if (isExpanded) {
-                Spacer(modifier = Modifier.height(16.dp))
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                Spacer(modifier = Modifier.height(16.dp))
 
-                // Único botón de acción que redirige al editor
-                Button(
-                    onClick = { onNavigateToRoutineEditor(microcycle.microcycleId) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (microcycle.isActive) {
                     Icon(
-                        imageVector = Icons.Default.Settings,
-                        contentDescription = null,
-                        modifier = Modifier.size(20.dp)
+                        imageVector = Icons.Default.CheckCircle,
+                        contentDescription = "Activa",
+                        tint = MaterialTheme.colorScheme.tertiary,
+                        modifier = Modifier.size(22.dp)
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "Editar",
-                        fontWeight = FontWeight.Bold
-                    )
+                    Spacer(modifier = Modifier.width(12.dp))
                 }
-
-                microcycle.days.forEachIndexed { index, day ->
-                    OutlinedCard(
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-                        colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surface),
-                        border = CardDefaults.outlinedCardBorder(true)
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(12.dp).fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = day.focus,
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                                Text(
-                                    text = "${day.slots.size} ejercicios",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        }
-                    }
-                }
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = "Administrar Rutina",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     }

@@ -46,37 +46,9 @@ fun LibraryScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
 
-    val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
-
-    val lastWasBookmark = remember { mutableStateOf(true) }
-
     OverloadScaffold(
         title = "Ejercicios",
         showBackButton = false,
-        snackbarHost = {
-            SnackbarHost(snackbarHostState) { data ->
-                Snackbar(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(12.dp)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        if (lastWasBookmark.value) UnBookmarkedIcon() else BookmarkedIcon()
-
-                        Spacer(modifier = Modifier.width(12.dp))
-
-                        Text(
-                            text = data.visuals.message,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                }
-            }
-        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -194,6 +166,9 @@ fun LibraryScreen(
                                     onExerciseClick = { onExerciseClick(exercise.id) },
                                     onSelectClick = { onExerciseSelect(exercise) }
                                 )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                                Spacer(modifier = Modifier.height(8.dp))
                             }
                         }
                     }
@@ -228,8 +203,6 @@ fun LibraryScreen(
                                 verticalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
                                 items(state.remoteState.results, key = { it.id }) { exercise ->
-                                    //val isBookmarked = state.localExercisesIds.contains(exercise.id)
-
                                     ExerciseCard(
                                         exercise = exercise,
                                         isSelectionMode = isSelectionMode,
@@ -239,6 +212,9 @@ fun LibraryScreen(
                                             onExerciseSelect(exercise)
                                         }
                                     )
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                                    Spacer(modifier = Modifier.height(8.dp))
                                 }
                             }
                         }
@@ -256,67 +232,58 @@ fun ExerciseCard(
     onExerciseClick: () -> Unit,
     onSelectClick: () -> Unit
 ) {
-    OutlinedCard(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { if (isSelectionMode) onExerciseClick() },
-        shape = RoundedCornerShape(8.dp)
+            .clickable { if (isSelectionMode) onExerciseClick() }
+            .padding(12.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
+
+        AsyncImage(
+            model = exercise.remoteImages.firstOrNull(),
+            contentDescription = exercise.name,
             modifier = Modifier
-                .padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .size(100.dp)
+                .clip(RoundedCornerShape(8.dp)),
+            contentScale = ContentScale.Crop
+        )
+
+        Spacer(modifier = Modifier.width(16.dp))
+
+        Column(
+            modifier = Modifier
+                .weight(1f)
         ) {
-
-            AsyncImage(
-                model = exercise.remoteImages.firstOrNull(),
-                contentDescription = exercise.name,
-                modifier = Modifier
-                    .size(90.dp)
-                    .clip(RoundedCornerShape(8.dp)),
-                contentScale = ContentScale.Crop
+            Text(
+                text = exercise.name,
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold
             )
+            Text(
+                text = "${exercise.muscleGroup.replaceFirstChar { it.uppercase() }} • ${exercise.mechanic}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
 
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-            ) {
-                Text(
-                    text = exercise.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = "${exercise.muscleGroup.replaceFirstChar { it.uppercase() }} • ${exercise.mechanic}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+        if (isSelectionMode) {
+            IconButton(onClick = onSelectClick) {
+                Icon(
+                    imageVector = Icons.Default.AddCircleOutline,
+                    contentDescription = "Seleccionar",
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(32.dp)
                 )
             }
-
-            if (isSelectionMode) {
-                IconButton(onClick = onSelectClick) {
-                    Icon(
-                        imageVector = Icons.Default.AddCircleOutline,
-                        contentDescription = "Seleccionar",
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(32.dp)
-                    )
-                }
-            } else {
-                IconButton(onClick = onExerciseClick) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
-                        contentDescription = "Ver más",
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(32.dp)
-                    )
-                }
-                /*BookmarkButton(
-                    isBookmarked = isBookmarked,
-                    onCheckedChange = { onBookmarkClick() }
-                )*/
+        } else {
+            IconButton(onClick = onExerciseClick) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                    contentDescription = "Ver más",
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(32.dp)
+                )
             }
         }
     }

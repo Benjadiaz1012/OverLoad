@@ -1,31 +1,31 @@
 package com.pdm0126.overload.ui.screens.routines.editor.day
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AddCircleOutline
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.DriveFileRenameOutline
-import androidx.compose.material.icons.filled.RemoveCircleOutline
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil3.compose.AsyncImage
 import com.pdm0126.overload.ui.components.OverloadScaffold
 
 @Composable
@@ -36,10 +36,10 @@ fun DayEditorScreen(
         key = dayId.toString()
     ),
     onBackClick: () -> Unit,
-    onNavigateToLibrarySelection: () -> Unit
+    onNavigateToLibrarySelection: () -> Unit,
+    onNavigateToExerciseDetail: (String) -> Unit
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-
     var showRenameDialog by rememberSaveable { mutableStateOf(false) }
     var newDayName by rememberSaveable { mutableStateOf("") }
 
@@ -63,125 +63,137 @@ fun DayEditorScreen(
         },
         floatingActionButton = {
             if (state.day != null && state.day!!.slots.size < 12) {
-                FloatingActionButton(
+                ExtendedFloatingActionButton(
                     onClick = onNavigateToLibrarySelection,
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                ) {
-                    Icon(Icons.Default.Add, null)
-                }
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    icon = { Icon(imageVector = Icons.Default.Add, contentDescription = null) },
+                    text = { Text("Agregar Ejercicio") }
+                )
             }
         }
     ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
+        Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
             if (state.isLoading) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             } else if (state.day?.slots.isNullOrEmpty()) {
                 Text(
-                    text = "Agrega tu primer ejercicio",
+                    text = "Lienzo en blanco.\nAgrega tu primer ejercicio.",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier
-                        .align(Alignment.Center),
-                    textAlign = TextAlign.Center
+                    modifier = Modifier.align(Alignment.Center),
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
                 )
             } else {
                 LazyColumn(
                     contentPadding = PaddingValues(bottom = 100.dp, start = 16.dp, end = 16.dp, top = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier
-                        .fillMaxSize()
+                    modifier = Modifier.fillMaxSize()
                 ) {
-                    items(state.day!!.slots, key = { it.slotId }) { slot ->
-                        Card(
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-                            shape = RoundedCornerShape(12.dp),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
+                    itemsIndexed(state.day!!.slots, key = { _, slot -> slot.slotId }) { index, slot ->
+                        // Estado individual para el menú desplegable de este elemento
+                        var expandedDropdown by remember { mutableStateOf(false) }
+
+                        Column(modifier = Modifier.fillMaxWidth()) {
                             Row(
-                                modifier = Modifier.padding(12.dp),
-                                verticalAlignment = Alignment.CenterVertically
+                                modifier = Modifier.padding(vertical = 12.dp).fillMaxWidth(),
+                                verticalAlignment = Alignment.Top // ALINEACIÓN SUPERIOR (Maneja textos largos)
                             ) {
-
-                                AsyncImage(
-                                    model = slot.exercise.remoteImages.firstOrNull(),
-                                    contentDescription = null,
+                                // 1. ZONA IZQUIERDA CLICKABLE (Navega al detalle)
+                                Row(
                                     modifier = Modifier
-                                        .size(90.dp)
-                                        .clip(RoundedCornerShape(8.dp)),
-                                    contentScale = ContentScale.Crop
-                                )
-                                Spacer(modifier = Modifier.width(16.dp))
-
-                                Column(modifier = Modifier.weight(1f)) {
+                                        .weight(1f)
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .clickable { onNavigateToExerciseDetail(slot.exercise.id) }
+                                        .padding(end = 12.dp, top = 4.dp, bottom = 4.dp) // Pequeño padding para el ripple
+                                ) {
                                     Text(
-                                        text = slot.exercise.name,
+                                        text = "${index + 1}",
                                         style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                                         fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.colorScheme.onSurface
+                                        modifier = Modifier.width(28.dp)
                                     )
-                                    Spacer(modifier = Modifier.height(4.dp))
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        IconButton(
-                                            onClick = {
-                                                viewModel.updateTargetSets(
-                                                    slotId = slot.slotId,
-                                                    currentSets = slot.targetSets,
-                                                    change = -1
-                                                )
-                                                      },
-                                            modifier = Modifier.size(28.dp)
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.Default.RemoveCircleOutline,
-                                                contentDescription = "Menos",
-                                                tint = MaterialTheme.colorScheme.primary
-                                            )
-                                        }
 
+                                    Column(modifier = Modifier.weight(1f)) {
                                         Text(
-                                            text = "${slot.targetSets} Series",
-                                            style = MaterialTheme.typography.labelLarge,
-                                            modifier = Modifier.padding(horizontal = 8.dp),
+                                            text = slot.exercise.name,
+                                            style = MaterialTheme.typography.titleMedium,
                                             fontWeight = FontWeight.Bold,
                                             color = MaterialTheme.colorScheme.onSurface
+                                            // maxLines y overflow ELIMINADOS
                                         )
-
-                                        IconButton(
-                                            onClick = {
-                                                viewModel.updateTargetSets(
-                                                    slotId = slot.slotId,
-                                                    currentSets = slot.targetSets,
-                                                    change = 1
-                                                )
-                                                      },
-                                            modifier = Modifier.size(28.dp)
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.Default.AddCircleOutline,
-                                                contentDescription = "Más",
-                                                tint = MaterialTheme.colorScheme.primary
-                                            )
-                                        }
+                                        Spacer(modifier = Modifier.height(2.dp))
+                                        Text(
+                                            text = "${slot.exercise.muscleGroup.replaceFirstChar { it.uppercase() }} • ${slot.exercise.mechanic}",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
                                     }
                                 }
 
-                                IconButton(onClick = { viewModel.removeSlot(slot.slotId) }) {
-                                    Icon(
-                                        imageVector = Icons.Default.DeleteOutline,
-                                        contentDescription = "Borrar",
-                                        tint = MaterialTheme.colorScheme.error
-                                    )
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+
+                                    Box {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            modifier = Modifier
+                                                .clip(shape = CircleShape)
+                                                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                                                .clickable { expandedDropdown = true }
+                                                .padding(horizontal = 12.dp, vertical = 8.dp)
+                                        ) {
+                                            Text(
+                                                text = "x${slot.targetSets}",
+                                                style = MaterialTheme.typography.labelMedium,
+                                                fontWeight = FontWeight.Bold,
+                                                color = MaterialTheme.colorScheme.onSurface
+                                            )
+                                            Spacer(modifier = Modifier.width(4.dp))
+                                            Icon(
+                                                imageVector = Icons.Default.ArrowDropDown,
+                                                contentDescription = "Cambiar series",
+                                                tint = MaterialTheme.colorScheme.onSurface,
+                                                modifier = Modifier.size(18.dp)
+                                            )
+                                        }
+
+                                        DropdownMenu(
+                                            expanded = expandedDropdown,
+                                            onDismissRequest = { expandedDropdown = false }
+                                        ) {
+                                            (1..6).forEach { setAmount ->
+                                                DropdownMenuItem(
+                                                    text = { Text("$setAmount Series") },
+                                                    onClick = {
+                                                        viewModel.updateTargetSets(slot.slotId, setAmount)
+                                                        expandedDropdown = false
+                                                    }
+                                                )
+                                            }
+                                        }
+                                    }
+
+                                    Spacer(modifier = Modifier.width(8.dp))
+
+                                    IconButton(
+                                        onClick = { viewModel.removeSlot(slot.slotId) },
+                                        modifier = Modifier.size(32.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.DeleteOutline,
+                                            contentDescription = "Borrar",
+                                            tint = MaterialTheme.colorScheme.error,
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    }
                                 }
                             }
+                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                         }
                     }
                 }
             }
         }
+
         if (showRenameDialog) {
             AlertDialog(
                 onDismissRequest = { showRenameDialog = false },
@@ -196,12 +208,12 @@ fun DayEditorScreen(
                     )
                 },
                 confirmButton = {
-                    Button(onClick = {
-                        viewModel.updateDayName(newDayName)
-                        showRenameDialog = false
-                    }) {
-                        Text("Guardar")
-                    }
+                    Button(
+                        onClick = {
+                            viewModel.updateDayName(newDayName)
+                            showRenameDialog = false
+                        }
+                    ) { Text("Guardar") }
                 },
                 dismissButton = {
                     TextButton(onClick = { showRenameDialog = false }) {
@@ -212,4 +224,3 @@ fun DayEditorScreen(
         }
     }
 }
-

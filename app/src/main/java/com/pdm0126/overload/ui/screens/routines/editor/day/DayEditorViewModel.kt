@@ -46,8 +46,7 @@ class DayEditorViewModel(
         }
     }
 
-    fun updateTargetSets(slotId: Long, currentSets: Int, change: Int) {
-        val newSets = currentSets + change
+    fun updateTargetSets(slotId: Long, newSets: Int) {
         if (newSets in 1..10) {
             viewModelScope.launch {
                 routineRepository.updateSlotTargetSets(slotId, newSets)

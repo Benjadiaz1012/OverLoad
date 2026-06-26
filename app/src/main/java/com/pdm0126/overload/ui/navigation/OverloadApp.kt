@@ -97,8 +97,10 @@ fun OverloadApp() {
                         dayId = entry.dayId,
                         onBackClick = { backStack.removeLastOrNull() },
                         onNavigateToLibrarySelection = {
-                            // Navegamos a la librería pasándole el ID del día actual
                             backStack.add(Routes.LibrarySelection(entry.dayId))
+                        },
+                        onNavigateToExerciseDetail = { exerciseId ->
+                            backStack.add(Routes.Detail(exerciseId))
                         }
                     )
                 }
