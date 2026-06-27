@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface AnalysisDao {
 
-    // 1. Progreso de Volumen Crudo por Ejercicio a través del tiempo
     @Query("""
         SELECT wss.startTimestamp AS timestamp, 
                SUM(ws.weightKg * ws.reps) AS totalVolume
@@ -23,7 +22,6 @@ interface AnalysisDao {
     """)
     fun getVolumeProgressionForExercise(exerciseId: String): Flow<List<ExerciseVolumeRecord>>
 
-    // 2. Progreso de Volumen Efectivo (con RIR Factor) por Grupo Muscular a través del tiempo
     @Query("""
         SELECT wss.startTimestamp AS timestamp, 
                e.mainMuscleGroup AS muscleGroup, 
@@ -38,7 +36,6 @@ interface AnalysisDao {
     """)
     fun getEffectiveVolumeProgressionForMuscle(muscleGroup: String): Flow<List<MuscleProgressionRecord>>
 
-    // 3. Distribución global de esfuerzo (Ideal para gráfica de pastel/barras)
     @Query("""
         SELECT e.mainMuscleGroup AS muscleGroup, 
                SUM(ws.weightKg * ws.reps * ws.rirFactor) AS totalEffectiveVolume

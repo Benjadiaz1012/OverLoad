@@ -18,6 +18,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.pdm0126.overload.ui.routes.Routes
 import com.pdm0126.overload.ui.components.OverloadScaffold
+import com.pdm0126.overload.ui.screens.analysis.AnalysisScreen
 import com.pdm0126.overload.ui.screens.dashboard.DashboardScreen
 import com.pdm0126.overload.ui.screens.detail.DetailScreen
 import com.pdm0126.overload.ui.screens.library.LibraryScreen
@@ -106,7 +107,6 @@ fun OverloadApp() {
                     )
                 }
 
-                // Librería en modo selección
                 entry<Routes.LibrarySelection> { entry ->
                     val dayEditorViewModel: DayEditorViewModel = viewModel(
                         factory = DayEditorViewModel.provideFactory(entry.dayId),
@@ -124,7 +124,7 @@ fun OverloadApp() {
                     )
                 }
                 entry<Routes.Analysis> {
-                    PlaceholderScreen("Análisis y Progreso")
+                    AnalysisScreen()
                 }
             },
             transitionSpec = {
@@ -134,12 +134,11 @@ fun OverloadApp() {
     }
 }
 
-// ejemplo de cómo se ve una pantalla usando el OverloadScaffold
 @Composable
 fun PlaceholderScreen(title: String) {
     OverloadScaffold(
         title = title,
-        showBackButton = false // Sin boton de go back en los top level destinations
+        showBackButton = false
     ) { paddingValues ->
         Box(
             modifier = Modifier
