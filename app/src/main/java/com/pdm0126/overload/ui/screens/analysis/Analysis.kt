@@ -2,6 +2,7 @@ package com.pdm0126.overload.ui.screens.analysis
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -14,9 +15,14 @@ import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.compose.cartesian.data.columnModel
+import com.patrykandpatrick.vico.compose.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.common.Fill // <-- 2. IMPORT DE LA CLASE FILL
+import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
+import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.pdm0126.overload.ui.components.OverloadScaffold
 
 @Composable
@@ -26,11 +32,23 @@ fun AnalysisScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val distributionModelProducer = remember { CartesianChartModelProducer() }
 
+    val labelListKey = remember { ExtraStore.Key<List<String>>() }
+
+    val labelFormatter = remember(uiState.muscleDistribution) {
+        CartesianValueFormatter { context, x, _ ->
+            val labels = context.model.extraStore.getOrNull(labelListKey)
+            labels?.getOrNull(x.toInt())?.replaceFirstChar { it.uppercase() } ?: ""
+        }
+    }
+
     LaunchedEffect(uiState.muscleDistribution) {
         if (uiState.muscleDistribution.isNotEmpty()) {
             val volumes = uiState.muscleDistribution.map { it.totalEffectiveVolume }
+            val muscleNames = uiState.muscleDistribution.map { it.muscleGroup }
+
             distributionModelProducer.runTransaction {
                 columnModel { series(volumes) }
+                extras { it[labelListKey] = muscleNames }
             }
         }
     }
@@ -65,16 +83,26 @@ fun AnalysisScreen(
 
                             if (uiState.muscleDistribution.isEmpty()) {
                                 Text(
-                                    text = "Aún no hay datos suficientes. Completa algunas sesiones de entrenamiento para generar estadísticas.",
+                                    text = "Aún no hay datos suficientes",
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier.padding(vertical = 32.dp)
                                 )
                             } else {
                                 CartesianChartHost(
                                     chart = rememberCartesianChart(
-                                        rememberColumnCartesianLayer(),
+                                        rememberColumnCartesianLayer(
+                                            columnProvider = ColumnCartesianLayer.ColumnProvider.series(
+                                                rememberLineComponent(
+                                                    fill = Fill(MaterialTheme.colorScheme.primary),
+                                                    thickness = 16.dp,
+                                                    shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
+                                                )
+                                            )
+                                        ),
                                         startAxis = VerticalAxis.rememberStart(),
-                                        bottomAxis = HorizontalAxis.rememberBottom()
+                                        bottomAxis = HorizontalAxis.rememberBottom(
+                                            valueFormatter = labelFormatter
+                                        )
                                     ),
                                     modelProducer = distributionModelProducer,
                                     modifier = Modifier
@@ -86,7 +114,6 @@ fun AnalysisScreen(
 
                         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                     }
-
                 }
             }
         }
