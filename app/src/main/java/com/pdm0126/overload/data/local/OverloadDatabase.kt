@@ -8,6 +8,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.pdm0126.overload.data.local.converter.Converters
+import com.pdm0126.overload.data.local.dao.AnalysisDao
 import com.pdm0126.overload.data.local.dao.ExerciseDao
 import com.pdm0126.overload.data.local.dao.RoutineDao
 import com.pdm0126.overload.data.local.dao.WorkoutDao
@@ -39,6 +40,8 @@ abstract class OverloadDatabase : RoomDatabase() {
     abstract fun exerciseDao(): ExerciseDao
     abstract fun routineDao(): RoutineDao
     abstract fun workoutDao(): WorkoutDao
+    abstract fun analysisDao(): AnalysisDao
+
 
     companion object {
         @Volatile
