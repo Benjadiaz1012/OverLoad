@@ -27,6 +27,7 @@ import com.pdm0126.overload.domain.model.Exercise
 import com.pdm0126.overload.ui.components.BookmarkButton
 import com.pdm0126.overload.ui.components.BookmarkedIcon
 import com.pdm0126.overload.ui.components.Error
+import com.pdm0126.overload.ui.components.OverloadConfirmDialog
 import com.pdm0126.overload.ui.components.OverloadScaffold
 import com.pdm0126.overload.ui.components.UnBookmarkedIcon
 import kotlinx.coroutines.delay
@@ -45,6 +46,7 @@ fun DetailScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+    var showUnbookmarkDialog by remember { mutableStateOf(false) }
 
     OverloadScaffold(
         title = state.exercise?.name ?: "Detalles",
@@ -53,7 +55,7 @@ fun DetailScreen(
         snackbarHost = {
             SnackbarHost(snackbarHostState) { data ->
                 Snackbar(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    containerColor = MaterialTheme.colorScheme.background,
                     contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(12.dp)
                 ) {
@@ -77,14 +79,18 @@ fun DetailScreen(
             if (state.exercise != null) {
                 BookmarkButton(
                     isBookmarked = state.isBookmarked,
-                    onCheckedChange = {
-                        viewModel.toggleBookmark()
-                        coroutineScope.launch {
-                            snackbarHostState.currentSnackbarData?.dismiss()
-                            snackbarHostState.showSnackbar(
-                                message = if (state.isBookmarked) "Eliminado de tu biblioteca" else "Agregado a tu biblioteca",
-                                duration = SnackbarDuration.Short
-                            )
+                    onCheckedChange = { isNowBookmarked ->
+                        if (!isNowBookmarked) {
+                            showUnbookmarkDialog = true
+                        } else {
+                            viewModel.toggleBookmark()
+                            coroutineScope.launch {
+                                snackbarHostState.currentSnackbarData?.dismiss()
+                                snackbarHostState.showSnackbar(
+                                    message = "Agregado a tu biblioteca",
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
                         }
                     }
                 )
@@ -104,6 +110,23 @@ fun DetailScreen(
                 state.exercise != null -> {
                     ExerciseDetailContent(exercise = state.exercise!!)
                 }
+            }
+            if (showUnbookmarkDialog) {
+                OverloadConfirmDialog(
+                    title = "Eliminar de la biblioteca",
+                    text = "Si eliminas este ejercicio de tu biblioteca, desaparecera de tus rutinas. ¿Quieres continuar?",
+                    confirmText = "Eliminar",
+                    dismissText = "Cancelar",
+                    isDestructive = true,
+                    onConfirm = {
+                        viewModel.toggleBookmark()
+                        showUnbookmarkDialog = false
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar("Eliminado de tu biblioteca")
+                        }
+                    },
+                    onDismiss = { showUnbookmarkDialog = false }
+                )
             }
         }
     }

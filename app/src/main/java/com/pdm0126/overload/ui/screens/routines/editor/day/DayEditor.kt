@@ -12,8 +12,10 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.DriveFileRenameOutline
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -44,25 +46,64 @@ fun DayEditorScreen(
     onNavigateToExerciseDetail: (String) -> Unit
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val day = state.day
+    LaunchedEffect(day) {
+        if (!state.isLoading && day == null) {
+            onBackClick()
+        }
+    }
+
     var showRenameDialog by rememberSaveable { mutableStateOf(false) }
     var showDeleteExerciseDialog by rememberSaveable { mutableStateOf(false) }
+    var showDeleteDayDialog by rememberSaveable { mutableStateOf(false) }
     var slotToDeleteId by rememberSaveable { mutableLongStateOf(0) }
     var newDayName by rememberSaveable { mutableStateOf("") }
+    var showMenu by rememberSaveable { mutableStateOf(false) }
 
     OverloadScaffold(
         title = state.day?.focus ?: "Cargando...",
         showBackButton = true,
         onBackClick = onBackClick,
         actions = {
-            if (state.day != null) {
-                IconButton(onClick = {
-                    newDayName = state.day!!.focus
-                    showRenameDialog = true
-                }) {
+            Box {
+                IconButton(onClick = { showMenu = true }) {
                     Icon(
-                        imageVector = Icons.Default.DriveFileRenameOutline,
-                        contentDescription = "Renombrar Día",
-                        tint = MaterialTheme.colorScheme.primary
+                        imageVector = Icons.Default.MoreVert,
+                        contentDescription = "Opciones",
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+                DropdownMenu(
+                    expanded = showMenu,
+                    onDismissRequest = { showMenu = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Eliminar Dia", color = MaterialTheme.colorScheme.onSurface) },
+                        onClick = {
+                            showMenu = false
+                            showDeleteDayDialog = true
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.DeleteOutline,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Renombrar Día", color = MaterialTheme.colorScheme.onSurface) },
+                        onClick = {
+                            showMenu = false
+                            showRenameDialog = true
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.DriveFileRenameOutline,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
                     )
                 }
             }
@@ -219,6 +260,18 @@ fun DayEditorScreen(
                 icon = Icons.Default.DeleteOutline,
                 onConfirm = { viewModel.removeSlot(slotToDeleteId) ; showDeleteExerciseDialog = false },
                 onDismiss = { showDeleteExerciseDialog = false }
+            )
+        }
+        if (showDeleteDayDialog) {
+            OverloadConfirmDialog(
+                title = "Eliminar Día",
+                text = "¿Estás seguro de que deseas eliminar este día?",
+                confirmText = "Eliminar",
+                dismissText = "Cancelar",
+                isDestructive = true,
+                icon = Icons.Default.DeleteOutline,
+                onConfirm = { viewModel.deleteDay() ; showDeleteDayDialog = false },
+                onDismiss = { showDeleteDayDialog = false }
             )
         }
     }

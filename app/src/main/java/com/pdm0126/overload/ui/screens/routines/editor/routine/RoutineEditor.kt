@@ -44,9 +44,10 @@ fun RoutineEditorScreen(
 
     if (microcycle == null) return
 
+    var showMenu by rememberSaveable { mutableStateOf(false) }
     var showRenameDialog by rememberSaveable { mutableStateOf(false) }
-    var newMicrocycleName by rememberSaveable { mutableStateOf("") }
     var showDeleteRoutineDialog by rememberSaveable { mutableStateOf(false) }
+    var showActivateRoutineDialog by rememberSaveable { mutableStateOf(false) }
     var showDeleteDayDialog by rememberSaveable { mutableStateOf(false) }
     var dayToDeleteId by rememberSaveable { mutableStateOf<Long?>(null) }
     var dayToDeleteName by rememberSaveable { mutableStateOf("") }
@@ -54,7 +55,67 @@ fun RoutineEditorScreen(
     OverloadScaffold(
         title = "Editar Rutina",
         showBackButton = true,
-        onBackClick = onBackClick
+        onBackClick = onBackClick,
+        actions = {
+            Box {
+                IconButton(onClick = { showMenu = true }) {
+                    Icon(
+                        imageVector = Icons.Default.MoreVert,
+                        contentDescription = "Opciones",
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+                DropdownMenu(
+                    expanded = showMenu,
+                    onDismissRequest = { showMenu = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Eliminar Rutina", color = MaterialTheme.colorScheme.onSurface) },
+                        onClick = {
+                            showMenu = false
+                            showDeleteRoutineDialog = true
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.DeleteOutline,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Renombrar Rutina", color = MaterialTheme.colorScheme.onSurface) },
+                        onClick = {
+                            showMenu = false
+                            showRenameDialog = true
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.DriveFileRenameOutline,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    )
+                    if (!microcycle.isActive) {
+                        DropdownMenuItem(
+                            text = { Text("Activar Rutina", color = MaterialTheme.colorScheme.onSurface) },
+                            onClick = {
+                                showMenu = false
+                                showActivateRoutineDialog = true
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.StarOutline,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.tertiary
+                                )
+                            }
+                        )
+                    }
+                }
+            }
+        }
     ) { paddingValues ->
         LazyColumn(
             contentPadding = PaddingValues(16.dp),
@@ -72,34 +133,14 @@ fun RoutineEditorScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(
-                                    text = microcycle.name,
-                                    style = MaterialTheme.typography.titleLarge,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.weight(1f, fill = false),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-
-                                IconButton(
-                                    onClick = {
-                                        newMicrocycleName = microcycle.name
-                                        showRenameDialog = true
-                                    },
-                                    modifier = Modifier
-                                        .size(32.dp)
-                                        .padding(start = 4.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Edit,
-                                        contentDescription = "Renombrar",
-                                        tint = MaterialTheme.colorScheme.primary,
-                                        modifier = Modifier.size(18.dp)
-                                    )
-                                }
-                            }
+                            Text(
+                                text = microcycle.name,
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
                                 text = "Sistema Base: ${microcycle.blueprintType}\nLongitud: ${microcycle.days.size}",
@@ -111,7 +152,7 @@ fun RoutineEditorScreen(
                         if (microcycle.isActive) {
                             Spacer(modifier = Modifier.width(12.dp))
                             Icon(
-                                imageVector = Icons.Default.CheckCircle,
+                                imageVector = Icons.Default.StarOutline,
                                 contentDescription = "Activa",
                                 tint = MaterialTheme.colorScheme.tertiary,
                                 modifier = Modifier.size(22.dp)
@@ -123,49 +164,15 @@ fun RoutineEditorScreen(
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    Row(
+                    /*Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 16.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        if (!microcycle.isActive) {
-                            Button(
-                                onClick = { viewModel.setActive() },
-                                modifier = Modifier.weight(1f),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.tertiary,
-                                    contentColor = MaterialTheme.colorScheme.onTertiary
-                                ),
-                                shape = RoundedCornerShape(12.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Star,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text("Activar", fontWeight = FontWeight.Bold)
-                            }
-                        }
 
-                        OutlinedButton(
-                            onClick = { showDeleteRoutineDialog = true },
-                            modifier = if (microcycle.isActive) Modifier.fillMaxWidth() else Modifier.weight(1f),
-                            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error),
-                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.5f)),
-                            shape = RoundedCornerShape(12.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.DeleteOutline,
-                                contentDescription = null,
-                                modifier = Modifier.size(20.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text("Eliminar", fontWeight = FontWeight.Bold)
-                        }
                     }
-
+*/
                     Text(
                         text = "Editar Días",
                         style = MaterialTheme.typography.labelLarge,
@@ -292,13 +299,24 @@ fun RoutineEditorScreen(
         if (showDeleteDayDialog && dayToDeleteId != null) {
             OverloadConfirmDialog(
                 title = "Eliminar Día",
-                text = "Esta acción borrará todos los ejercicios asignados a este día. No se puede deshacer",
+                text = "Esta acción borrará todos los ejercicios asignados a ${dayToDeleteName}. No se puede deshacer",
                 confirmText = "Eliminar",
                 dismissText = "Cancelar",
                 isDestructive = true,
                 icon = Icons.Default.DeleteOutline,
                 onConfirm = { viewModel.deleteDay(dayToDeleteId!!) ; showDeleteDayDialog = false },
                 onDismiss = { showDeleteDayDialog = false }
+            )
+        }
+        if (showActivateRoutineDialog) {
+            OverloadConfirmDialog(
+                title = "Activar Rutina",
+                text = "¿Estás seguro de que deseas activar esta rutina? Solo puede haber una activa a la vez",
+                confirmText = "Activar",
+                dismissText = "Cancelar",
+                icon = Icons.Default.Star,
+                onConfirm = { viewModel.setActive() ; showActivateRoutineDialog = false },
+                onDismiss = { showActivateRoutineDialog = false }
             )
         }
     }

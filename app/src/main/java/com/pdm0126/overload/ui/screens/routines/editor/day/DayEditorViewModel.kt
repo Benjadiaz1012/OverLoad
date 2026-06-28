@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.pdm0126.overload.OverloadApplication
 import com.pdm0126.overload.domain.model.RoutineDay
 import com.pdm0126.overload.domain.repository.RoutineRepository
+import com.pdm0126.overload.domain.repository.WorkoutRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -18,7 +19,7 @@ data class DayEditorUiState(
 
 class DayEditorViewModel(
     private val dayId: Long,
-    private val routineRepository: RoutineRepository
+    private val routineRepository: RoutineRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DayEditorUiState())
@@ -62,6 +63,12 @@ class DayEditorViewModel(
         if (newName.isBlank()) return
         viewModelScope.launch {
             routineRepository.updateDayFocus(dayId, newName.trim())
+        }
+    }
+
+    fun deleteDay() {
+        viewModelScope.launch {
+            routineRepository.deleteDay(dayId)
         }
     }
 
