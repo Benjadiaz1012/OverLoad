@@ -27,6 +27,7 @@ import com.patrykandpatrick.vico.compose.cartesian.data.lineModel
 import com.patrykandpatrick.vico.compose.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.marker.rememberDefaultCartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
@@ -36,6 +37,7 @@ import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
+import com.pdm0126.overload.domain.TechnicalDictionary
 import com.pdm0126.overload.ui.components.OverloadScaffold
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -43,15 +45,17 @@ import java.util.Locale
 
 
 @Composable
-internal fun rememberToolTipMarker() = rememberDefaultCartesianMarker(
+internal fun rememberToolTipMarker(
+    valueFormatter: DefaultCartesianMarker.ValueFormatter = remember { DefaultCartesianMarker.ValueFormatter.default() }
+) = rememberDefaultCartesianMarker(
     label = rememberTextComponent(
         background = rememberShapeComponent(
             fill = Fill(MaterialTheme.colorScheme.onSurface),
             shape = RoundedCornerShape(1.dp)
         )
-    )
+    ),
+    valueFormatter = valueFormatter
 )
-
 @Composable
 fun AnalysisScreen(
     onNavigateToLibrary : () -> Unit,
@@ -70,13 +74,32 @@ fun AnalysisScreen(
 
     val muscleFormatter = remember(uiState.muscleDistribution) {
         CartesianValueFormatter { context, x, _ ->
-            context.model.extraStore.getOrNull(muscleListKey)?.getOrNull(x.toInt())?.replaceFirstChar { it.uppercase() } ?: ""
+            val fullName = context.model.extraStore.getOrNull(muscleListKey)?.getOrNull(x.toInt())?.replaceFirstChar { it.uppercase() } ?: ""
+            TechnicalDictionary.muscleAbbreviationMap[fullName] ?: fullName
         }
     }
 
     val dateFormatter = remember(uiState.exerciseProgression) {
         CartesianValueFormatter { context, x, _ ->
             context.model.extraStore.getOrNull(dateListKey)?.getOrNull(x.toInt()) ?: ""
+        }
+    }
+
+    val distributionTooltipFormatter = remember(uiState.muscleDistribution) {
+        DefaultCartesianMarker.ValueFormatter { context, targets ->
+            val xIndex = targets.first().x.toInt()
+            val fullName = context.model.extraStore.getOrNull(muscleListKey)?.getOrNull(xIndex)?.replaceFirstChar { it.uppercase() } ?: ""
+            val volume = uiState.muscleDistribution.getOrNull(xIndex)?.totalEffectiveVolume ?: 0f
+            "$fullName: ${String.format(Locale.US, "%.1f", volume)} Kg"
+        }
+    }
+
+    val trendTooltipFormatter = remember(uiState.exerciseProgression) {
+        DefaultCartesianMarker.ValueFormatter { context, targets ->
+            val xIndex = targets.first().x.toInt()
+            val date = context.model.extraStore.getOrNull(dateListKey)?.getOrNull(xIndex) ?: ""
+            val volume = uiState.exerciseProgression.getOrNull(xIndex)?.totalVolume ?: 0f
+            "$date: ${String.format(Locale.US, "%.1f", volume)} Kg"
         }
     }
 
@@ -159,19 +182,21 @@ fun AnalysisScreen(
                                                 columnProvider = ColumnCartesianLayer.ColumnProvider.series(
                                                     rememberLineComponent(
                                                         fill = Fill(MaterialTheme.colorScheme.primary),
-                                                        thickness = 24.dp, // Barras más anchas para forzar el scroll si hay muchos músculos
+                                                        thickness = 32.dp,
                                                         shape = RoundedCornerShape(topStart = 6.dp, topEnd = 6.dp)
                                                     )
-                                                )
+                                                ),
                                             ),
                                             startAxis = VerticalAxis.rememberStart(),
                                             bottomAxis = HorizontalAxis.rememberBottom(valueFormatter = muscleFormatter),
-                                            marker = rememberToolTipMarker(), // NUEVO: Tooltip al tocar
+                                            marker = rememberToolTipMarker(valueFormatter = distributionTooltipFormatter),
                                         ),
                                         modelProducer = distributionModelProducer,
-                                        scrollState = rememberVicoScrollState(), // NUEVO: Permite Scroll Horizontal
-                                        zoomState = rememberVicoZoomState(zoomEnabled = true), // NUEVO: Permite pellizcar para alejar/acercar
-                                        modifier = Modifier.fillMaxWidth().height(300.dp)
+                                        scrollState = rememberVicoScrollState(),
+                                        zoomState = rememberVicoZoomState(zoomEnabled = true),
+                                        modifier = Modifier
+                                            .width(950.dp)
+                                            .height(300.dp)
                                     )
                                 }
                             }
@@ -257,7 +282,7 @@ fun AnalysisScreen(
                                                 rememberLineCartesianLayer(),
                                                 startAxis = VerticalAxis.rememberStart(),
                                                 bottomAxis = HorizontalAxis.rememberBottom(valueFormatter = dateFormatter),
-                                                marker = rememberToolTipMarker()
+                                                marker = rememberToolTipMarker(valueFormatter = trendTooltipFormatter)
                                             ),
                                             modelProducer = trendModelProducer,
                                             scrollState = rememberVicoScrollState(),
