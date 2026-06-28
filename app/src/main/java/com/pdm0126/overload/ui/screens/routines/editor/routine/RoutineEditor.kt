@@ -19,6 +19,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.pdm0126.overload.ui.components.OverloadConfirmDialog
+import com.pdm0126.overload.ui.components.OverloadInputDialog
 import com.pdm0126.overload.ui.components.OverloadScaffold
 
 @Composable
@@ -61,7 +63,9 @@ fun RoutineEditorScreen(
                 .padding(paddingValues)
         ) {
             item {
-                Column(modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)) {
+                Column(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp)) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -84,7 +88,9 @@ fun RoutineEditorScreen(
                                         newMicrocycleName = microcycle.name
                                         showRenameDialog = true
                                     },
-                                    modifier = Modifier.size(32.dp).padding(start = 4.dp)
+                                    modifier = Modifier
+                                        .size(32.dp)
+                                        .padding(start = 4.dp)
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Edit,
@@ -118,7 +124,9 @@ fun RoutineEditorScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         if (!microcycle.isActive) {
@@ -185,7 +193,9 @@ fun RoutineEditorScreen(
                             modifier = Modifier.width(28.dp)
                         )
 
-                        Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
+                        Column(modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 12.dp)) {
                             Text(
                                 text = day.focus,
                                 style = MaterialTheme.typography.titleMedium,
@@ -240,7 +250,9 @@ fun RoutineEditorScreen(
                 item {
                     OutlinedButton(
                         onClick = { viewModel.addDay() },
-                        modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp),
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Icon(imageVector = Icons.Default.Add, contentDescription = null)
@@ -251,76 +263,42 @@ fun RoutineEditorScreen(
             }
         }
         if (showRenameDialog) {
-            AlertDialog(
-                onDismissRequest = { showRenameDialog = false },
-                title = { Text("Renombrar Rutina") },
-                text = {
-                    OutlinedTextField(
-                        value = newMicrocycleName,
-                        onValueChange = { newMicrocycleName = it },
-                        label = { Text("Nuevo nombre") },
-                        singleLine = true,
-                        shape = RoundedCornerShape(12.dp)
-                    )
-                },
-                confirmButton = {
-                    Button(onClick = {
-                        viewModel.renameRoutine(newMicrocycleName)
-                        showRenameDialog = false
-                    }) { Text("Guardar") }
-                },
-                dismissButton = {
-                    TextButton(onClick = { showRenameDialog = false }) { Text("Cancelar") }
-                }
+
+            OverloadInputDialog(
+                title = "Renombrar Rutina",
+                initialValue = microcycle.name,
+                label = "Nuevo nombre",
+                confirmText = "Guardar",
+                dismissText = "Cancelar",
+                onConfirm = { newName -> viewModel.renameRoutine(newName)
+                    showRenameDialog = false },
+                onDismiss = { showRenameDialog = false }
             )
         }
 
         if (showDeleteRoutineDialog) {
-            AlertDialog(
-                onDismissRequest = { showDeleteRoutineDialog = false },
-                title = { Text("Eliminar Rutina") },
-                text = { Text("¿Estás seguro de que deseas eliminar \"${microcycle.name}\"? Esta acción borrará todos sus días y ejercicios asignados. No se puede deshacer.") },
-                icon = { Icon(Icons.Default.DeleteOutline, contentDescription = null, tint = MaterialTheme.colorScheme.error) },
-                confirmButton = {
-                    Button(
-                        onClick = {
-                            viewModel.deleteRoutine()
-                            showDeleteRoutineDialog = false
-                        },
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-                    ) { Text("Eliminar") }
-                },
-                dismissButton = {
-                    TextButton(onClick = { showDeleteRoutineDialog = false }) { Text("Cancelar") }
-                }
+            OverloadConfirmDialog(
+                title = "Eliminar Rutina",
+                text = "Esta acción borrará todos sus días y ejercicios asignados. No se puede deshacer",
+                confirmText = "Eliminar",
+                dismissText = "Cancelar",
+                isDestructive = true,
+                icon = Icons.Default.DeleteOutline,
+                onConfirm = { viewModel.deleteRoutine() ; showDeleteRoutineDialog = false },
+                onDismiss = { showDeleteRoutineDialog = false }
             )
         }
 
         if (showDeleteDayDialog && dayToDeleteId != null) {
-            AlertDialog(
-                onDismissRequest = {
-                    showDeleteDayDialog = false
-                    dayToDeleteId = null
-                },
-                title = { Text("Eliminar Día") },
-                text = { Text("¿Estás seguro de que deseas eliminar el día \"$dayToDeleteName\"? Todos los ejercicios asignados a este día se perderán de tu rutina.") },
-                icon = { Icon(Icons.Default.DeleteOutline, contentDescription = null, tint = MaterialTheme.colorScheme.error) },
-                confirmButton = {
-                    Button(
-                        onClick = {
-                            viewModel.deleteDay(dayToDeleteId!!)
-                            showDeleteDayDialog = false
-                            dayToDeleteId = null
-                        },
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-                    ) { Text("Eliminar") }
-                },
-                dismissButton = {
-                    TextButton(onClick = {
-                        showDeleteDayDialog = false
-                        dayToDeleteId = null
-                    }) { Text("Cancelar") }
-                }
+            OverloadConfirmDialog(
+                title = "Eliminar Día",
+                text = "Esta acción borrará todos los ejercicios asignados a este día. No se puede deshacer",
+                confirmText = "Eliminar",
+                dismissText = "Cancelar",
+                isDestructive = true,
+                icon = Icons.Default.DeleteOutline,
+                onConfirm = { viewModel.deleteDay(dayToDeleteId!!) ; showDeleteDayDialog = false },
+                onDismiss = { showDeleteDayDialog = false }
             )
         }
     }

@@ -54,7 +54,7 @@ class DayEditorViewModel(
         }
     }
 
-    fun removeSlot(slotId: Long) {
+    fun removeSlot(slotId: Long?) {
         viewModelScope.launch { routineRepository.removeExerciseSlot(slotId) }
     }
 

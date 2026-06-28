@@ -1,5 +1,6 @@
 package com.pdm0126.overload
 
+/*
 import com.pdm0126.overload.data.local.dao.AnalysisDao
 import com.pdm0126.overload.data.local.dao.ExerciseDao
 import com.pdm0126.overload.data.local.dao.RoutineDao
@@ -160,7 +161,7 @@ class RoutineRepositoryImp(
         return routineDao.insertSlot(newSlot) // Retorna el id del slot
     }
 
-    override suspend fun removeExerciseSlot(slotId: Long) {
+    override suspend fun removeExerciseSlot(slotId: Long?) {
         routineDao.deleteSlotById(slotId)
     }
     override suspend fun updateActiveMicrocycle(microcycleId: Long) {
@@ -268,3 +269,4 @@ class WorkoutRepositoryImp(
 
 
 
+*/

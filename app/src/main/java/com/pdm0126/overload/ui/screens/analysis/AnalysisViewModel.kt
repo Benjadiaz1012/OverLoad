@@ -54,6 +54,9 @@ class AnalysisViewModel(
     fun selectExercise(exerciseId: String) {
         _selectedExerciseId.value = exerciseId
     }
+    fun unselectExercise() {
+        _selectedExerciseId.value = null
+    }
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {

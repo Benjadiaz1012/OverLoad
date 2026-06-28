@@ -8,6 +8,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.AccessibleForward
+import androidx.compose.material.icons.automirrored.filled.ListAlt
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -108,8 +110,14 @@ fun DashboardScreen(
                         modifier = Modifier.align(Alignment.Center).padding(32.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.AccessibleForward,
+                            contentDescription = null,
+                            modifier = Modifier.size(64.dp),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                        )
                         Text(
-                            text = "Sin Rutinas",
+                            text = "Sin Rutinas activas",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center
@@ -183,7 +191,7 @@ fun DashboardScreen(
                                             .size(40.dp)
                                             .background(MaterialTheme.colorScheme.primaryContainer,RoundedCornerShape(12.dp)), contentAlignment = Alignment.Center) {
                                         Icon(
-                                            imageVector = Icons.Default.PlayArrow,
+                                            imageVector = Icons.Default.FitnessCenter,
                                             contentDescription = "Iniciar",
                                             tint = MaterialTheme.colorScheme.onPrimaryContainer
                                         )

@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.DriveFileRenameOutline
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -23,9 +24,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.pdm0126.overload.ui.components.OverloadConfirmDialog
+import com.pdm0126.overload.ui.components.OverloadInputDialog
 import com.pdm0126.overload.ui.components.OverloadScaffold
 
 @Composable
@@ -41,6 +45,8 @@ fun DayEditorScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     var showRenameDialog by rememberSaveable { mutableStateOf(false) }
+    var showDeleteExerciseDialog by rememberSaveable { mutableStateOf(false) }
+    var slotToDeleteId by rememberSaveable { mutableLongStateOf(0) }
     var newDayName by rememberSaveable { mutableStateOf("") }
 
     OverloadScaffold(
@@ -78,10 +84,10 @@ fun DayEditorScreen(
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             } else if (state.day?.slots.isNullOrEmpty()) {
                 Text(
-                    text = "Lienzo en blanco.\nAgrega tu primer ejercicio.",
+                    text = "Agrega tu primer ejercicio.",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.align(Alignment.Center),
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    textAlign = TextAlign.Center
                 )
             } else {
                 LazyColumn(
@@ -172,7 +178,7 @@ fun DayEditorScreen(
                                     Spacer(modifier = Modifier.width(8.dp))
 
                                     IconButton(
-                                        onClick = { viewModel.removeSlot(slot.slotId) },
+                                        onClick = { showDeleteExerciseDialog = true ; slotToDeleteId = slot.slotId },
                                         modifier = Modifier.size(32.dp)
                                     ) {
                                         Icon(
@@ -192,31 +198,27 @@ fun DayEditorScreen(
         }
 
         if (showRenameDialog) {
-            AlertDialog(
-                onDismissRequest = { showRenameDialog = false },
-                title = { Text("Renombrar Día") },
-                text = {
-                    OutlinedTextField(
-                        value = newDayName,
-                        onValueChange = { newDayName = it },
-                        label = { Text("Nuevo nombre") },
-                        singleLine = true,
-                        shape = RoundedCornerShape(12.dp)
-                    )
+            OverloadInputDialog(
+                title = "Renombrar Día",
+                initialValue = state.day?.focus ?: "",
+                label = "Nuevo nombre",
+                onConfirm = { newName ->
+                    viewModel.updateDayName(newName)
+                    showRenameDialog = false
                 },
-                confirmButton = {
-                    Button(
-                        onClick = {
-                            viewModel.updateDayName(newDayName)
-                            showRenameDialog = false
-                        }
-                    ) { Text("Guardar") }
-                },
-                dismissButton = {
-                    TextButton(onClick = { showRenameDialog = false }) {
-                        Text("Cancelar")
-                    }
-                }
+                onDismiss = { showRenameDialog = false },
+            )
+        }
+        if (showDeleteExerciseDialog) {
+            OverloadConfirmDialog(
+                title = "Eliminar Ejercicio",
+                text = "¿Estás seguro de que deseas eliminar este ejercicio?",
+                confirmText = "Eliminar",
+                dismissText = "Cancelar",
+                isDestructive = true,
+                icon = Icons.Default.DeleteOutline,
+                onConfirm = { viewModel.removeSlot(slotToDeleteId) ; showDeleteExerciseDialog = false },
+                onDismiss = { showDeleteExerciseDialog = false }
             )
         }
     }

@@ -81,7 +81,7 @@ class RoutineRepositoryImp(
         return routineDao.insertSlot(newSlot) // Retorna el id del slot
     }
 
-    override suspend fun removeExerciseSlot(slotId: Long) {
+    override suspend fun removeExerciseSlot(slotId: Long?) {
         routineDao.deleteSlotById(slotId)
     }
     override suspend fun updateActiveMicrocycle(microcycleId: Long) {

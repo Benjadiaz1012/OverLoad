@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
+import androidx.compose.material.icons.automirrored.filled.ListAlt
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -24,6 +25,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pdm0126.overload.domain.model.Blueprint
 import com.pdm0126.overload.domain.model.BlueprintCatalog
 import com.pdm0126.overload.domain.model.RoutineMicrocycle
+import com.pdm0126.overload.ui.components.OverloadConfirmDialog
 import com.pdm0126.overload.ui.components.OverloadScaffold
 
 
@@ -67,7 +69,7 @@ fun RoutinesListContent(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
-                        imageVector = Icons.Default.ListAlt,
+                        imageVector = Icons.AutoMirrored.Filled.ListAlt,
                         contentDescription = null,
                         modifier = Modifier.size(64.dp),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
@@ -286,24 +288,17 @@ fun BlueprintSelectionScreen(
         }
     }
     if (blueprintToConfirm != null) {
-        AlertDialog(
-            onDismissRequest = { blueprintToConfirm = null },
-            title = { Text("Crear Nueva Rutina") },
-            text = { Text("¿Deseas crear un nuevo microciclo basado en el sistema ${blueprintToConfirm!!.name}?") },
-            confirmButton = {
-                Button(onClick = {
-                    viewModel.createMicrocycleFromBlueprint(blueprintToConfirm!!)
-                    blueprintToConfirm = null
-                    onRoutineCreated()
-                }) {
-                    Text("Crear")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { blueprintToConfirm = null }) {
-                    Text("Cancelar")
-                }
-            }
+        OverloadConfirmDialog(
+            title = "Crear Nueva Rutina",
+            text = "¿Deseas crear un nuevo microciclo basado en el sistema ${blueprintToConfirm!!.name}?",
+            confirmText = "Crear",
+            dismissText = "Cancelar",
+            icon = Icons.Default.Create,
+            onConfirm = {
+                viewModel.createMicrocycleFromBlueprint(blueprintToConfirm!!)
+                blueprintToConfirm = null
+                onRoutineCreated() },
+            onDismiss = { blueprintToConfirm = null }
         )
     }
 }

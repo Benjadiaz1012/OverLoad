@@ -18,6 +18,6 @@ interface RoutineRepository {
     suspend fun createMicrocycle(name: String, blueprintType: String, isActive: Boolean = true): Long
     suspend fun addDayToMicrocycle(microcycleId: Long, order: Int, focus: String): Long
     suspend fun addExerciseSlot(dayId: Long, exerciseId: String, order: Int, targetSets: Int): Long
-    suspend fun removeExerciseSlot(slotId: Long)
+    suspend fun removeExerciseSlot(slotId: Long?)
     suspend fun updateActiveMicrocycle(microcycleId: Long)
 }
