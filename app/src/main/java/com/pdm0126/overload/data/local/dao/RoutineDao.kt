@@ -65,7 +65,7 @@ interface RoutineDao {
 
     @Transaction
     @Query("SELECT * FROM days_table WHERE dayId = :dayId LIMIT 1")
-    fun getDayWithSlots(dayId: Long): Flow<DayWithSlots?>
+    fun getDayWithSlots(dayId: Long?): Flow<DayWithSlots?>
 
     @Transaction
     suspend fun updateActiveMicrocycle(microcycleId: Long) {

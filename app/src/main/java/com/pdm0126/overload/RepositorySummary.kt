@@ -110,7 +110,7 @@ class RoutineRepositoryImp(
         return routineDao.getMicrocycleById(microcycleId).map { it?.toDomainModel() }
     }
 
-    override fun getRoutineDay(dayId: Long): Flow<RoutineDay?> {
+    override fun getRoutineDay(dayId: Long?): Flow<RoutineDay?> {
         return routineDao.getDayWithSlots(dayId).map { it?.toDomainModel() }
     }
 

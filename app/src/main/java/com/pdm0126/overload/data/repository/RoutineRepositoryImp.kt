@@ -8,10 +8,8 @@ import com.pdm0126.overload.data.mapper.toDomainModel
 import com.pdm0126.overload.domain.model.RoutineDay
 import com.pdm0126.overload.domain.model.RoutineMicrocycle
 import com.pdm0126.overload.domain.repository.RoutineRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 
 class RoutineRepositoryImp(
     private val routineDao: RoutineDao
@@ -33,7 +31,7 @@ class RoutineRepositoryImp(
         return routineDao.getMicrocycleById(microcycleId).map { it?.toDomainModel() }
     }
 
-    override fun getRoutineDay(dayId: Long): Flow<RoutineDay?> {
+    override fun getRoutineDay(dayId: Long?): Flow<RoutineDay?> {
         return routineDao.getDayWithSlots(dayId).map { it?.toDomainModel() }
     }
 

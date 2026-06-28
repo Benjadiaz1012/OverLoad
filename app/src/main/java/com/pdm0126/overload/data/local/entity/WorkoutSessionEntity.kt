@@ -12,7 +12,7 @@ import androidx.room.PrimaryKey
             entity = DayEntity::class,
             parentColumns = ["dayId"],
             childColumns = ["dayId"],
-            onDelete = ForeignKey.CASCADE
+            onDelete = ForeignKey.SET_NULL // Queremos los registros historicos para las estadísticas
         )
     ],
     indices = [Index("dayId")]
@@ -20,7 +20,7 @@ import androidx.room.PrimaryKey
 data class WorkoutSessionEntity(
     @PrimaryKey(autoGenerate = true)
     val sessionId: Long = 0,
-    val dayId: Long,                // El día del microciclo que se está ejecutando
+    val dayId: Long?,                // El día del microciclo que se está ejecutando
     val startTimestamp: Long,       // Momento de inicio de la sesión (epoch ms)
     val endTimestamp: Long? = null  // Momento de fin; null si la sesión sigue activa
 )

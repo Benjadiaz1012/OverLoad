@@ -9,7 +9,7 @@ interface RoutineRepository {
     fun getActiveMicrocycle(): Flow<RoutineMicrocycle?>
     fun getAllMicrocycles(): Flow<List<RoutineMicrocycle>>
     fun getMicrocycleById(microcycleId: Long): Flow<RoutineMicrocycle?>
-    fun getRoutineDay(dayId: Long): Flow<RoutineDay?>
+    fun getRoutineDay(dayId: Long?): Flow<RoutineDay?>
     suspend fun updateSlotTargetSets(slotId: Long, targetSets: Int)
     suspend fun deleteMicrocycle(microcycleId: Long)
     suspend fun deleteDay(dayId: Long)
