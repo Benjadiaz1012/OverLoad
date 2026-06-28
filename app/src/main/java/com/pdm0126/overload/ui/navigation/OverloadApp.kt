@@ -19,6 +19,7 @@ import androidx.navigation3.ui.NavDisplay
 import com.pdm0126.overload.ui.routes.Routes
 import com.pdm0126.overload.ui.components.OverloadScaffold
 import com.pdm0126.overload.ui.screens.analysis.AnalysisScreen
+import com.pdm0126.overload.ui.screens.analysis.AnalysisViewModel
 import com.pdm0126.overload.ui.screens.dashboard.DashboardScreen
 import com.pdm0126.overload.ui.screens.detail.DetailScreen
 import com.pdm0126.overload.ui.screens.library.LibraryScreen
@@ -124,7 +125,20 @@ fun OverloadApp() {
                     )
                 }
                 entry<Routes.Analysis> {
-                    AnalysisScreen()
+                    AnalysisScreen(
+                        onNavigateToLibrary = { backStack.add(Routes.LibraryAnalysisSelection) }
+                    )
+                }
+                entry<Routes.LibraryAnalysisSelection> {
+                    val analysisViewModel: AnalysisViewModel = viewModel(factory = AnalysisViewModel.Factory)
+                    LibraryScreen(
+                        isAnalysisMode = true,
+                        onExerciseClick = { exerciseId -> backStack.add(Routes.Detail(exerciseId)) },
+                        onExerciseAnalysisSelect = { exercise ->
+                            analysisViewModel.selectExercise(exercise.id)
+                            backStack.removeLastOrNull()
+                        }
+                    )
                 }
             },
             transitionSpec = {

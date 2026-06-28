@@ -13,10 +13,57 @@ import com.pdm0126.overload.data.local.entity.MicrocycleEntity
 import com.pdm0126.overload.data.local.entity.SlotEntity
 import com.pdm0126.overload.data.local.entity.WorkoutSessionEntity
 import com.pdm0126.overload.data.local.entity.WorkoutSetEntity
+import com.pdm0126.overload.data.local.relation.DayWithSlots
 import com.pdm0126.overload.data.local.relation.MicrocycleWithDays
 import com.pdm0126.overload.data.local.relation.SessionWithSets
+import com.pdm0126.overload.domain.model.ExerciseVolumeRecord
+import com.pdm0126.overload.domain.model.MuscleDistribution
+import com.pdm0126.overload.domain.model.MuscleProgressionRecord
 import kotlinx.coroutines.flow.Flow
 
+//--------------------------------------------------------------------------------------------------
+@Dao
+interface AnalysisDao {
+
+    @Query("""
+        SELECT wss.startTimestamp AS timestamp, 
+               SUM(ws.weightKg * ws.reps) AS totalVolume
+        FROM workout_sets_table ws
+        INNER JOIN workout_sessions_table wss ON ws.sessionId = wss.sessionId
+        WHERE ws.exerciseId = :exerciseId 
+          AND wss.endTimestamp IS NOT NULL
+        GROUP BY wss.sessionId
+        ORDER BY wss.startTimestamp ASC
+    """)
+    fun getVolumeProgressionForExercise(exerciseId: String): Flow<List<ExerciseVolumeRecord>>
+
+    @Query("""
+        SELECT wss.startTimestamp AS timestamp, 
+               e.mainMuscleGroup AS muscleGroup, 
+               SUM(ws.weightKg * ws.reps * ws.rirFactor) AS effectiveVolume
+        FROM workout_sets_table ws
+        INNER JOIN exercises_table e ON ws.exerciseId = e.exerciseId
+        INNER JOIN workout_sessions_table wss ON ws.sessionId = wss.sessionId
+        WHERE e.mainMuscleGroup = :muscleGroup 
+          AND wss.endTimestamp IS NOT NULL
+        GROUP BY wss.sessionId, e.mainMuscleGroup
+        ORDER BY wss.startTimestamp ASC
+    """)
+    fun getEffectiveVolumeProgressionForMuscle(muscleGroup: String): Flow<List<MuscleProgressionRecord>>
+
+    @Query("""
+        SELECT e.mainMuscleGroup AS muscleGroup, 
+               SUM(ws.weightKg * ws.reps * ws.rirFactor) AS totalEffectiveVolume
+        FROM workout_sets_table ws
+        INNER JOIN exercises_table e ON ws.exerciseId = e.exerciseId
+        INNER JOIN workout_sessions_table wss ON ws.sessionId = wss.sessionId
+        WHERE wss.endTimestamp IS NOT NULL
+        GROUP BY e.mainMuscleGroup
+        ORDER BY totalEffectiveVolume DESC
+    """)
+    fun getOverallMuscleDistribution(): Flow<List<MuscleDistribution>>
+}
+//--------------------------------------------------------------------------------------------------
 @Dao
 interface ExerciseDao {
 
@@ -38,8 +85,7 @@ interface ExerciseDao {
     @Query("SELECT * FROM exercises_table WHERE exerciseId = :id LIMIT 1")
     suspend fun getExerciseById(id: String): ExerciseEntity?
 }
-
-/*-------------------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------------------------------
 @Dao
 interface RoutineDao {
 
@@ -63,6 +109,19 @@ interface RoutineDao {
     @Query("DELETE FROM slots_table WHERE slotId = :slotId")
     suspend fun deleteSlotById(slotId: Long)
 
+    @Query("UPDATE slots_table SET targetSets = :targetSets WHERE slotId = :slotId")
+    suspend fun updateSlotTargetSets(slotId: Long, targetSets: Int)
+
+    @Query("DELETE FROM days_table WHERE dayId = :dayId")
+    suspend fun deleteDay(dayId: Long)
+
+    @Query("UPDATE days_table SET focus = :newFocus WHERE dayId = :dayId")
+    suspend fun updateDayFocus(dayId: Long, newFocus: String)
+    @Query("UPDATE microcycles_table SET name = :newName WHERE microcycleId = :microcycleId")
+    suspend fun updateMicrocycleName(microcycleId: Long, newName: String)
+    @Query("DELETE FROM microcycles_table WHERE microcycleId = :microcycleId")
+    suspend fun deleteMicrocycle(microcycleId: Long)
+
     // Consultas principales
     // Con @Transaction room lee nuestras clases de relación y arma el arbol completo
     @Transaction
@@ -71,9 +130,29 @@ interface RoutineDao {
 
     @Transaction
     @Query("SELECT * FROM microcycles_table")
-    fun getAllMicrocycles(): Flow<List<MicrocycleWithDays>>
+    fun getAllMicrocycles(): Flow<List<com.pdm0126.overload.data.local.relation.MicrocycleWithDays>>
+
+    @Transaction
+    @Query("SELECT * FROM microcycles_table WHERE microcycleId = :microcycleId")
+    fun getMicrocycleById(microcycleId: Long): Flow<MicrocycleWithDays?>
+
+    @Transaction
+    @Query("SELECT * FROM days_table WHERE dayId = :dayId LIMIT 1")
+    fun getDayWithSlots(dayId: Long): Flow<DayWithSlots?>
+
+    @Transaction
+    suspend fun updateActiveMicrocycle(microcycleId: Long) {
+        clearAllActiveMicrocycles()
+        setActiveMicrocycleById(microcycleId)
+    }
+
+    @Query("UPDATE microcycles_table SET isActive = 0")
+    suspend fun clearAllActiveMicrocycles()
+
+    @Query("UPDATE microcycles_table SET isActive = 1 WHERE microcycleId = :microcycleId")
+    suspend fun setActiveMicrocycleById(microcycleId: Long)
 }
-/*-------------------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------------------------------
 @Dao
 interface WorkoutDao {
 
@@ -129,3 +208,4 @@ interface WorkoutDao {
     @Query("SELECT * FROM workout_sessions_table WHERE sessionId = :sessionId LIMIT 1")
     suspend fun getSessionSnapshot(sessionId: Long): WorkoutSessionEntity?
 }
+

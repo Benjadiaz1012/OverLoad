@@ -23,5 +23,7 @@ sealed class Routes : NavKey {
     @Serializable
     data class LibrarySelection(val dayId: Long) : Routes()
     @Serializable
+    data object LibraryAnalysisSelection : Routes()
+    @Serializable
     data object Analysis : Routes()
 }

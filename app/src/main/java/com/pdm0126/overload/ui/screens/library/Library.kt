@@ -40,8 +40,10 @@ import com.pdm0126.overload.ui.components.UnBookmarkedIcon
 fun LibraryScreen(
     viewModel: LibraryViewModel = viewModel(factory = LibraryViewModel.Factory),
     isSelectionMode: Boolean = false,
+    isAnalysisMode: Boolean = false,
     onExerciseClick: (String) -> Unit,
     onExerciseSelect: (Exercise) -> Unit = {},
+    onExerciseAnalysisSelect: (Exercise) -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
@@ -163,8 +165,10 @@ fun LibraryScreen(
                                 ExerciseCard(
                                     exercise = exercise,
                                     isSelectionMode = isSelectionMode,
+                                    isAnalysisMode = isAnalysisMode,
                                     onExerciseClick = { onExerciseClick(exercise.id) },
-                                    onSelectClick = { onExerciseSelect(exercise) }
+                                    onSelectClick = { onExerciseSelect(exercise) },
+                                    onAnalysisClick = { onExerciseAnalysisSelect(exercise) }
                                 )
                                 Spacer(modifier = Modifier.height(8.dp))
                                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
@@ -206,10 +210,15 @@ fun LibraryScreen(
                                     ExerciseCard(
                                         exercise = exercise,
                                         isSelectionMode = isSelectionMode,
+                                        isAnalysisMode = isAnalysisMode,
                                         onExerciseClick = { onExerciseClick(exercise.id) },
                                         onSelectClick = {
                                             viewModel.addExercise(exercise)
                                             onExerciseSelect(exercise)
+                                        },
+                                        onAnalysisClick = {
+                                            viewModel.addExercise(exercise)
+                                            onExerciseAnalysisSelect(exercise)
                                         }
                                     )
                                     Spacer(modifier = Modifier.height(8.dp))
@@ -229,8 +238,10 @@ fun LibraryScreen(
 fun ExerciseCard(
     exercise: Exercise,
     isSelectionMode: Boolean,
+    isAnalysisMode: Boolean,
     onExerciseClick: () -> Unit,
-    onSelectClick: () -> Unit
+    onSelectClick: () -> Unit,
+    onAnalysisClick : (Exercise) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -276,7 +287,18 @@ fun ExerciseCard(
                     modifier = Modifier.size(32.dp)
                 )
             }
-        } else {
+        } else if (isAnalysisMode) {
+            IconButton(onClick = { onAnalysisClick(exercise) }) {
+                Icon(
+                    imageVector = Icons.Default.Insights,
+                    contentDescription = "Analizar",
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(32.dp)
+                )
+            }
+        }
+
+        else {
             IconButton(onClick = onExerciseClick) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
