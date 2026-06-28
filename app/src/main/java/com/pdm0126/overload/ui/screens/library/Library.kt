@@ -41,6 +41,7 @@ fun LibraryScreen(
     viewModel: LibraryViewModel = viewModel(factory = LibraryViewModel.Factory),
     isSelectionMode: Boolean = false,
     isAnalysisMode: Boolean = false,
+    onBackClick: () -> Unit = {},
     onExerciseClick: (String) -> Unit,
     onExerciseSelect: (Exercise) -> Unit = {},
     onExerciseAnalysisSelect: (Exercise) -> Unit = {}
@@ -50,7 +51,8 @@ fun LibraryScreen(
 
     OverloadScaffold(
         title = "Ejercicios",
-        showBackButton = false,
+        showBackButton = isSelectionMode || isAnalysisMode,
+        onBackClick = { onBackClick() }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -92,7 +94,7 @@ fun LibraryScreen(
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                        tint = MaterialTheme.colorScheme.primary
                     )
                               },
                 trailingIcon = {

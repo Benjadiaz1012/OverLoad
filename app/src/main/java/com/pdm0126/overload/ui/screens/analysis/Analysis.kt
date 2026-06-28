@@ -1,13 +1,10 @@
 package com.pdm0126.overload.ui.screens.analysis
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Insights
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
@@ -15,8 +12,8 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -50,7 +47,7 @@ internal fun rememberToolTipMarker() = rememberDefaultCartesianMarker(
     label = rememberTextComponent(
         background = rememberShapeComponent(
             fill = Fill(MaterialTheme.colorScheme.onSurface),
-            shape = RoundedCornerShape(8.dp)
+            shape = RoundedCornerShape(1.dp)
         )
     )
 )
@@ -191,14 +188,19 @@ fun AnalysisScreen(
                                     color = MaterialTheme.colorScheme.primary
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
-                                Text("Evolución de volumen total estimado en el tiempo", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(
+                                    text = "Evolución de volumen total estimado en el tiempo",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
                                 Spacer(modifier = Modifier.height(24.dp))
 
                                 // CALL TO ACTION LIMPIO PARA BUSCAR EJERCICIO
                                 OutlinedCard(
                                     onClick = onNavigateToLibrary,
                                     modifier = Modifier.fillMaxWidth(),
-                                    colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surface)
+                                    colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.background),
+                                    shape = RoundedCornerShape(8.dp)
                                 ) {
                                     Row(
                                         modifier = Modifier.padding(16.dp).fillMaxWidth(),
@@ -213,17 +215,11 @@ fun AnalysisScreen(
                                         Column {
                                             val currentExerciseName = uiState.availableExercises.find { it.id == uiState.selectedExerciseId }?.name
                                             Text(
-                                                text = currentExerciseName ?: "Buscar Ejercicio a Analizar",
-                                                style = MaterialTheme.typography.titleMedium,
-                                                fontWeight = FontWeight.Bold
+                                                text = currentExerciseName ?: "Ejercicio a analizar",
+                                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                                maxLines = 1,
+                                                overflow = Ellipsis
                                             )
-                                            if (currentExerciseName != null) {
-                                                Text(
-                                                    text = "Toca para cambiar de ejercicio",
-                                                    style = MaterialTheme.typography.bodySmall,
-                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                                )
-                                            }
                                         }
                                     }
                                 }

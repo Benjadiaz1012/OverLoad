@@ -116,8 +116,8 @@ fun OverloadApp() {
 
                     LibraryScreen(
                         isSelectionMode = true,
+                        onBackClick = { backStack.removeLastOrNull() },
                         onExerciseClick = { exerciseId -> backStack.add(Routes.Detail(exerciseId)) },
-
                         onExerciseSelect = { exercise ->
                             dayEditorViewModel.addExerciseToSlot(exercise.id)
                             backStack.removeLastOrNull()
@@ -133,6 +133,7 @@ fun OverloadApp() {
                     val analysisViewModel: AnalysisViewModel = viewModel(factory = AnalysisViewModel.Factory)
                     LibraryScreen(
                         isAnalysisMode = true,
+                        onBackClick = { backStack.removeLastOrNull() },
                         onExerciseClick = { exerciseId -> backStack.add(Routes.Detail(exerciseId)) },
                         onExerciseAnalysisSelect = { exercise ->
                             analysisViewModel.selectExercise(exercise.id)
