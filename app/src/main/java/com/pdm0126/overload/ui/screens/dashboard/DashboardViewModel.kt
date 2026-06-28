@@ -38,12 +38,10 @@ class DashboardViewModel(
                             workoutRepository.getSetsForSession(session.sessionId)
                         ) { day, sets ->
 
-                            val historicalSets = mutableMapOf<Long, List<WorkoutSet>>()
+                            val historicalSets = mutableMapOf<String, List<WorkoutSet>>()
                             day?.slots?.forEach { slot ->
-                                historicalSets[slot.slotId] = workoutRepository.getLastSetsForSlot(
-                                    slotId = slot.slotId,
-                                    dayId = day.dayId,
-                                    targetSets = slot.targetSets
+                                historicalSets[slot.exercise.id] = workoutRepository.getLastSetsForExercise(
+                                    exerciseId = slot.exercise.id
                                 )
                             }
 

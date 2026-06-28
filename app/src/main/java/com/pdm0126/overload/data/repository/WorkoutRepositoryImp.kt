@@ -43,12 +43,10 @@ class WorkoutRepositoryImp(
     }
 
 
-    override suspend fun getLastSetsForSlot(
-        slotId: Long,
-        dayId: Long,
-        targetSets: Int
+    override suspend fun getLastSetsForExercise(
+        exerciseId: String
     ): List<WorkoutSet> {
-        return workoutDao.getLastSetsForSlot(slotId, dayId, targetSets)
+        return workoutDao.getLastSetsForExercise(exerciseId)
             .map { it.toDomainModel() }
     }
 

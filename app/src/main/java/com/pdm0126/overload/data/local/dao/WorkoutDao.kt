@@ -54,13 +54,17 @@ interface WorkoutDao {
     @Query("""
         SELECT ws.* FROM workout_sets_table ws
         INNER JOIN workout_sessions_table wss ON ws.sessionId = wss.sessionId
-        WHERE ws.slotId = :slotId
-        AND wss.dayId = :dayId
-        AND wss.endTimestamp IS NOT NULL
-        ORDER BY wss.startTimestamp DESC, ws.setNumber ASC
-        LIMIT :targetSets
+        WHERE ws.exerciseId = :exerciseId
+          AND wss.endTimestamp IS NOT NULL
+          AND wss.sessionId = (
+              SELECT wss2.sessionId FROM workout_sets_table ws2
+              INNER JOIN workout_sessions_table wss2 ON ws2.sessionId = wss2.sessionId
+              WHERE ws2.exerciseId = :exerciseId AND wss2.endTimestamp IS NOT NULL
+              ORDER BY wss2.startTimestamp DESC LIMIT 1
+          )
+        ORDER BY ws.setNumber ASC
     """)
-    suspend fun getLastSetsForSlot(slotId: Long, dayId: Long, targetSets: Int): List<WorkoutSetEntity>
+    suspend fun getLastSetsForExercise(exerciseId: String): List<WorkoutSetEntity>
 
     // Snapshot directo de una sesión por ID (uso interno del repositorio para actualizar endTimestamp)
     @Query("SELECT * FROM workout_sessions_table WHERE sessionId = :sessionId LIMIT 1")

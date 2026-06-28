@@ -16,7 +16,7 @@ interface WorkoutRepository {
     fun getSetsBySlotAndSession(slotId: Long, sessionId: Long): Flow<List<WorkoutSet>>
 
     // Recupera la referencia histórica de las series del slot en la sesión anterior del mismo día
-    suspend fun getLastSetsForSlot(slotId: Long, dayId: Long, targetSets: Int): List<WorkoutSet>
+    suspend fun getLastSetsForExercise(exerciseId: String): List<WorkoutSet>
 
     // Crea e inicia una nueva sesión para el día indicado. Retorna el sessionId generado.
     suspend fun startSession(dayId: Long): Long

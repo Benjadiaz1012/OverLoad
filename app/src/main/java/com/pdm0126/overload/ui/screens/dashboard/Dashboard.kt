@@ -69,7 +69,7 @@ fun DashboardScreen(
                         itemsIndexed(activeDay.slots, key = { _, slot -> slot.slotId }) { index, slot ->
 
                             val slotSets = sessionSets.filter { it.slotId == slot.slotId }
-                            val historicalSets = lastSetsMap[slot.slotId] ?: emptyList()
+                            val historicalSets = lastSetsMap[slot.exercise.id] ?: emptyList()
 
                             ActiveSlotItem(
                                 index = index + 1,

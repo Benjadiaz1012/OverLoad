@@ -188,25 +188,23 @@ class WorkoutRepositoryImp(
         }
     }
 
-    override fun getSetsForSession(sessionId: Long): Flow<List<com.pdm0126.overload.domain.model.WorkoutSet>> {
+    override fun getSetsForSession(sessionId: Long): Flow<List<WorkoutSet>> {
         return workoutDao.getSetsForSession(sessionId).map { entities ->
             entities.map { it.toDomainModel() }
         }
     }
 
-    override fun getSetsBySlotAndSession(slotId: Long, sessionId: Long): Flow<List<com.pdm0126.overload.domain.model.WorkoutSet>> {
+    override fun getSetsBySlotAndSession(slotId: Long, sessionId: Long): Flow<List<WorkoutSet>> {
         return workoutDao.getSetsBySlotAndSession(slotId, sessionId).map { entities ->
             entities.map { it.toDomainModel() }
         }
     }
 
 
-    override suspend fun getLastSetsForSlot(
-        slotId: Long,
-        dayId: Long,
-        targetSets: Int
+    override suspend fun getLastSetsForExercise(
+        exerciseId: String
     ): List<WorkoutSet> {
-        return workoutDao.getLastSetsForSlot(slotId, dayId, targetSets)
+        return workoutDao.getLastSetsForExercise(exerciseId)
             .map { it.toDomainModel() }
     }
 

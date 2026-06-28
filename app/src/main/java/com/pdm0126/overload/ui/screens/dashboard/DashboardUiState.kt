@@ -11,5 +11,5 @@ data class DashboardUiState(
     val activeSession: WorkoutSession? = null,
     val activeDay: RoutineDay? = null,
     val sessionSets: List<WorkoutSet> = emptyList(),
-    val lastSets: Map<Long, List<WorkoutSet>> = emptyMap()
+    val lastSets: Map<String, List<WorkoutSet>> = emptyMap()
 )
