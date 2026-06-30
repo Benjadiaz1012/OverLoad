@@ -139,7 +139,7 @@ fun MicrocycleCard(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (microcycle.isActive) {
                     Icon(
-                        imageVector = Icons.Default.StarOutline,
+                        imageVector = Icons.Default.Star,
                         contentDescription = "Activa",
                         tint = MaterialTheme.colorScheme.tertiary,
                         modifier = Modifier.size(22.dp)

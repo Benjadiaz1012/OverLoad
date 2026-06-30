@@ -1,6 +1,5 @@
 package com.pdm0126.overload.ui.screens.routines.editor.routine
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -44,7 +43,8 @@ fun RoutineEditorScreen(
 
     if (microcycle == null) return
 
-    var showMenu by rememberSaveable { mutableStateOf(false) }
+    var showTopBarMenu by rememberSaveable { mutableStateOf(false) }
+    var menuDayId by rememberSaveable { mutableStateOf<Long?>(null) }
     var showRenameDialog by rememberSaveable { mutableStateOf(false) }
     var showDeleteRoutineDialog by rememberSaveable { mutableStateOf(false) }
     var showActivateRoutineDialog by rememberSaveable { mutableStateOf(false) }
@@ -58,7 +58,7 @@ fun RoutineEditorScreen(
         onBackClick = onBackClick,
         actions = {
             Box {
-                IconButton(onClick = { showMenu = true }) {
+                IconButton(onClick = { showTopBarMenu = true }) {
                     Icon(
                         imageVector = Icons.Default.MoreVert,
                         contentDescription = "Opciones",
@@ -66,27 +66,13 @@ fun RoutineEditorScreen(
                     )
                 }
                 DropdownMenu(
-                    expanded = showMenu,
-                    onDismissRequest = { showMenu = false }
+                    expanded = showTopBarMenu,
+                    onDismissRequest = { showTopBarMenu = false }
                 ) {
-                    DropdownMenuItem(
-                        text = { Text("Eliminar Rutina", color = MaterialTheme.colorScheme.onSurface) },
-                        onClick = {
-                            showMenu = false
-                            showDeleteRoutineDialog = true
-                        },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.DeleteOutline,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.error
-                            )
-                        }
-                    )
                     DropdownMenuItem(
                         text = { Text("Renombrar Rutina", color = MaterialTheme.colorScheme.onSurface) },
                         onClick = {
-                            showMenu = false
+                            showTopBarMenu = false
                             showRenameDialog = true
                         },
                         leadingIcon = {
@@ -101,7 +87,7 @@ fun RoutineEditorScreen(
                         DropdownMenuItem(
                             text = { Text("Activar Rutina", color = MaterialTheme.colorScheme.onSurface) },
                             onClick = {
-                                showMenu = false
+                                showTopBarMenu = false
                                 showActivateRoutineDialog = true
                             },
                             leadingIcon = {
@@ -113,6 +99,20 @@ fun RoutineEditorScreen(
                             }
                         )
                     }
+                    DropdownMenuItem(
+                        text = { Text("Eliminar Rutina", color = MaterialTheme.colorScheme.onSurface) },
+                        onClick = {
+                            showTopBarMenu = false
+                            showDeleteRoutineDialog = true
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.DeleteOutline,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    )
                 }
             }
         }
@@ -152,7 +152,7 @@ fun RoutineEditorScreen(
                         if (microcycle.isActive) {
                             Spacer(modifier = Modifier.width(12.dp))
                             Icon(
-                                imageVector = Icons.Default.StarOutline,
+                                imageVector = Icons.Default.Star,
                                 contentDescription = "Activa",
                                 tint = MaterialTheme.colorScheme.tertiary,
                                 modifier = Modifier.size(22.dp)
@@ -172,7 +172,7 @@ fun RoutineEditorScreen(
                     ) {
 
                     }
-*/
+                    */
                     Text(
                         text = "Editar Días",
                         style = MaterialTheme.typography.labelLarge,
@@ -218,8 +218,50 @@ fun RoutineEditorScreen(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
+                        Box {
+                            IconButton(onClick = { menuDayId = day.dayId }) {
+                                Icon(
+                                    imageVector = Icons.Default.Settings,
+                                    contentDescription = "Opciones",
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                            DropdownMenu(
+                                expanded = menuDayId == day.dayId,
+                                onDismissRequest = { menuDayId = null }
+                            ) {
+                                DropdownMenuItem(
+                                    text = { Text("Editar Día", color = MaterialTheme.colorScheme.onSurface) },
+                                    onClick = { onNavigateToDayEditor(day.dayId) ; menuDayId = null },
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = Icons.Default.Edit,
+                                            contentDescription = "Editar Día",
+                                            tint = MaterialTheme.colorScheme.onSurface
+                                        )
+                                    }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("Borrar Día", color = MaterialTheme.colorScheme.onSurface) },
+                                    onClick = {
+                                        dayToDeleteId = day.dayId
+                                        dayToDeleteName = day.focus
+                                        showDeleteDayDialog = true
+                                        menuDayId = null
+                                    },
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = Icons.Default.DeleteOutline,
+                                            contentDescription = "Borrar Día",
+                                            tint = MaterialTheme.colorScheme.error
+                                        )
+                                    }
 
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                )
+
+                            }
+                        }
+                        /*Row(verticalAlignment = Alignment.CenterVertically) {
                             IconButton(
                                 onClick = { onNavigateToDayEditor(day.dayId) },
                                 modifier = Modifier.size(32.dp)
@@ -247,7 +289,7 @@ fun RoutineEditorScreen(
                                     modifier = Modifier.size(20.dp)
                                 )
                             }
-                        }
+                        }*/
                     }
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                 }

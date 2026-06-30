@@ -10,6 +10,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
+import androidx.compose.material.icons.automirrored.filled.ShowChart
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.material3.SecondaryTabRow
@@ -248,7 +249,7 @@ fun ExerciseCard(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { if (isSelectionMode) onExerciseClick() }
+            .clickable { onExerciseClick() }
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -292,7 +293,7 @@ fun ExerciseCard(
         } else if (isAnalysisMode) {
             IconButton(onClick = { onAnalysisClick(exercise) }) {
                 Icon(
-                    imageVector = Icons.Default.Insights,
+                    imageVector = Icons.AutoMirrored.Filled.ShowChart,
                     contentDescription = "Analizar",
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(32.dp)

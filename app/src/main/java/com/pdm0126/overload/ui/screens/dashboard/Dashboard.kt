@@ -1,5 +1,6 @@
 package com.pdm0126.overload.ui.screens.dashboard
 
+import android.app.Dialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -26,8 +27,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pdm0126.overload.domain.model.RoutineSlot
 import com.pdm0126.overload.domain.model.WorkoutSet
+import com.pdm0126.overload.ui.components.OverloadConfirmDialog
 import com.pdm0126.overload.ui.components.OverloadScaffold
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
     viewModel: DashboardViewModel = viewModel(factory = DashboardViewModel.Factory)
@@ -41,6 +44,9 @@ fun DashboardScreen(
     val sessionSets = uiState.sessionSets
     val lastSetsMap = uiState.lastSets
 
+    var startWorkoutDialog by rememberSaveable { mutableStateOf(false) }
+    var workoutId by rememberSaveable { mutableStateOf<Long?>(null) }
+    var showEmptyWorkoutDialog by rememberSaveable { mutableStateOf(false) }
     var showEndWorkoutDialog by rememberSaveable { mutableStateOf(false) }
 
     OverloadScaffold(
@@ -157,7 +163,12 @@ fun DashboardScreen(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clip(RoundedCornerShape(8.dp))
-                                        .clickable { viewModel.startWorkout(day.dayId) }
+                                        .clickable { workoutId = day.dayId
+                                            if (day.slots.isEmpty()) {
+                                                showEmptyWorkoutDialog = true
+                                            } else {
+                                                startWorkoutDialog = true
+                                            } }
                                         .padding(vertical = 16.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
@@ -186,16 +197,11 @@ fun DashboardScreen(
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                     }
-                                    Box(
-                                        modifier = Modifier
-                                            .size(40.dp)
-                                            .background(MaterialTheme.colorScheme.primaryContainer,RoundedCornerShape(12.dp)), contentAlignment = Alignment.Center) {
-                                        Icon(
-                                            imageVector = Icons.Default.FitnessCenter,
-                                            contentDescription = "Iniciar",
-                                            tint = MaterialTheme.colorScheme.onPrimaryContainer
-                                        )
-                                    }
+                                    Icon(
+                                        imageVector = Icons.Default.Start,
+                                        contentDescription = "Iniciar",
+                                        tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                    )
                                 }
                                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                             }
@@ -204,18 +210,48 @@ fun DashboardScreen(
                 }
             }
         }
+        if (showEmptyWorkoutDialog) {
+            AlertDialog(
+                onDismissRequest = { showEmptyWorkoutDialog = false },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                },
+                title = {
+                    Text(text = "Rutina sin ejercicios")
+                },
+                text = {
+                    Text(text = "Esta rutina no tiene ejercicios programados. Debes añadir ejercicios desde el editor de rutinas")
+                },
+                confirmButton = {
+                    TextButton(onClick = { showEmptyWorkoutDialog = false }) {
+                        Text("Entendido")
+                    }
+                }
+            )
+        }
 
         if (showEndWorkoutDialog) {
-            AlertDialog(
-                onDismissRequest = { showEndWorkoutDialog = false },
-                title = { Text("Finalizar Sesión") },
-                text = { Text("¿Estás seguro de que deseas dar por terminado este entrenamiento? Los datos registrados se guardarán en tu historial") },
-                confirmButton = {
-                    Button(onClick = { viewModel.endWorkout(); showEndWorkoutDialog = false }) { Text("Finalizar") }
-                },
-                dismissButton = {
-                    TextButton(onClick = { showEndWorkoutDialog = false }) { Text("Cancelar") }
-                }
+            OverloadConfirmDialog(
+                title = "Finalizar Sesión",
+                text = "¿Estás seguro de que deseas dar por terminado este entrenamiento? Los datos registrados se guardarán en tu historial",
+                confirmText = "Finalizar",
+                dismissText = "Cancelar",
+                onConfirm = { viewModel.endWorkout(); showEndWorkoutDialog = false },
+                onDismiss = { showEndWorkoutDialog = false }
+            )
+        }
+        if (startWorkoutDialog) {
+            OverloadConfirmDialog(
+                title = "Iniciar Rutina",
+                text = "¿Estás seguro de que deseas iniciar este entrenamiento?",
+                confirmText = "Iniciar",
+                dismissText = "Cancelar",
+                onConfirm = { viewModel.startWorkout(workoutId!!); startWorkoutDialog = false },
+                onDismiss = { startWorkoutDialog = false }
             )
         }
     }
@@ -231,11 +267,12 @@ fun ActiveSlotItem(
     onDeleteSet: (Long) -> Unit
 ) {
     var weightInput by rememberSaveable { mutableStateOf("") }
-    var repsInput by rememberSaveable { mutableStateOf("") }
+    var repsInput by rememberSaveable { mutableIntStateOf(8) }
 
     var isRirEnabled by rememberSaveable { mutableStateOf(true) }
     var rirInput by rememberSaveable { mutableIntStateOf(2) }
     var showRirMenu by remember { mutableStateOf(false) }
+    var showRepsMenu by remember { mutableStateOf(false) }
 
     val nextSetNumber = (loggedSets.maxOfOrNull { it.setNumber } ?: 0) + 1
     val isCompleted = loggedSets.size >= slot.targetSets
@@ -348,7 +385,7 @@ fun ActiveSlotItem(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp))
+                            .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp))
                             .padding(12.dp),
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
@@ -379,14 +416,34 @@ fun ActiveSlotItem(
                             singleLine = true
                         )
 
-                        OutlinedTextField(
-                            value = repsInput,
-                            onValueChange = { repsInput = it },
-                            label = { Text("Reps") },
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                            modifier = Modifier.weight(1f),
-                            singleLine = true
-                        )
+                        Box(modifier = Modifier.weight(1f)) {
+                            OutlinedButton(
+                                onClick = { showRepsMenu = true },
+                                contentPadding = PaddingValues(0.dp),
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(4.dp)
+                            ) {
+                                Text(
+                                    text = "$repsInput Reps",
+                                    maxLines = 1,
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
+                            DropdownMenu(
+                                expanded = showRepsMenu,
+                                onDismissRequest = { showRepsMenu = false }
+                            ) {
+                                (1..20).forEach { repVal ->
+                                    DropdownMenuItem(
+                                        text = { Text("$repVal Reps") },
+                                        onClick = {
+                                            repsInput = repVal
+                                            showRepsMenu = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
 
                         Box(modifier = Modifier.weight(1f)) {
                             OutlinedButton(
@@ -412,11 +469,17 @@ fun ActiveSlotItem(
                         IconButton(
                             onClick = {
                                 val weight = weightInput.toFloatOrNull()
-                                val rir = repsInput.toIntOrNull()
-                                if (weight != null && rir != null) {
+                                if (weight != null) {
                                     val finalRir = if (isRirEnabled) rirInput else null
-                                    onLogSet(slot.slotId, slot.exercise.id, nextSetNumber, weight, rir, finalRir, isRirEnabled)
-                                    repsInput = ""
+                                    onLogSet(
+                                        slot.slotId,
+                                        slot.exercise.id,
+                                        nextSetNumber,
+                                        weight,
+                                        repsInput,
+                                        finalRir,
+                                        isRirEnabled
+                                    )
                                 }
                             },
                             modifier = Modifier

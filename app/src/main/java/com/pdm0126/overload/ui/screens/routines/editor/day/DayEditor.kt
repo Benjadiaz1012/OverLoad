@@ -78,20 +78,6 @@ fun DayEditorScreen(
                     onDismissRequest = { showMenu = false }
                 ) {
                     DropdownMenuItem(
-                        text = { Text("Eliminar Dia", color = MaterialTheme.colorScheme.onSurface) },
-                        onClick = {
-                            showMenu = false
-                            showDeleteDayDialog = true
-                        },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.DeleteOutline,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.error
-                            )
-                        }
-                    )
-                    DropdownMenuItem(
                         text = { Text("Renombrar Día", color = MaterialTheme.colorScheme.onSurface) },
                         onClick = {
                             showMenu = false
@@ -102,6 +88,20 @@ fun DayEditorScreen(
                                 imageVector = Icons.Default.DriveFileRenameOutline,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Eliminar Dia", color = MaterialTheme.colorScheme.onSurface) },
+                        onClick = {
+                            showMenu = false
+                            showDeleteDayDialog = true
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.DeleteOutline,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.error
                             )
                         }
                     )

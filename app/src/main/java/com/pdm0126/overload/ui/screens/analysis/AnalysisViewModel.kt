@@ -51,7 +51,11 @@ class AnalysisViewModel(
         initialValue = AnalysisUiState()
     )
 
-    fun selectExercise(exerciseId: String) {
+    fun selectExercise(exerciseId: String?) {
+        if (exerciseId == null) {
+            _selectedExerciseId.value = null
+            return
+        }
         _selectedExerciseId.value = exerciseId
     }
     fun unselectExercise() {

@@ -1,5 +1,6 @@
 package com.pdm0126.overload.ui.screens.analysis
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -8,8 +9,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddChart
 import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Insights
+import androidx.compose.material.icons.filled.QueryStats
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -135,9 +139,10 @@ fun AnalysisScreen(
         title = "Análisis",
         showBackButton = false
     ) { paddingValues ->
-        Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)) {
 
-            // TABS
             SecondaryTabRow(
                 selectedTabIndex = selectedTabIndex,
                 containerColor = MaterialTheme.colorScheme.surface,
@@ -191,7 +196,7 @@ fun AnalysisScreen(
                                                 columnProvider = ColumnCartesianLayer.ColumnProvider.series(
                                                     rememberLineComponent(
                                                         fill = Fill(MaterialTheme.colorScheme.primary),
-                                                        thickness = 32.dp,
+                                                        thickness = 18.dp,
                                                         shape = RoundedCornerShape(topStart = 6.dp, topEnd = 6.dp)
                                                     )
                                                 ),
@@ -205,7 +210,7 @@ fun AnalysisScreen(
                                         zoomState = rememberVicoZoomState(zoomEnabled = true),
                                         modifier = Modifier
                                             .width(950.dp)
-                                            .height(300.dp)
+                                            .height(350.dp)
                                     )
                                 }
                             }
@@ -229,33 +234,56 @@ fun AnalysisScreen(
                                 )
                                 Spacer(modifier = Modifier.height(24.dp))
 
-                                // CALL TO ACTION LIMPIO PARA BUSCAR EJERCICIO
+                                val selectedExercise = uiState.availableExercises.find { it.id == uiState.selectedExerciseId }
+
                                 OutlinedCard(
-                                    onClick = onNavigateToLibrary,
                                     modifier = Modifier.fillMaxWidth(),
-                                    colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.background),
-                                    shape = RoundedCornerShape(8.dp)
+                                    shape = RoundedCornerShape(12.dp),
+                                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                                    colors = CardDefaults.outlinedCardColors(
+                                        containerColor = if (selectedExercise != null)
+                                            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.1f)
+                                        else MaterialTheme.colorScheme.surface
+                                    )
                                 ) {
-                                    Row(
-                                        modifier = Modifier.padding(16.dp).fillMaxWidth(),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Search,
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.primary
-                                        )
-                                        Spacer(modifier = Modifier.width(16.dp))
-                                        Column {
-                                            val currentExerciseName = uiState.availableExercises.find { it.id == uiState.selectedExerciseId }?.name
+                                    ListItem(
+                                        modifier = Modifier.clickable { onNavigateToLibrary() },
+                                        headlineContent = {
                                             Text(
-                                                text = currentExerciseName ?: "Ejercicio a analizar",
-                                                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                                                maxLines = 1,
-                                                overflow = Ellipsis
+                                                text = selectedExercise?.name ?: "Seleccionar ejercicio",
+                                                fontWeight = FontWeight.Bold,
+                                                style = MaterialTheme.typography.titleMedium,
+                                                color = if (selectedExercise != null)
+                                                    MaterialTheme.colorScheme.onSurface
+                                                else MaterialTheme.colorScheme.onSurfaceVariant
                                             )
-                                        }
-                                    }
+                                        },
+                                        supportingContent = {
+                                            Text(
+                                                text = if (selectedExercise != null) "Toca para cambiar de ejercicio"
+                                                else "Elige un ejercicio para ver su evolución"
+                                            )
+                                        },
+                                        leadingContent = {
+                                            Icon(
+                                                imageVector = if (selectedExercise == null) Icons.Default.AddChart else Icons.Default.Insights,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.primary
+                                            )
+                                        },
+                                        trailingContent = {
+                                            if (selectedExercise != null) {
+                                                IconButton(onClick = { viewModel.selectExercise(null) }) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.Close,
+                                                        contentDescription = "Quitar selección",
+                                                        tint = MaterialTheme.colorScheme.error
+                                                    )
+                                                }
+                                            }
+                                        },
+                                        colors = ListItemDefaults.colors(containerColor = androidx.compose.ui.graphics.Color.Transparent)
+                                    )
                                 }
 
                                 Spacer(modifier = Modifier.height(24.dp))
@@ -267,12 +295,15 @@ fun AnalysisScreen(
                                                 .fillMaxWidth()
                                                 .height(200.dp)
                                                 .background(
-                                                    MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
-                                                    RoundedCornerShape(12.dp)),
+                                                    MaterialTheme.colorScheme.surfaceVariant.copy(
+                                                        alpha = 0.3f
+                                                    ),
+                                                    RoundedCornerShape(12.dp)
+                                                ),
                                             contentAlignment = Alignment.Center
                                         ) {
                                             Icon(
-                                                imageVector = Icons.Default.Insights,
+                                                imageVector = Icons.Default.QueryStats,
                                                 contentDescription = null,
                                                 modifier = Modifier.size(48.dp),
                                                 tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
@@ -296,7 +327,9 @@ fun AnalysisScreen(
                                             modelProducer = trendModelProducer,
                                             scrollState = rememberVicoScrollState(),
                                             zoomState = rememberVicoZoomState(zoomEnabled = true),
-                                            modifier = Modifier.fillMaxWidth().height(250.dp)
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(350.dp)
                                         )
                                     }
                                 }
