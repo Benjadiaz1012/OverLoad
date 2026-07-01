@@ -196,7 +196,7 @@ fun AnalysisScreen(
                                                 columnProvider = ColumnCartesianLayer.ColumnProvider.series(
                                                     rememberLineComponent(
                                                         fill = Fill(MaterialTheme.colorScheme.primary),
-                                                        thickness = 18.dp,
+                                                        thickness = 38.dp,
                                                         shape = RoundedCornerShape(topStart = 6.dp, topEnd = 6.dp)
                                                     )
                                                 ),
@@ -293,7 +293,7 @@ fun AnalysisScreen(
                                         Box(
                                             modifier = Modifier
                                                 .fillMaxWidth()
-                                                .height(200.dp)
+                                                .height(350.dp)
                                                 .background(
                                                     MaterialTheme.colorScheme.surfaceVariant.copy(
                                                         alpha = 0.3f

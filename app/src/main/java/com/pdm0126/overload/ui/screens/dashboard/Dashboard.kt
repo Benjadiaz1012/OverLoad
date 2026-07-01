@@ -431,7 +431,8 @@ fun ActiveSlotItem(
                             }
                             DropdownMenu(
                                 expanded = showRepsMenu,
-                                onDismissRequest = { showRepsMenu = false }
+                                onDismissRequest = { showRepsMenu = false },
+                                modifier = Modifier.heightIn(max = 250.dp)
                             ) {
                                 (1..20).forEach { repVal ->
                                     DropdownMenuItem(
@@ -458,10 +459,20 @@ fun ActiveSlotItem(
                                     style = MaterialTheme.typography.labelSmall
                                 )
                             }
-                            DropdownMenu(expanded = showRirMenu, onDismissRequest = { showRirMenu = false }) {
-                                DropdownMenuItem(text = { Text("Fijo (Sin RIR)") }, onClick = { isRirEnabled = false; showRirMenu = false })
+                            DropdownMenu(
+                                expanded = showRirMenu,
+                                onDismissRequest = { showRirMenu = false },
+                                modifier = Modifier.heightIn(max = 250.dp)
+                            ) {
+                                DropdownMenuItem(
+                                    text = { Text("Fijo (Sin RIR)") },
+                                    onClick = { isRirEnabled = false; showRirMenu = false }
+                                )
                                 (0..5).forEach { rirVal ->
-                                    DropdownMenuItem(text = { Text("RIR $rirVal") }, onClick = { isRirEnabled = true; rirInput = rirVal; showRirMenu = false })
+                                    DropdownMenuItem(
+                                        text = { Text("RIR $rirVal") },
+                                        onClick = { isRirEnabled = true; rirInput = rirVal; showRirMenu = false }
+                                    )
                                 }
                             }
                         }
