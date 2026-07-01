@@ -67,6 +67,14 @@ class ActiveWorkoutViewModel(
         }
     }
 
+    fun cancelWorkout() {
+        val sessionId = _uiState.value.activeSession?.sessionId ?: return
+        viewModelScope.launch {
+            workoutRepository.cancelSession(sessionId)
+            _isWorkoutFinished.value = true
+        }
+    }
+
     fun resetNavigation() {
         _isWorkoutFinished.value = false
     }

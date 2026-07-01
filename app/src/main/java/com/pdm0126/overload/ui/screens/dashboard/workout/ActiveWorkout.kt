@@ -38,6 +38,8 @@ fun ActiveWorkoutScreen(
     val lastSetsMap = uiState.lastSets
 
     var showEndWorkoutDialog by rememberSaveable { mutableStateOf(false) }
+    var showMenu by rememberSaveable { mutableStateOf(false) }
+    var showCancelWorkoutDialog by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(isWorkoutFinished) {
         if (isWorkoutFinished) {
@@ -51,11 +53,47 @@ fun ActiveWorkoutScreen(
         showBackButton = false,
         actions = {
             if (activeSession != null) {
-                IconButton(onClick = { showEndWorkoutDialog = true }) {
-                    Icon(
-                        imageVector = Icons.Default.StopCircle,
-                        contentDescription = "Finalizar",
-                        tint = MaterialTheme.colorScheme.error)
+                Box {
+                    IconButton(onClick = { showMenu = true }) {
+                        Icon(
+                            imageVector = Icons.Default.MoreVert,
+                            contentDescription = "Opciones",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = showMenu,
+                        onDismissRequest = { showMenu = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text("Finalizar Entrenamiento", color = MaterialTheme.colorScheme.onSurface) },
+                            onClick = {
+                                showMenu = false
+                                showEndWorkoutDialog = true
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.DoneAll,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Cancelar Entrenamiento", color = MaterialTheme.colorScheme.onSurface) },
+                            onClick = {
+                                showMenu = false
+                                showCancelWorkoutDialog = true
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.DeleteOutline,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -88,21 +126,26 @@ fun ActiveWorkoutScreen(
                     }
 
                     item {
-                        Button(
-                            onClick = { showEndWorkoutDialog = true },
-                            modifier = Modifier.fillMaxWidth().padding(top = 24.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
-                            shape = RoundedCornerShape(12.dp)
+                        Box(
+                            contentAlignment = Alignment.BottomEnd,
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Stop,
-                                contentDescription = null
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = "Finalizar Entrenamiento",
-                                fontWeight = FontWeight.Bold
-                            )
+                            Button(
+                                onClick = { showEndWorkoutDialog = true },
+                                modifier = Modifier.padding(top = 24.dp),
+                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                                shape = RoundedCornerShape(8.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.DoneAll,
+                                    contentDescription = null
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "Finalizar Entrenamiento",
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
                         }
                     }
                 }
@@ -112,13 +155,28 @@ fun ActiveWorkoutScreen(
         if (showEndWorkoutDialog) {
             OverloadConfirmDialog(
                 title = "Finalizar Sesión",
-                text = "¿Estás seguro de que deseas dar por terminado este entrenamiento? Los datos registrados se guardarán en tu historial.",
+                text = "Los datos registrados se guardarán en tu historial",
                 confirmText = "Finalizar",
                 onConfirm = {
                     viewModel.endWorkout()
                     showEndWorkoutDialog = false
                 },
                 onDismiss = { showEndWorkoutDialog = false }
+            )
+        }
+        if (showCancelWorkoutDialog) {
+            OverloadConfirmDialog(
+                title = "Cancelar Sesión",
+                text = "Se perderán todas las series registradas en este momento y nada se guardará en tu historial",
+                confirmText = "Cancelar Sesión",
+                dismissText = "Volver",
+                isDestructive = true,
+                icon = Icons.Default.DeleteOutline,
+                onConfirm = {
+                    viewModel.cancelWorkout()
+                    showCancelWorkoutDialog = false
+                },
+                onDismiss = { showCancelWorkoutDialog = false }
             )
         }
     }

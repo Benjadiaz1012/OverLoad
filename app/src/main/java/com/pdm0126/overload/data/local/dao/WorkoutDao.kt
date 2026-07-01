@@ -42,6 +42,9 @@ interface WorkoutDao {
     @Query("DELETE FROM workout_sets_table WHERE setId = :setId")
     suspend fun deleteSetById(setId: Long)
 
+    @Query("DELETE FROM workout_sessions_table WHERE sessionId = :sessionId")
+    suspend fun deleteSessionById(sessionId: Long)
+
     // Todas las series de una sesión (usado para el resumen final)
     @Query("SELECT * FROM workout_sets_table WHERE sessionId = :sessionId ORDER BY slotId, setNumber")
     fun getSetsForSession(sessionId: Long): Flow<List<WorkoutSetEntity>>

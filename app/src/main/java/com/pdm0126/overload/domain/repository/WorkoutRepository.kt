@@ -24,6 +24,8 @@ interface WorkoutRepository {
     // Marca la sesión como completada guardando el endTimestamp actual
     suspend fun endSession(sessionId: Long)
 
+    suspend fun cancelSession(sessionId: Long)
+
     // Registra una serie individual. Aplica la lógica de rirFactor internamente.
     suspend fun logSet(
         sessionId: Long,

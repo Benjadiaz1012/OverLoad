@@ -1,6 +1,5 @@
 package com.pdm0126.overload
 
-/*
 import com.pdm0126.overload.data.local.dao.AnalysisDao
 import com.pdm0126.overload.data.local.dao.ExerciseDao
 import com.pdm0126.overload.data.local.dao.RoutineDao
@@ -29,7 +28,6 @@ import com.pdm0126.overload.domain.repository.WorkoutRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-//-----------------------------------------------------------------------------
 class AnalysisRepositoryImp(
     private val analysisDao: AnalysisDao
 ) : AnalysisRepository {
@@ -46,34 +44,34 @@ class AnalysisRepositoryImp(
         return analysisDao.getOverallMuscleDistribution()
     }
 }
-//-----------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
 class ExerciseRepositoryImp(
     private val exerciseDao: ExerciseDao,
     private val ktorClient: ExerciseApiClient
 ) : ExerciseRepository {
 
-    override fun getLocalExercises(): Flow<List<com.pdm0126.overload.domain.model.Exercise>> {
+    override fun getLocalExercises(): Flow<List<Exercise>> {
         return exerciseDao.getAllExercises().map { entities ->
             entities.map { entity -> entity.toDomainModel() }
         }
     }
 
-    override fun getExercisesByMuscleGroup(muscleGroup: String): Flow<List<com.pdm0126.overload.domain.model.Exercise>> {
+    override fun getExercisesByMuscleGroup(muscleGroup: String): Flow<List<Exercise>> {
         return exerciseDao.getExercisesByMuscleGroup(muscleGroup).map { entities ->
             entities.map { entity -> entity.toDomainModel() }
         }
     }
-    override suspend fun saveRemoteExerciseToLocal(exercise: com.pdm0126.overload.domain.model.Exercise) {
+    override suspend fun saveRemoteExerciseToLocal(exercise: Exercise) {
         val entity = exercise.toEntity()
         exerciseDao.insertExercise(entity)
     }
 
-    override suspend fun deleteLocalExercise(exercise: com.pdm0126.overload.domain.model.Exercise) {
+    override suspend fun deleteLocalExercise(exercise: Exercise) {
         val entity = exercise.toEntity()
         exerciseDao.deleteExercise(entity)
     }
 
-    override suspend fun getExerciseById(id: String): com.pdm0126.overload.domain.model.Exercise? {
+    override suspend fun getExerciseById(id: String): Exercise? {
         return exerciseDao.getExerciseById(id)?.toDomainModel()
     }
 
@@ -89,19 +87,18 @@ class ExerciseRepositoryImp(
         }
     }
 }
-//-----------------------------------------------------------------------------
-
+//----------------------------------------------------------------------------------------------------------------
 class RoutineRepositoryImp(
     private val routineDao: RoutineDao
 ) : RoutineRepository {
 
-    override fun getActiveMicrocycle(): Flow<com.pdm0126.overload.domain.model.RoutineMicrocycle?> {
+    override fun getActiveMicrocycle(): Flow<RoutineMicrocycle?> {
         return routineDao.getActiveMicrocycle().map { relation ->
             relation?.toDomainModel()
         }
     }
 
-    override fun getAllMicrocycles(): Flow<List<com.pdm0126.overload.domain.model.RoutineMicrocycle>> {
+    override fun getAllMicrocycles(): Flow<List<RoutineMicrocycle>> {
         return routineDao.getAllMicrocycles().map { list ->
             list.map { it.toDomainModel() }
         }
@@ -168,7 +165,7 @@ class RoutineRepositoryImp(
         routineDao.updateActiveMicrocycle(microcycleId)
     }
 }
-//-----------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
 class WorkoutRepositoryImp(
     private val workoutDao: WorkoutDao
 ) : WorkoutRepository {
@@ -223,6 +220,9 @@ class WorkoutRepositoryImp(
             currentSession.copy(endTimestamp = System.currentTimeMillis())
         )
     }
+    override suspend fun cancelSession(sessionId: Long) {
+        workoutDao.deleteSessionById(sessionId)
+    }
 
     override suspend fun logSet(
         sessionId: Long,
@@ -253,20 +253,6 @@ class WorkoutRepositoryImp(
         workoutDao.deleteSetById(setId)
     }
 }
+//----------------------------------------------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-
-
-
-
-*/
+//----------------------------------------------------------------------------------------------------------------

@@ -64,6 +64,9 @@ class WorkoutRepositoryImp(
             currentSession.copy(endTimestamp = System.currentTimeMillis())
         )
     }
+    override suspend fun cancelSession(sessionId: Long) {
+        workoutDao.deleteSessionById(sessionId)
+    }
 
     override suspend fun logSet(
         sessionId: Long,
