@@ -137,7 +137,6 @@ fun DetailScreen(
 fun ExerciseDetailContent(exercise: Exercise) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        //contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item {
