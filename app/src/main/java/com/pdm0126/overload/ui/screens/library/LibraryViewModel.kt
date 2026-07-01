@@ -75,7 +75,7 @@ class LibraryViewModel(
         }
     }
 
-    fun onMuscleFilterSelected(muscle: String) {
+    fun onMuscleFilterSelected(muscle: String?) {
         _selectedMuscle.value = if (_selectedMuscle.value == muscle) null else muscle
     }
 

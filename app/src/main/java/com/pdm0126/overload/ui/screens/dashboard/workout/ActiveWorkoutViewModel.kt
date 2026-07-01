@@ -61,8 +61,14 @@ class ActiveWorkoutViewModel(
 
     fun endWorkout() {
         val sessionId = _uiState.value.activeSession?.sessionId ?: return
+        val loggedSets = _uiState.value.sessionSets
+
         viewModelScope.launch {
-            workoutRepository.endSession(sessionId)
+            if (loggedSets.isEmpty()) {
+                workoutRepository.cancelSession(sessionId)
+            } else {
+                workoutRepository.endSession(sessionId)
+            }
             _isWorkoutFinished.value = true
         }
     }

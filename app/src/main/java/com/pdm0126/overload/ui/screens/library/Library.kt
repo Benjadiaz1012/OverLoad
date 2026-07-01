@@ -3,7 +3,6 @@ package com.pdm0126.overload.ui.screens.library
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -18,7 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,10 +31,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.pdm0126.overload.domain.TechnicalDictionary
 import com.pdm0126.overload.domain.model.Exercise
-import com.pdm0126.overload.ui.components.BookmarkedIcon
 import com.pdm0126.overload.ui.components.Error
 import com.pdm0126.overload.ui.components.OverloadScaffold
-import com.pdm0126.overload.ui.components.UnBookmarkedIcon
 
 @Composable
 fun LibraryScreen(
@@ -49,6 +46,8 @@ fun LibraryScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
+
+    var showFilterMenu by remember { mutableStateOf(false) }
 
     OverloadScaffold(
         title = "Ejercicios",
@@ -129,24 +128,13 @@ fun LibraryScreen(
                 )
             )
 
-            val muscleGroups = TechnicalDictionary.mainMuscleGroupsList
-            LazyRow(
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                modifier = Modifier.padding(bottom = 8.dp)
-            ) {
-                items(muscleGroups) { muscle ->
-                    FilterChip(
-                        selected = state.selectedMuscle == muscle,
-                        onClick = { viewModel.onMuscleFilterSelected(muscle) },
-                        label = { Text(muscle.replaceFirstChar { it.uppercase() }) },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = MaterialTheme.colorScheme.primary,
-                            selectedLabelColor = MaterialTheme.colorScheme.onPrimary
-                        )
-                    )
-                }
-            }
+            MuscleFilter(
+                selectedMuscle = state.selectedMuscle,
+                onMuscleSelect = { viewModel.onMuscleFilterSelected(it) },
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             Box(
                 modifier = Modifier.fillMaxSize()
@@ -232,6 +220,69 @@ fun LibraryScreen(
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun MuscleFilter(
+    selectedMuscle: String?,
+    onMuscleSelect: (String?) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Box(modifier = modifier) {
+        FilterChip(
+            selected = selectedMuscle != null,
+            onClick = { expanded = true },
+            label = {
+                Text(
+                    text = if (selectedMuscle == null) "Todos los músculos" else "Músculo: $selectedMuscle",
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            leadingIcon = {
+                Icon(Icons.Default.FilterList, contentDescription = "Filtrar")
+            },
+            trailingIcon = {
+                Icon(Icons.Default.ArrowDropDown, contentDescription = null)
+            },
+            shape = RoundedCornerShape(8.dp)
+        )
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.heightIn(max = 350.dp)
+        ) {
+            // Opción: Todos
+            DropdownMenuItem(
+                text = { Text("Todos los músculos", fontWeight = if (selectedMuscle == null) FontWeight.Bold else FontWeight.Normal) },
+                onClick = {
+                    onMuscleSelect(null)
+                    expanded = false
+                },
+                trailingIcon = if (selectedMuscle == null) {
+                    { Icon(Icons.Default.Check, contentDescription = null, tint = MaterialTheme.colorScheme.primary) }
+                } else null
+            )
+
+            HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
+
+            // Lista de músculos dinámicos
+            TechnicalDictionary.mainMuscleGroupsList.forEach { muscle ->
+                DropdownMenuItem(
+                    text = { Text(muscle, fontWeight = if (selectedMuscle == muscle) FontWeight.Bold else FontWeight.Normal) },
+                    onClick = {
+                        onMuscleSelect(muscle)
+                        expanded = false
+                    },
+                    trailingIcon = if (selectedMuscle == muscle) {
+                        { Icon(Icons.Default.Check, contentDescription = null, tint = MaterialTheme.colorScheme.primary) }
+                    } else null
+                )
             }
         }
     }
