@@ -23,6 +23,7 @@ import com.pdm0126.overload.ui.components.OverloadScaffold
 import com.pdm0126.overload.ui.screens.analysis.AnalysisScreen
 import com.pdm0126.overload.ui.screens.analysis.AnalysisViewModel
 import com.pdm0126.overload.ui.screens.dashboard.DashboardScreen
+import com.pdm0126.overload.ui.screens.dashboard.workout.ActiveWorkoutScreen
 import com.pdm0126.overload.ui.screens.detail.DetailScreen
 import com.pdm0126.overload.ui.screens.library.LibraryScreen
 import com.pdm0126.overload.ui.screens.routines.BlueprintSelectionScreen
@@ -61,7 +62,14 @@ fun OverloadApp() {
             onBack = { backStack.removeLastOrNull() },
             entryProvider = entryProvider {
                 entry<Routes.Dashboard> {
-                    DashboardScreen()
+                    DashboardScreen(
+                        onNavigateToActiveWorkout = { backStack.add(Routes.ActiveWorkout) }
+                    )
+                }
+                entry<Routes.ActiveWorkout> {
+                    ActiveWorkoutScreen(
+                        onBack = { backStack.removeLastOrNull() }
+                    )
                 }
                 entry<Routes.Routines> {
                     RoutinesScreen(

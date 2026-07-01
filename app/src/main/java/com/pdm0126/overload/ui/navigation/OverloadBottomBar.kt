@@ -33,7 +33,6 @@ fun OverloadBottomBar(
     currentDestination: Any?,
     onNavigate: (Routes) -> Unit
 ) {
-    // Cuando la ruta actual no sea un "Top Level Destination", ocultamos la barra (ej. Sesión activa o personalización de microciclo, día de entrenamiento, etcétera)
     val isTopLevel = topLevelDestinations.any { destination -> destination.route == currentDestination }
     if (!isTopLevel) return
 
