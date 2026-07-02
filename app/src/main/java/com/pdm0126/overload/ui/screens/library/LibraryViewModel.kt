@@ -30,11 +30,11 @@ class LibraryViewModel(
         Pair(muscle, mechanic)
     }
     val uiState: StateFlow<LibraryUiState> = combine(
-        exerciseRepository.getLocalExercises(),           // Flow<List<Exercise>>
-        _selectedTabIndex,                               // MutableStateFlow<Int>
-        _filtersFlow,                                 // MutableStateFlow<String?>
-        _query,                                          // MutableStateFlow<String>
-        _remoteState                                     // MutableStateFlow<RemoteState>
+        exerciseRepository.getLocalExercises(),
+        _selectedTabIndex,
+        _filtersFlow,
+        _query,
+        _remoteState
     ) { local, tabIndex, filters, query, remote ->
 
         val (muscles, mechanic) = filters
@@ -72,6 +72,9 @@ class LibraryViewModel(
     fun onTabSelected(index: Int) {
         if (_selectedTabIndex.value != index) {
             _selectedTabIndex.value = index
+            if (index == 1 && _query.value.isNotBlank()) {
+                searchRemoteExercises()
+            }
         }
     }
 

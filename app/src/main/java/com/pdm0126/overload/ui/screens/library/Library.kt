@@ -1,5 +1,6 @@
 package com.pdm0126.overload.ui.screens.library
 
+import com.pdm0126.overload.R
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -79,7 +81,7 @@ fun LibraryScreen(
             }
 
             val isLocal = state.selectedTabIndex == 0
-            OutlinedTextField(
+            TextField(
                 value = state.query,
                 onValueChange = {  viewModel.onSearchQueryChanged(it) },
                 modifier = Modifier
@@ -135,8 +137,9 @@ fun LibraryScreen(
                 ),
                 shape = RoundedCornerShape(8.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.background,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.background
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                    disabledContainerColor = MaterialTheme.colorScheme.surface,
                 )
             )
 
@@ -191,11 +194,24 @@ fun LibraryScreen(
                         }
 
                         state.remoteState.results.isEmpty() && state.query.isBlank() -> {
-                            Text(
-                                text = "...", // Mensaje de inicio o indicación de búsqueda vacía
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.align(Alignment.Center)
-                            )
+                            Column(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Search,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(64.dp),
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                                )
+                                Text(
+                                    text = "Busca un ejercicio",
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                )
+                            }
                         }
 
                         else -> {
@@ -409,10 +425,9 @@ fun ExerciseCard(
         } else if (isAnalysisMode) {
             IconButton(onClick = { onAnalysisClick(exercise) }) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ShowChart,
+                    painter = painterResource(id = R.drawable.search_insights_24px),
                     contentDescription = "Analizar",
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(32.dp)
                 )
             }
         }

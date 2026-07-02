@@ -77,6 +77,8 @@ fun RoutinesListContent(
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = "No tienes rutinas",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

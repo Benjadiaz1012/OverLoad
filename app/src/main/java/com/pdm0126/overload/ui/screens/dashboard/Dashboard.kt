@@ -63,6 +63,7 @@ fun DashboardScreen(
                             text = "Sin Rutinas activas",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center
                         )
                     }

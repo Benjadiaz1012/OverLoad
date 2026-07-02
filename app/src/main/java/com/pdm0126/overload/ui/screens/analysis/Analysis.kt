@@ -9,17 +9,21 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ShowChart
 import androidx.compose.material.icons.filled.AddChart
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Insights
 import androidx.compose.material.icons.filled.QueryStats
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.ShowChart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color.Companion.Transparent
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
@@ -46,6 +50,7 @@ import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
+import com.pdm0126.overload.R
 import com.pdm0126.overload.domain.TechnicalDictionary
 import com.pdm0126.overload.ui.components.OverloadScaffold
 import java.text.SimpleDateFormat
@@ -166,7 +171,6 @@ fun AnalysisScreen(
                     contentPadding = PaddingValues(16.dp),
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    // CONTENIDO TAB 1: DISTRIBUCIÓN
                     if (selectedTabIndex == 0) {
                         item {
                             Column(modifier = Modifier.fillMaxWidth()) {
@@ -216,7 +220,6 @@ fun AnalysisScreen(
                             }
                         }
                     }
-                    // CONTENIDO TAB 2: EVOLUCIÓN (LÍNEAS)
                     else {
                         item {
                             Column(modifier = Modifier.fillMaxWidth()) {
@@ -228,46 +231,86 @@ fun AnalysisScreen(
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    text = "Evolución de volumen total estimado en el tiempo",
+                                    text = "Evolución de volumen total en el tiempo",
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                                 Spacer(modifier = Modifier.height(24.dp))
 
                                 val selectedExercise = uiState.availableExercises.find { it.id == uiState.selectedExerciseId }
-
-                                OutlinedCard(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    shape = RoundedCornerShape(12.dp),
-                                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                                    colors = CardDefaults.outlinedCardColors(
-                                        containerColor = if (selectedExercise != null)
-                                            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.1f)
-                                        else MaterialTheme.colorScheme.surface
+                                /*Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                ) {
+                                    TextField(
+                                        value = selectedExercise?.name ?: "",
+                                        onValueChange = {},
+                                        modifier = Modifier.fillMaxWidth(),
+                                        singleLine = true,
+                                        maxLines = 1,
+                                        readOnly = true,
+                                        //enabled = false,
+                                        placeholder = {
+                                            Text(
+                                                text = "Ejercicio a analizar",
+                                                color = MaterialTheme.colorScheme.onSecondaryContainer
+                                            )
+                                        },
+                                        leadingIcon = {
+                                            Icon(
+                                                imageVector = Icons.Default.Search,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.primary
+                                            )
+                                        },
+                                        trailingIcon = {
+                                            if (selectedExercise != null) {
+                                                IconButton(onClick = { viewModel.selectExercise(null) }) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.Cancel,
+                                                        contentDescription = "Limpiar selección",
+                                                        tint = MaterialTheme.colorScheme.primary
+                                                    )
+                                                }
+                                            }
+                                        },
+                                        shape = RoundedCornerShape(8.dp),
+                                        colors = TextFieldDefaults.colors(
+                                            disabledContainerColor = MaterialTheme.colorScheme.surface,
+                                            disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                                            disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            disabledIndicatorColor = if (selectedExercise != null) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                                            disabledLeadingIconColor = MaterialTheme.colorScheme.primary,
+                                            disabledTrailingIconColor = MaterialTheme.colorScheme.primary
+                                        )
                                     )
+                                    Box(
+                                        modifier = Modifier
+                                            .matchParentSize()
+                                            .padding(end = 48.dp)
+                                            .clickable { onNavigateToLibrary() }
+                                    )
+                                }*/
+                                Card(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    shape = RoundedCornerShape(8.dp),
+                                    colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surface),
+                                    border = BorderStroke(1.dp, if (selectedExercise == null) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.primary)
                                 ) {
                                     ListItem(
                                         modifier = Modifier.clickable { onNavigateToLibrary() },
                                         headlineContent = {
                                             Text(
                                                 text = selectedExercise?.name ?: "Seleccionar ejercicio",
-                                                fontWeight = FontWeight.Bold,
-                                                style = MaterialTheme.typography.titleMedium,
-                                                color = if (selectedExercise != null)
-                                                    MaterialTheme.colorScheme.onSurface
-                                                else MaterialTheme.colorScheme.onSurfaceVariant
-                                            )
-                                        },
-                                        supportingContent = {
-                                            Text(
-                                                text = if (selectedExercise != null) "Toca para cambiar de ejercicio"
-                                                else "Elige un ejercicio para ver su evolución"
+                                                maxLines = 1,
+                                                overflow = Ellipsis,
+                                                color = MaterialTheme.colorScheme.onSurface
                                             )
                                         },
                                         leadingContent = {
                                             Icon(
-                                                imageVector = if (selectedExercise == null) Icons.Default.AddChart else Icons.Default.Insights,
-                                                contentDescription = null,
+                                                painter = painterResource(id = R.drawable.search_insights_24px),
+                                                contentDescription = "Analizar",
                                                 tint = MaterialTheme.colorScheme.primary
                                             )
                                         },
@@ -282,7 +325,7 @@ fun AnalysisScreen(
                                                 }
                                             }
                                         },
-                                        colors = ListItemDefaults.colors(containerColor = androidx.compose.ui.graphics.Color.Transparent)
+                                        colors = ListItemDefaults.colors(containerColor = Transparent)
                                     )
                                 }
 
