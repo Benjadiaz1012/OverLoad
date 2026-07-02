@@ -25,6 +25,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -47,7 +48,7 @@ fun LibraryScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
 
-    var showFilterMenu by remember { mutableStateOf(false) }
+    var showFilterSheet by remember { mutableStateOf(false) }
 
     OverloadScaffold(
         title = "Ejercicios",
@@ -98,15 +99,26 @@ fun LibraryScreen(
                     )
                               },
                 trailingIcon = {
-                    if (state.query.isNotEmpty()) {
-                        IconButton(
-                            onClick = { viewModel.onSearchQueryChanged(""); focusManager.clearFocus() }
-                        ) {
+                    Row {
+                        IconButton(onClick = { showFilterSheet = true }) {
+                            val isFilterActive = state.selectedMuscles != emptyList<String?>() || state.selectedMechanic != null
                             Icon(
-                                Icons.Default.Cancel,
-                                contentDescription = "Limpiar búsqueda",
-                                tint = MaterialTheme.colorScheme.primary
+                                imageVector = Icons.Default.FilterList,
+                                contentDescription = "Filtros",
+                                tint = if (isFilterActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                             )
+                        }
+
+                        if (state.query.isNotEmpty()) {
+                            IconButton(
+                                onClick = { viewModel.onSearchQueryChanged(""); focusManager.clearFocus() }
+                            ) {
+                                Icon(
+                                    Icons.Default.Cancel,
+                                    contentDescription = "Limpiar búsqueda",
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
                         }
                     }
                 },
@@ -128,13 +140,8 @@ fun LibraryScreen(
                 )
             )
 
-            MuscleFilter(
-                selectedMuscle = state.selectedMuscle,
-                onMuscleSelect = { viewModel.onMuscleFilterSelected(it) },
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
-            )
+            Spacer(modifier = Modifier.height(8.dp))
 
-            Spacer(modifier = Modifier.height(16.dp))
 
             Box(
                 modifier = Modifier.fillMaxSize()
@@ -222,67 +229,125 @@ fun LibraryScreen(
                 }
             }
         }
+        if (showFilterSheet) {
+            ExerciseFilterBottomSheet(
+                selectedMuscles = state.selectedMuscles,
+                selectedMechanic = state.selectedMechanic,
+                onMuscleSelect = { viewModel.onMuscleFilterSelected(it) },
+                onMechanicSelect = { viewModel.onMechanicFilterSelected(it) },
+                onDismiss = { showFilterSheet = false }
+            )
+        }
     }
 }
-
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun MuscleFilter(
-    selectedMuscle: String?,
+fun ExerciseFilterBottomSheet(
+    selectedMuscles: List<String>,
+    selectedMechanic: String?,
     onMuscleSelect: (String?) -> Unit,
-    modifier: Modifier = Modifier
+    onMechanicSelect: (String?) -> Unit,
+    onDismiss: () -> Unit
 ) {
-    var expanded by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    Box(modifier = modifier) {
-        FilterChip(
-            selected = selectedMuscle != null,
-            onClick = { expanded = true },
-            label = {
-                Text(
-                    text = if (selectedMuscle == null) "Todos los músculos" else "Músculo: $selectedMuscle",
-                    fontWeight = FontWeight.Bold
-                )
-            },
-            leadingIcon = {
-                Icon(Icons.Default.FilterList, contentDescription = "Filtrar")
-            },
-            trailingIcon = {
-                Icon(Icons.Default.ArrowDropDown, contentDescription = null)
-            },
-            shape = RoundedCornerShape(8.dp)
-        )
-
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier.heightIn(max = 350.dp)
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+        containerColor = MaterialTheme.colorScheme.surface,
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp)
+                .padding(bottom = 48.dp)
         ) {
-            // Opción: Todos
-            DropdownMenuItem(
-                text = { Text("Todos los músculos", fontWeight = if (selectedMuscle == null) FontWeight.Bold else FontWeight.Normal) },
-                onClick = {
-                    onMuscleSelect(null)
-                    expanded = false
-                },
-                trailingIcon = if (selectedMuscle == null) {
-                    { Icon(Icons.Default.Check, contentDescription = null, tint = MaterialTheme.colorScheme.primary) }
-                } else null
-            )
-
-            HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
-
-            // Lista de músculos dinámicos
-            TechnicalDictionary.mainMuscleGroupsList.forEach { muscle ->
-                DropdownMenuItem(
-                    text = { Text(muscle, fontWeight = if (selectedMuscle == muscle) FontWeight.Bold else FontWeight.Normal) },
-                    onClick = {
-                        onMuscleSelect(muscle)
-                        expanded = false
-                    },
-                    trailingIcon = if (selectedMuscle == muscle) {
-                        { Icon(Icons.Default.Check, contentDescription = null, tint = MaterialTheme.colorScheme.primary) }
-                    } else null
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .defaultMinSize(minHeight = 48.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Filtros",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
                 )
+
+                if (selectedMuscles.isNotEmpty() || selectedMechanic != null) {
+                    TextButton(onClick = {
+                        onMuscleSelect(null)
+                        onMechanicSelect(null)
+                    }) {
+                        Text("Limpiar todo", fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "Grupo Muscular",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                val muscles = TechnicalDictionary.mainMuscleGroupsList
+                muscles.forEach { muscle ->
+                    FilterChip(
+                        selected = selectedMuscles.contains(muscle),
+                        onClick = { onMuscleSelect(muscle) },
+                        label = { Text(muscle) },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                            selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = "Mecánica",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                val mechanics = listOf("Compuesto", "Aislamiento")
+                mechanics.forEach { mechanic ->
+                    FilterChip(
+                        selected = selectedMechanic == mechanic,
+                        onClick = { onMechanicSelect(if (selectedMechanic == mechanic) null else mechanic) },
+                        label = {
+                            Text(
+                                text = mechanic,
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center
+                            )
+                        },
+                        modifier = Modifier.weight(1f),
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                            selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    )
+                }
             }
         }
     }
