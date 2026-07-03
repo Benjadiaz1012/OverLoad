@@ -8,6 +8,18 @@ object TechnicalDictionary {
     )
 
     // Lista pública para los chips de filtro en la UI
+    val muscleAbbreviationMap = mapOf(
+        "Pecho" to "PEC",
+        "Hombros" to "HOM",
+        "Espalda" to "ESP",
+        "Tríceps" to "TRÍ",
+        "Bíceps" to "BÍC",
+        "Pierna" to "PIE",
+        "Gemelos" to "GEM",
+        "Antebrazos" to "ANT",
+        "Abdominales" to "ABS"
+    )
+
     val mainMuscleGroupsList = listOf(
         "Pecho", "Hombros", "Espalda", "Tríceps", "Bíceps",
         "Pierna", "Gemelos", "Antebrazos", "Abdominales"

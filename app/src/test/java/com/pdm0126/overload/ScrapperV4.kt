@@ -1,5 +1,6 @@
 package com.pdm0126.overload
 
+import com.pdm0126.overload.domain.TechnicalDictionary
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -75,7 +76,7 @@ class Scrapper {
                     val apiMatch = apiExercises.find { it.id.equals(targetId, ignoreCase = true) }
 
                     if (apiMatch != null) {
-                        println("Procesando: ${apiMatch.name} (ID: ${apiMatch.id})")
+                        println("Procesando: ${apiMatch.name} (ID: ${apiMatch.id.lowercase()})")
 
                         val mainMuscleGroup = TechnicalDictionary.getGeneralGroup(apiMatch.primaryMuscles.firstOrNull())
                         val targetMuscles = apiMatch.primaryMuscles.map { TechnicalDictionary.getSpecificMuscle(it) }
