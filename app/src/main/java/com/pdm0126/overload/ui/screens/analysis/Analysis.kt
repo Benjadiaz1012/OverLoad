@@ -13,10 +13,12 @@ import androidx.compose.material.icons.automirrored.filled.ShowChart
 import androidx.compose.material.icons.filled.AddChart
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Insights
 import androidx.compose.material.icons.filled.QueryStats
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShowChart
+import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -238,6 +240,10 @@ fun AnalysisScreen(
                                 Spacer(modifier = Modifier.height(24.dp))
 
                                 val selectedExercise = uiState.availableExercises.find { it.id == uiState.selectedExerciseId }
+                                ExerciseSelectorCard(
+                                    selectedExerciseName = selectedExercise?.name,
+                                    onClick = { onNavigateToLibrary() }
+                                )
                                 /*Box(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -291,7 +297,7 @@ fun AnalysisScreen(
                                             .clickable { onNavigateToLibrary() }
                                     )
                                 }*/
-                                Card(
+                                /*Card(
                                     modifier = Modifier.fillMaxWidth(),
                                     shape = RoundedCornerShape(8.dp),
                                     colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surface),
@@ -327,7 +333,7 @@ fun AnalysisScreen(
                                         },
                                         colors = ListItemDefaults.colors(containerColor = Transparent)
                                     )
-                                }
+                                }*/
 
                                 Spacer(modifier = Modifier.height(24.dp))
 
@@ -381,6 +387,68 @@ fun AnalysisScreen(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun ExerciseSelectorCard(
+    selectedExerciseName: String?,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    OutlinedCard(
+        onClick = onClick, // Hace que toda la tarjeta sea clickeable
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.outlinedCardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        ),
+        border = BorderStroke(
+            width = 1.dp,
+            color = if (selectedExerciseName == null)
+                MaterialTheme.colorScheme.outlineVariant
+            else
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                // El ícono cambia dependiendo de si hay algo seleccionado
+                Icon(
+                    imageVector = if (selectedExerciseName == null) Icons.Default.Search else Icons.Default.FitnessCenter,
+                    contentDescription = null,
+                    tint = if (selectedExerciseName == null) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.primary
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Column {
+                    Text(
+                        text = "Ejercicio a analizar",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = selectedExerciseName ?: "Toca para buscar en tu biblioteca",
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = if (selectedExerciseName == null) FontWeight.Normal else FontWeight.Bold,
+                        color = if (selectedExerciseName == null) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+
+            // Un pequeño ícono de "intercambio" o flecha para indicar que se puede cambiar
+            Icon(
+                imageVector = Icons.Default.SwapHoriz,
+                contentDescription = "Cambiar ejercicio",
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }

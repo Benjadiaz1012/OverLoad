@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ExerciseDto(
+    val id: String,
     val name: String,
     val primaryMuscles: List<String> = emptyList(),
     val secondaryMuscles: List<String> = emptyList(),

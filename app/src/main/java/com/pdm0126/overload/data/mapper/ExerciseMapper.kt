@@ -35,11 +35,10 @@ fun Exercise.toEntity() : ExerciseEntity {
 }
 
 fun ExerciseDto.toDomainModel(): Exercise {
-    val baseUrl = "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/"
-    val generatedId = "ex_${name.trim().lowercase().replace(" ", "_").replace("-", "_")}"
+    val baseUrl = "https://raw.githubusercontent.com/IgnacioPeralta00/overload-exercise-db/main/exercises/"
 
     return Exercise(
-        id = generatedId,
+        id = id,
         name = name,
         muscleGroup = TechnicalDictionary.getGeneralGroup(primaryMuscles.first()),
         mechanic = TechnicalDictionary.getMechanic(mechanic),
