@@ -7,7 +7,6 @@ object TechnicalDictionary {
         val generalGroup: String
     )
 
-    // Lista pública para los chips de filtro en la UI
     val muscleAbbreviationMap = mapOf(
         "Pecho" to "PEC",
         "Hombros" to "HOM",
@@ -22,7 +21,7 @@ object TechnicalDictionary {
 
     val mainMuscleGroupsList = listOf(
         "Pecho", "Hombros", "Espalda", "Tríceps", "Bíceps",
-        "Pierna", "Gemelos", "Antebrazos", "Abdominales"
+        "Pierna", "Gemelos", "Antebrazos", "Abdomen"
     )
 
     private val muscleMap = mapOf(

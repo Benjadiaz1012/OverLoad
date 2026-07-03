@@ -1,9 +1,13 @@
 package com.pdm0126.overload.ui.screens.library
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import com.pdm0126.overload.R
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -86,7 +90,7 @@ fun LibraryScreen(
                 onValueChange = {  viewModel.onSearchQueryChanged(it) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(top = 16.dp, bottom = 8.dp, start = 16.dp, end = 16.dp ),
                 placeholder = {
                     Text(
                         text = if (isLocal) "Tu biblioteca" else "Buscar ejercicio",
@@ -143,7 +147,18 @@ fun LibraryScreen(
                 )
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            ActiveFiltersRow(
+                selectedMuscles = state.selectedMuscles,
+                selectedMechanic = state.selectedMechanic,
+                onRemoveMuscle = { muscle ->
+                    viewModel.onMuscleFilterSelected(muscle)
+                },
+                onRemoveMechanic = {
+                    viewModel.onMechanicFilterSelected(null)
+                }
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
 
 
             Box(
@@ -171,9 +186,7 @@ fun LibraryScreen(
                                     onSelectClick = { onExerciseSelect(exercise) },
                                     onAnalysisClick = { onExerciseAnalysisSelect(exercise) }
                                 )
-                                Spacer(modifier = Modifier.height(8.dp))
-                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                                Spacer(modifier = Modifier.height(8.dp))
+                                ItemDivider()
                             }
                         }
                     }
@@ -235,9 +248,7 @@ fun LibraryScreen(
                                             onExerciseAnalysisSelect(exercise)
                                         }
                                     )
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                                    Spacer(modifier = Modifier.height(8.dp))
+                                    ItemDivider()
                                 }
                             }
                         }
@@ -391,7 +402,7 @@ fun ExerciseCard(
             contentDescription = exercise.name,
             modifier = Modifier
                 .size(100.dp)
-                .clip(RoundedCornerShape(8.dp)),
+                .clip(RoundedCornerShape(4.dp)),
             contentScale = ContentScale.Crop
         )
 
@@ -443,4 +454,88 @@ fun ExerciseCard(
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ActiveFiltersRow(
+    selectedMuscles: List<String>,
+    selectedMechanic: String?,
+    onRemoveMuscle: (String) -> Unit,
+    onRemoveMechanic: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val hasFilters = selectedMuscles.isNotEmpty() || selectedMechanic != null
+
+    AnimatedVisibility(
+        visible = hasFilters,
+        enter = expandVertically(),
+        exit = shrinkVertically()
+    ) {
+        LazyRow(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(selectedMuscles) { muscle ->
+                InputChip(
+                    selected = true,
+                    onClick = { onRemoveMuscle(muscle) },
+                    label = {
+                        Text(
+                            text = muscle,
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    },
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Quitar filtro $muscle",
+                            modifier = Modifier.size(16.dp)
+                        )
+                    },
+                    colors = InputChipDefaults.inputChipColors(
+                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    ),
+                    border = null
+                )
+            }
+
+            selectedMechanic?.let { mechanic ->
+                item {
+                    InputChip(
+                        selected = true,
+                        onClick = { onRemoveMechanic() },
+                        label = {
+                            Text(
+                                text = mechanic,
+                                style = MaterialTheme.typography.labelMedium
+                            )
+                        },
+                        trailingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "Quitar filtro $mechanic",
+                                modifier = Modifier.size(16.dp)
+                            )
+                        },
+                        colors = InputChipDefaults.inputChipColors(
+                            selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            selectedLabelColor = MaterialTheme.colorScheme.onSecondaryContainer
+                        ),
+                        border = null
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ItemDivider() {
+    Spacer(modifier = Modifier.height(4.dp))
+    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+    Spacer(modifier = Modifier.height(4.dp))
 }
