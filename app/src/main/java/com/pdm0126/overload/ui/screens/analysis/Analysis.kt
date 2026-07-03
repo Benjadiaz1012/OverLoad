@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -52,6 +53,7 @@ import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
+import com.pdm0126.overload.Exercise
 import com.pdm0126.overload.R
 import com.pdm0126.overload.domain.TechnicalDictionary
 import com.pdm0126.overload.ui.components.OverloadScaffold
@@ -240,100 +242,10 @@ fun AnalysisScreen(
                                 Spacer(modifier = Modifier.height(24.dp))
 
                                 val selectedExercise = uiState.availableExercises.find { it.id == uiState.selectedExerciseId }
-                                ExerciseSelectorCard(
-                                    selectedExerciseName = selectedExercise?.name,
-                                    onClick = { onNavigateToLibrary() }
+                                ExerciseSelectorHeader(
+                                    selectedExercise = selectedExercise as Exercise?,
+                                    onNavigateToLibrary = onNavigateToLibrary
                                 )
-                                /*Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                ) {
-                                    TextField(
-                                        value = selectedExercise?.name ?: "",
-                                        onValueChange = {},
-                                        modifier = Modifier.fillMaxWidth(),
-                                        singleLine = true,
-                                        maxLines = 1,
-                                        readOnly = true,
-                                        //enabled = false,
-                                        placeholder = {
-                                            Text(
-                                                text = "Ejercicio a analizar",
-                                                color = MaterialTheme.colorScheme.onSecondaryContainer
-                                            )
-                                        },
-                                        leadingIcon = {
-                                            Icon(
-                                                imageVector = Icons.Default.Search,
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.primary
-                                            )
-                                        },
-                                        trailingIcon = {
-                                            if (selectedExercise != null) {
-                                                IconButton(onClick = { viewModel.selectExercise(null) }) {
-                                                    Icon(
-                                                        imageVector = Icons.Default.Cancel,
-                                                        contentDescription = "Limpiar selección",
-                                                        tint = MaterialTheme.colorScheme.primary
-                                                    )
-                                                }
-                                            }
-                                        },
-                                        shape = RoundedCornerShape(8.dp),
-                                        colors = TextFieldDefaults.colors(
-                                            disabledContainerColor = MaterialTheme.colorScheme.surface,
-                                            disabledTextColor = MaterialTheme.colorScheme.onSurface,
-                                            disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                            disabledIndicatorColor = if (selectedExercise != null) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                                            disabledLeadingIconColor = MaterialTheme.colorScheme.primary,
-                                            disabledTrailingIconColor = MaterialTheme.colorScheme.primary
-                                        )
-                                    )
-                                    Box(
-                                        modifier = Modifier
-                                            .matchParentSize()
-                                            .padding(end = 48.dp)
-                                            .clickable { onNavigateToLibrary() }
-                                    )
-                                }*/
-                                /*Card(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    shape = RoundedCornerShape(8.dp),
-                                    colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surface),
-                                    border = BorderStroke(1.dp, if (selectedExercise == null) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.primary)
-                                ) {
-                                    ListItem(
-                                        modifier = Modifier.clickable { onNavigateToLibrary() },
-                                        headlineContent = {
-                                            Text(
-                                                text = selectedExercise?.name ?: "Seleccionar ejercicio",
-                                                maxLines = 1,
-                                                overflow = Ellipsis,
-                                                color = MaterialTheme.colorScheme.onSurface
-                                            )
-                                        },
-                                        leadingContent = {
-                                            Icon(
-                                                painter = painterResource(id = R.drawable.search_insights_24px),
-                                                contentDescription = "Analizar",
-                                                tint = MaterialTheme.colorScheme.primary
-                                            )
-                                        },
-                                        trailingContent = {
-                                            if (selectedExercise != null) {
-                                                IconButton(onClick = { viewModel.selectExercise(null) }) {
-                                                    Icon(
-                                                        imageVector = Icons.Default.Close,
-                                                        contentDescription = "Quitar selección",
-                                                        tint = MaterialTheme.colorScheme.error
-                                                    )
-                                                }
-                                            }
-                                        },
-                                        colors = ListItemDefaults.colors(containerColor = Transparent)
-                                    )
-                                }*/
 
                                 Spacer(modifier = Modifier.height(24.dp))
 
@@ -392,63 +304,98 @@ fun AnalysisScreen(
 }
 
 @Composable
-fun ExerciseSelectorCard(
-    selectedExerciseName: String?,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+fun ExerciseSelectorHeader(
+    selectedExercise: Exercise?,
+    onNavigateToLibrary: () -> Unit,
 ) {
-    OutlinedCard(
-        onClick = onClick, // Hace que toda la tarjeta sea clickeable
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.outlinedCardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface
-        ),
-        border = BorderStroke(
-            width = 1.dp,
-            color = if (selectedExerciseName == null)
-                MaterialTheme.colorScheme.outlineVariant
-            else
-                MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-        )
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+    if (selectedExercise == null) {
+        OutlinedCard(
+            onClick = onNavigateToLibrary,
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.outlinedCardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+            ),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                // El ícono cambia dependiendo de si hay algo seleccionado
-                Icon(
-                    imageVector = if (selectedExerciseName == null) Icons.Default.Search else Icons.Default.FitnessCenter,
-                    contentDescription = null,
-                    tint = if (selectedExerciseName == null) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.primary
-                )
-                Spacer(modifier = Modifier.width(12.dp))
+            Row(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = "Buscar",
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
+                Spacer(modifier = Modifier.width(16.dp))
                 Column {
                     Text(
-                        text = "Ejercicio a analizar",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        text = "Seleccionar ejercicio",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = selectedExerciseName ?: "Toca para buscar en tu biblioteca",
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = if (selectedExerciseName == null) FontWeight.Normal else FontWeight.Bold,
-                        color = if (selectedExerciseName == null) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface
+                        text = "Elige uno de tu biblioteca para analizar",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
+        }
+    } else {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(
+                modifier = Modifier.weight(1f),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .background(MaterialTheme.colorScheme.primary, CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ShowChart,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+                Spacer(modifier = Modifier.width(16.dp))
 
-            // Un pequeño ícono de "intercambio" o flecha para indicar que se puede cambiar
-            Icon(
-                imageVector = Icons.Default.SwapHoriz,
-                contentDescription = "Cambiar ejercicio",
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+                Text(
+                    text = selectedExercise.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Black,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+
+            Spacer(modifier = Modifier.width(8.dp))
+            FilledTonalIconButton(
+                onClick = onNavigateToLibrary,
+                modifier = Modifier.size(48.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.SwapHoriz,
+                    contentDescription = "Cambiar ejercicio"
+                )
+            }
         }
     }
 }
