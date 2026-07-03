@@ -76,7 +76,7 @@ class Scrapper {
                     val apiMatch = apiExercises.find { it.id.equals(targetId, ignoreCase = true) }
 
                     if (apiMatch != null) {
-                        println("Procesando: ${apiMatch.name} (ID: ${apiMatch.id.lowercase()})")
+                        println("Procesando: ${apiMatch.name} (ID: ${apiMatch.id})")
 
                         val mainMuscleGroup = TechnicalDictionary.getGeneralGroup(apiMatch.primaryMuscles.firstOrNull())
                         val targetMuscles = apiMatch.primaryMuscles.map { TechnicalDictionary.getSpecificMuscle(it) }
@@ -84,12 +84,11 @@ class Scrapper {
                         val equipment = if (apiMatch.equipment != null) TechnicalDictionary.getEquipment(apiMatch.equipment) else "N/A"
                         val mechanic = TechnicalDictionary.getMechanic(apiMatch.mechanic)
 
-                        val baseUrl = "https://raw.githubusercontent.com/IgnacioPeralta00/overload-exercise-db/main/exercises/"
-                        val remoteImages = apiMatch.images.map { "$baseUrl$it" }
+                        val remoteImages = apiMatch.images
 
                         finalExercisesList.add(
                             FinalExerciseEntity(
-                                exerciseId = apiMatch.id.lowercase(),
+                                exerciseId = apiMatch.id,
                                 name = apiMatch.name,
                                 mainMuscleGroup = mainMuscleGroup,
                                 mechanic = mechanic,
