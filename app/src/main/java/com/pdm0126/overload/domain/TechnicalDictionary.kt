@@ -39,8 +39,8 @@ object TechnicalDictionary {
         "calves" to MuscleInfo("Gemelos", "Gemelos"),
         "forearms" to MuscleInfo("Antebrazos", "Antebrazos"),
         "traps" to MuscleInfo("Trapecios", "Espalda"),
-        "abdominals" to MuscleInfo("Abdominales", "Abdominales"),
-        "abs" to MuscleInfo("Abdominales", "Abdominales"),
+        "abdominals" to MuscleInfo("Abdomen", "Abdomen"),
+        "abs" to MuscleInfo("Abdomen", "Abdomen"),
         "adductors" to MuscleInfo("Aductores", "Pierna"),
         "abductors" to MuscleInfo("Abductores", "Pierna"),
         "neck" to MuscleInfo("Cuello", "Espalda")
