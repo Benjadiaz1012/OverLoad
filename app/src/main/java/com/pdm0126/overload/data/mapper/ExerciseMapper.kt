@@ -38,7 +38,7 @@ fun ExerciseDto.toDomainModel(): Exercise {
     val baseUrl = "https://raw.githubusercontent.com/IgnacioPeralta00/overload-exercise-db/main/exercises/"
 
     return Exercise(
-        id = id,
+        id = id.lowercase(),
         name = name,
         muscleGroup = TechnicalDictionary.getGeneralGroup(primaryMuscles.first()),
         mechanic = TechnicalDictionary.getMechanic(mechanic),
