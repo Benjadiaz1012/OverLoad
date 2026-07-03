@@ -19,7 +19,6 @@ fun ExerciseEntity.toDomainModel() : Exercise {
     )
 }
 
-// Para guardar ejercicios externos
 fun Exercise.toEntity() : ExerciseEntity {
     return ExerciseEntity(
         exerciseId = id,
@@ -35,8 +34,6 @@ fun Exercise.toEntity() : ExerciseEntity {
 }
 
 fun ExerciseDto.toDomainModel(): Exercise {
-    val baseUrl = "https://raw.githubusercontent.com/IgnacioPeralta00/overload-exercise-db/main/exercises/"
-
     return Exercise(
         id = id.lowercase(),
         name = name,
@@ -46,6 +43,6 @@ fun ExerciseDto.toDomainModel(): Exercise {
         secondaryMuscles = secondaryMuscles.map {muscle -> TechnicalDictionary.getSpecificMuscle(muscle) },
         equipment = TechnicalDictionary.getEquipment(equipment),
         instructions = instructions,
-        remoteImages = images.map { "$baseUrl$it" }
+        remoteImages = images
     )
 }
