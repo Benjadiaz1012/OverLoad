@@ -47,12 +47,12 @@ La capa de presentación está estrictamente separada de la lógica de negocio y
 Toda interacción con orígenes de datos se realiza a través de Repositorios específicos. Las pantallas nunca consumen Room o Ktor de forma directa. El repositorio abstrae el origen físico de la información y centraliza las reglas de la arquitectura *offline-first*, coordinando de manera transparente la base de datos local (Room), las peticiones HTTP remotas (Ktor) y la sincronización con el BaaS (Firebase).
 
 ### 4.3. Gestión de Estado: Patrón UI State
-Cada pantalla expone un único flujo de estado inmutable (representado mediante `StateFlow` en Kotlin y consumido mediante `collectAsState()` en Compose). Este objeto de estado (`ScreenUiState`) es una clase de datos estricta que encapsula de forma segura los diferentes estados generales o realidades posibles de la interfaz, ej: `Loading`, `Error`, `refresh`. Esto elimina estados inconsistentes en la UI.
+Cada pantalla expone un único flujo de estado inmutable (representado mediante `StateFlow` en Kotlin y consumido mediante `collectAsState()` en Compose). Este objeto de estado (`ScreenUiState`) es una clase de datos estricta que encapsula de forma segura los diferentes estados generales o realidades posibles de la interfaz, ej. `Loading`, `Error`, `refresh`. Esto elimina estados inconsistentes en la UI.
 
 ### 4.4. Navegación: Jetpack Navigation 3
 Se adopta de forma estricta el nuevo estándar nativo de **Navigation 3**. El flujo de navegación se gestiona de manera declarativa y con tipado seguro (*type-safe*), abstrayendo la pila de pantallas mediante destinos basados en objetos de configuración de Kotlin. Queda prohibido el uso de strings desestructurados como rutas (propios de Navigation 2.x), asegurando la validación del grafo de pantallas en tiempo de compilación.
 
-### 5.5. Estructura Organizacional de Paquetes
+### 4.5. Estructura Organizacional de Paquetes
 El código fuente dentro del paquete principal (`com.pdm.overload`) se organiza rigurosamente bajo el principio de responsabilidad única. La estructura base de paquetes es:
 * `data/`: Contiene los archivos locales y remotos de persistencia. Aloja sub paquetes para `local/` (tablas y DAO de Room), `remote/` (clientes de Ktor y llamadas a la API de ExerciseDB) y `repositories/` (las implementaciones del patrón repositorio).
 * `domain/`: Contiene los modelos de negocio puros, clases de datos centrales de entrenamiento y las abstracciones del repositorio.
@@ -60,6 +60,26 @@ El código fuente dentro del paquete principal (`com.pdm.overload`) se organiza 
   * `screens/`: Funciones Composables organizadas por módulo (Acceso, Configuración, Entrenamiento, Análisis) con su respectivo ViewModel, encargado de emitir el UI State para cada pantalla.
   * `routes/`: Clases de configuración y definición del grafo de navegación nativo de Navigation 3.
   * `theme/`: Archivos de configuración del sistema de diseño (Colores, Tipografías y Formas de Material Design 3).
+
+---
+
+## 5. Patrones de Navegación y Experiencia de Usuario (UX)
+Para soportar los flujos no lineales del usuario real (abandonar una pantalla, consultar información en medio de un descanso, o gestionar múltiples bloques de entrenamiento), la aplicación utiliza un esquema de navegación basado en **Destinos de Nivel Superior (Top-Level Destinations)** integrados en un `NavigationBar` (Bottom Navigation) de Material Design 3.
+
+### 5.1. Grafo Principal (Top-Level Destinations)
+El menú inferior actúa como el ancla de la aplicación, dividiéndola en cuatro pilares accesibles en cualquier momento:
+1. **Entrenamiento (Dashboard):** El lugar de la ejecución diaria. Su comportamiento es dual y depende estrictamente del estado de la base de datos local:
+      * **Lobby del Microciclo (Sin sesión activa):** Despliega los días configurados en el microciclo activo como tarjetas. El sistema puede sugerir sutilmente el siguiente día lógico basándose en el historial, pero otorga libertad absoluta al usuario para iniciar el día que prefiera.
+      * **Ejecución en Vivo (Con sesión activa):** Al iniciar un día, la pestaña muta y se convierte en la pantalla de registro activo (inputs de RIR/Peso/Reps). Este estado persiste de manera fluida hasta que la sesión es finalizada explícitamente.
+2. **Mis Rutinas (Gestión):** Panel de control donde se listan todos los microciclos creados por el usuario. Permite alternar cuál es el microciclo "Activo", editar la estructura de rutinas existentes o crear nuevos bloques desde cero mediante un FAB (Floating Action Button).
+3. **Biblioteca:** Catálogo global. Accesible libremente para explorar, buscar en la API remota mediante Ktor y guardar ejercicios en la base local (Room) por curiosidad o aprendizaje.
+4. **Análisis:** Centro de lectura de métricas y gráficas de progreso.
+
+### 5.2. Manejo de Casos de Uso y Flexibilidad
+* **Libertad de Ejecución (Selección Dinámica):** La aplicación no impone rutas estrictas ni bloquea al usuario si altera su cronograma. Aunque un sistema "dicte" un orden (ej. Push -> Pull -> Legs), el practicante mantiene la potestad de saltar, invertir o repetir días según sus circunstancias reales y disponibilidad de equipamiento en el gimnasio. Básicamente, el usuario elige siempre el día que prefiera entrenar independientemente de su rutina, adaptándose a circunstancias de la vida real. 
+* **Comportamiento Dual de la Biblioteca:** La biblioteca es un destino global, pero se reutiliza durante la edición de la rutina. Si el usuario presiona "Agregar Ejercicio" en el lienzo de la rutina, el sistema navega a la Biblioteca pasándole un argumento de estado (ej. *Modo Selección*). Esto transforma la UI de la biblioteca para mostrar botones de inserción en lugar de solo información técnica, devolviendo al usuario al lienzo automáticamente tras la elección.
+* **Entrenamiento en Segundo Plano (Pausa Implícita):** Las sesiones de entrenamiento no requieren que el usuario mantenga la pantalla abierta de forma ininterrumpida. Si el usuario navega a la pestaña de "Análisis" o "Biblioteca" durante sus descansos, el entrenamiento permanece vivo (persistido en la base de datos). La UI implementará un banner persistente sobre él `NavigationBar` (ej. *"Sesión en curso: Día 2"*) que actúa como un acceso rápido para volver a la ficha de registro.
+* **Bloqueo Preventivo de Integridad (Safe-Lock):** Para proteger el historial y la base de datos, la UI maneja validaciones de estado cruzadas. Si existe una sesión de entrenamiento activa (cuyo `endTimestamp` es nulo en SQLite), el sistema bloquea y deshabilita temporalmente la opción de "Editar Rutina" en la pestaña de gestión. Esto imposibilita que el usuario elimine un *Slot* de entrenamiento que se está utilizando en ese preciso instante, garantizando la coherencia relacional de los datos.
 
 ---
 

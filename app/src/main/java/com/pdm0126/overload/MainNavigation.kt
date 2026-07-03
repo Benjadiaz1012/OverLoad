@@ -1,10 +1,13 @@
 package com.pdm0126.overload
 
 import androidx.compose.runtime.Composable
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.pdm0126.overload.screens.signin.SignIn
+import com.pdm0126.overload.screens.system.SelectSystemScreen
 
 
 @Composable
@@ -15,8 +18,16 @@ fun MainNavigation() {
         onBack = { backStack.removeLastOrNull() },
         entryProvider = entryProvider {
             entry<Routes.SignIn> {
-                SignIn()
+                SignIn(
+                    onNext = { backStack.add(Routes.System) }
+                )
+            }
+            entry<Routes.System>{
+                SelectSystemScreen()
             }
         }
     )
 }
+
+
+

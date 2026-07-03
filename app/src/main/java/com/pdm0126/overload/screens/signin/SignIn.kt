@@ -51,7 +51,7 @@ import com.pdm0126.overload.R
 
 
 @Composable
-fun SignIn() {
+fun SignIn(onNext: () -> Unit) {
     var password by rememberSaveable { mutableStateOf("") }
     var email by rememberSaveable { mutableStateOf("") }
     Box(
@@ -131,7 +131,7 @@ fun SignIn() {
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
-                onClick = { null },
+                onClick = { onNext() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp),

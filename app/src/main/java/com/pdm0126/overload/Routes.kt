@@ -7,4 +7,5 @@ import kotlinx.serialization.Serializable
 sealed class Routes : NavKey{
     @Serializable
     data object SignIn: Routes()
-}
+@Serializable
+    data object System : Routes()}
