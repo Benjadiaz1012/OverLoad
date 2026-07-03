@@ -243,8 +243,9 @@ fun AnalysisScreen(
 
                                 val selectedExercise = uiState.availableExercises.find { it.id == uiState.selectedExerciseId }
                                 ExerciseSelectorHeader(
-                                    selectedExercise = selectedExercise as Exercise?,
-                                    onNavigateToLibrary = onNavigateToLibrary
+                                    selectedExercise = selectedExercise?.name,
+                                    onNavigateToLibrary = onNavigateToLibrary,
+                                    onClearSelection = { viewModel.selectExercise(null) }
                                 )
 
                                 Spacer(modifier = Modifier.height(24.dp))
@@ -305,8 +306,9 @@ fun AnalysisScreen(
 
 @Composable
 fun ExerciseSelectorHeader(
-    selectedExercise: Exercise?,
+    selectedExercise: String?,
     onNavigateToLibrary: () -> Unit,
+    onClearSelection: () -> Unit
 ) {
     if (selectedExercise == null) {
         OutlinedCard(
@@ -379,22 +381,36 @@ fun ExerciseSelectorHeader(
                 Spacer(modifier = Modifier.width(16.dp))
 
                 Text(
-                    text = selectedExercise.name,
+                    text = selectedExercise,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Black,
                     color = MaterialTheme.colorScheme.onSurface
                 )
             }
 
-            Spacer(modifier = Modifier.width(8.dp))
-            FilledTonalIconButton(
-                onClick = onNavigateToLibrary,
-                modifier = Modifier.size(48.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.SwapHoriz,
-                    contentDescription = "Cambiar ejercicio"
-                )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                IconButton(
+                    onClick = onClearSelection,
+                    modifier = Modifier.size(48.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Quitar ejercicio",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(4.dp))
+
+                FilledTonalIconButton(
+                    onClick = onNavigateToLibrary,
+                    modifier = Modifier.size(48.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.SwapHoriz,
+                        contentDescription = "Cambiar ejercicio"
+                    )
+                }
             }
         }
     }
