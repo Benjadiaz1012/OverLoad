@@ -19,11 +19,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
@@ -42,6 +45,7 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.Fill
+import com.patrykandpatrick.vico.compose.common.Insets
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
@@ -84,11 +88,7 @@ fun AnalysisScreen(
     val muscleFormatter = remember(uiState.muscleDistribution) {
         CartesianValueFormatter { context, x, _ ->
             val fullName = context.model.extraStore.getOrNull(muscleListKey)?.getOrNull(x.toInt())?.replaceFirstChar { it.uppercase() }
-            if (fullName.isNullOrBlank()) {
-                "\u200B"
-            } else {
-                TechnicalDictionary.muscleAbbreviationMap[fullName] ?: fullName
-            }
+            TechnicalDictionary.getPaddedMuscleNameForChart(fullName)
         }
     }
 
@@ -125,19 +125,15 @@ fun AnalysisScreen(
             }
         }
     }
-
     LaunchedEffect(uiState.muscleDistribution) {
-        val volumes: List<Float>
-        val muscleNames: List<String>
+        val muscleNames = TechnicalDictionary.mainMuscleGroupsList
+        val volumes = mutableListOf<Float>()
+        val distributionMap = uiState.muscleDistribution.associateBy { it.muscleGroup.lowercase() }
 
-        if (uiState.muscleDistribution.isEmpty()) {
-            muscleNames = TechnicalDictionary.mainMuscleGroupsList
-            volumes = List(muscleNames.size) { 0f }
-        } else {
-            volumes = uiState.muscleDistribution.map { it.totalEffectiveVolume }
-            muscleNames = uiState.muscleDistribution.map { it.muscleGroup }
+        muscleNames.forEach { muscle ->
+            val volume = distributionMap[muscle.lowercase()]?.totalEffectiveVolume ?: 0f
+            volumes.add(volume)
         }
-
         distributionModelProducer.runTransaction {
             columnModel { series(volumes) }
             extras { it[muscleListKey] = muscleNames }
@@ -217,13 +213,22 @@ fun AnalysisScreen(
                                             columnProvider = ColumnCartesianLayer.ColumnProvider.series(
                                                 rememberLineComponent(
                                                     fill = Fill(MaterialTheme.colorScheme.primary),
-                                                    thickness = 38.dp,
+                                                    thickness = 58.dp,
                                                     shape = RoundedCornerShape(topStart = 6.dp, topEnd = 6.dp)
                                                 )
                                             ),
                                         ),
                                         startAxis = VerticalAxis.rememberStart(),
-                                        bottomAxis = HorizontalAxis.rememberBottom(valueFormatter = muscleFormatter),
+                                        bottomAxis = HorizontalAxis.rememberBottom(
+                                            valueFormatter = muscleFormatter,
+                                            labelRotationDegrees = -45f,
+                                            label = rememberTextComponent(
+                                                style = TextStyle(
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                    fontSize = 12.sp
+                                                )
+                                            )
+                                        ),
                                         marker = rememberToolTipMarker(valueFormatter = distributionTooltipFormatter),
                                     ),
                                     modelProducer = distributionModelProducer,
@@ -355,7 +360,6 @@ fun ExerciseSelectorHeader(
             }
         }
 
-        // Texto pequeño de asistencia al usuario
         if (isExerciseSelected) {
             Spacer(modifier = Modifier.height(4.dp))
             Text(

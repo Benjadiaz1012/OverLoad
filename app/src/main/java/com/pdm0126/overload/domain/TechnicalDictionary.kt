@@ -7,18 +7,6 @@ object TechnicalDictionary {
         val generalGroup: String
     )
 
-    val muscleAbbreviationMap = mapOf(
-        "Pecho" to "PEC",
-        "Hombros" to "HOM",
-        "Espalda" to "ESP",
-        "Tríceps" to "TRÍ",
-        "Bíceps" to "BÍC",
-        "Pierna" to "PIE",
-        "Gemelos" to "GEM",
-        "Antebrazos" to "ANT",
-        "Abdomen" to "ABS"
-    )
-
     val mainMuscleGroupsList = listOf(
         "Pecho", "Hombros", "Espalda", "Tríceps", "Bíceps",
         "Pierna", "Gemelos", "Antebrazos", "Abdomen"
@@ -59,6 +47,13 @@ object TechnicalDictionary {
         "foam roll" to "Rollo de foam",
         "other" to "Otro"
     )
+
+    val maxMuscleNameLength = mainMuscleGroupsList.maxOf { it.length }
+
+    fun getPaddedMuscleNameForChart(rawName: String?): String {
+        if (rawName.isNullOrBlank()) return "\u200B"
+        return rawName.padEnd(maxMuscleNameLength, '\u00A0')
+    }
 
     fun getGeneralGroup(apiMuscle: String?): String {
         val key = apiMuscle?.lowercase() ?: ""
