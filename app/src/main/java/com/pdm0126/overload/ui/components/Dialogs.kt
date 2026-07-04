@@ -22,7 +22,11 @@ fun OverloadConfirmDialog(
         title = { Text(title) },
         text = { Text(text) },
         icon = icon?.let {
-            { Icon(it, contentDescription = null, tint = if (isDestructive) MaterialTheme.colorScheme.error else LocalContentColor.current) }
+            { Icon(
+                imageVector = it,
+                contentDescription = null,
+                tint = if (isDestructive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.tertiary
+            ) }
         },
         confirmButton = {
             Button(
@@ -34,7 +38,7 @@ fun OverloadConfirmDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(dismissText)
+                Text(dismissText, color = MaterialTheme.colorScheme.onPrimary)
             }
         }
     )
@@ -71,7 +75,7 @@ fun OverloadInputDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(dismissText)
+                Text(dismissText, color = MaterialTheme.colorScheme.onSurface)
             }
         }
     )

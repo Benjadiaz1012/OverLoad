@@ -163,16 +163,6 @@ fun RoutineEditorScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                     Spacer(modifier = Modifier.height(16.dp))
-
-                    /*Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-
-                    }
-                    */
                     Text(
                         text = "Editar Días",
                         style = MaterialTheme.typography.labelLarge,
@@ -261,35 +251,6 @@ fun RoutineEditorScreen(
 
                             }
                         }
-                        /*Row(verticalAlignment = Alignment.CenterVertically) {
-                            IconButton(
-                                onClick = { onNavigateToDayEditor(day.dayId) },
-                                modifier = Modifier.size(32.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Edit,
-                                    contentDescription = "Editar Día",
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(8.dp))
-                            IconButton(
-                                onClick = {
-                                    dayToDeleteId = day.dayId
-                                    dayToDeleteName = day.focus
-                                    showDeleteDayDialog = true
-                                },
-                                modifier = Modifier.size(32.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.DeleteOutline,
-                                    contentDescription = "Borrar Día",
-                                    tint = MaterialTheme.colorScheme.error,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                            }
-                        }*/
                     }
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                 }

@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessibilityNew
+import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.FormatListNumbered
 import androidx.compose.material.icons.filled.Settings
@@ -117,6 +118,7 @@ fun DetailScreen(
                     text = "Si eliminas este ejercicio de tu biblioteca, desaparecera de tus rutinas. ¿Quieres continuar?",
                     confirmText = "Eliminar",
                     dismissText = "Cancelar",
+                    icon = Icons.Default.DeleteOutline,
                     isDestructive = true,
                     onConfirm = {
                         viewModel.toggleBookmark()

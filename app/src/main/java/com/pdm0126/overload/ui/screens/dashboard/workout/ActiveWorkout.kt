@@ -157,6 +157,7 @@ fun ActiveWorkoutScreen(
                 title = "Finalizar Sesión",
                 text = "Los datos registrados se guardarán en tu historial",
                 confirmText = "Finalizar",
+                icon = Icons.Default.DoneAll,
                 onConfirm = {
                     viewModel.endWorkout()
                     showEndWorkoutDialog = false
@@ -168,7 +169,7 @@ fun ActiveWorkoutScreen(
             OverloadConfirmDialog(
                 title = "Cancelar Sesión",
                 text = "Se perderán todas las series registradas en este momento y nada se guardará en tu historial",
-                confirmText = "Cancelar Sesión",
+                confirmText = "Cancelar",
                 dismissText = "Volver",
                 isDestructive = true,
                 icon = Icons.Default.DeleteOutline,

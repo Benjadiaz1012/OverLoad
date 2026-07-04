@@ -154,7 +154,7 @@ fun DashboardScreen(
                     Icon(
                         imageVector = Icons.Default.Info,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = MaterialTheme.colorScheme.tertiary
                     )
                 },
                 title = {
@@ -164,8 +164,13 @@ fun DashboardScreen(
                     Text(text = "Esta rutina no tiene ejercicios programados. Debes añadir ejercicios desde el editor de rutinas")
                 },
                 confirmButton = {
-                    TextButton(onClick = { showEmptyWorkoutDialog = false }) {
-                        Text("Entendido")
+                    TextButton(
+                        onClick = { showEmptyWorkoutDialog = false },
+                        colors = ButtonDefaults.textButtonColors(
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
+                            containerColor = MaterialTheme.colorScheme.primary)
+                    ) {
+                        Text(text = "Entendido")
                     }
                 }
             )
@@ -176,6 +181,7 @@ fun DashboardScreen(
                 text = "¿Estás seguro de que deseas iniciar este entrenamiento?",
                 confirmText = "Iniciar",
                 dismissText = "Cancelar",
+                icon = Icons.Default.FitnessCenter,
                 onConfirm = {
                     viewModel.startWorkout(workoutId!!, onNavigateToActiveWorkout)
                     startWorkoutDialog = false },
