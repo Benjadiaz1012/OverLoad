@@ -140,7 +140,10 @@ fun DistributionTab(uiState: AnalysisUiState) {
             if (uiState.muscleDistribution.isEmpty()) {
                 "Sin datos registrados"
             } else {
-                val volume = uiState.muscleDistribution.getOrNull(xIndex)?.totalEffectiveVolume ?: 0f
+                val distributionRecord = uiState.muscleDistribution.find {
+                    it.muscleGroup.equals(fullName.trim(), ignoreCase = true)
+                }
+                val volume = distributionRecord?.totalEffectiveVolume ?: 0f
                 "$fullName: ${String.format(Locale.US, "%.1f", volume)} Kg"
             }
         }
