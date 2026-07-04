@@ -333,7 +333,13 @@ fun ActiveSlotItem(
                     ) {
                         OutlinedTextField(
                             value = weightInput,
-                            onValueChange = { weightInput = it },
+                            onValueChange = { newValue ->
+                                if (newValue.isEmpty() || newValue.matches(Regex("^\\d*\\.?\\d{0,2}$"))) {
+                                    if (newValue.length <= 5) {
+                                        weightInput = newValue
+                                    }
+                                }
+                            },
                             label = { Text("Kg") },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                             modifier = Modifier.weight(1f),
@@ -400,10 +406,10 @@ fun ActiveSlotItem(
                                 }
                             }
                         }
-
+                        val weight = weightInput.toFloatOrNull()
+                        val isValidWeight = weight != null && weight in 0.0f..999.9f
                         IconButton(
                             onClick = {
-                                val weight = weightInput.toFloatOrNull()
                                 if (weight != null) {
                                     val finalRir = if (isRirEnabled) rirInput else null
                                     onLogSet(
@@ -418,12 +424,15 @@ fun ActiveSlotItem(
                                 }
                             },
                             modifier = Modifier
-                                .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp))
+                                .background(
+                                    color = if (isValidWeight) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+                                    shape = RoundedCornerShape(12.dp)
+                                )
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Check,
                                 contentDescription = "Guardar",
-                                tint = MaterialTheme.colorScheme.onPrimary
+                                tint = if (isValidWeight) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                             )
                         }
                     }

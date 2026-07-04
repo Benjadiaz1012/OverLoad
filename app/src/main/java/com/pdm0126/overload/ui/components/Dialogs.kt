@@ -1,9 +1,14 @@
 package com.pdm0126.overload.ui.components
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -51,25 +56,42 @@ fun OverloadInputDialog(
     label: String,
     confirmText: String = "Guardar",
     dismissText: String = "Cancelar",
+    maxLength: Int = 40,
     onConfirm: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
     var inputValue by remember { mutableStateOf(initialValue) }
+    val isInputValid = inputValue.isNotBlank() && inputValue.length <= maxLength
 
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(title) },
         text = {
-            OutlinedTextField(
-                value = inputValue,
-                onValueChange = { inputValue = it },
-                label = { Text(label) },
-                singleLine = true,
-                shape = RoundedCornerShape(12.dp)
-            )
+            Column {
+                OutlinedTextField(
+                    value = inputValue,
+                    onValueChange = {
+                        if (it.length <= maxLength) inputValue = it
+                    },
+                    label = { Text(label, fontWeight = FontWeight.Bold) },
+                    singleLine = true,
+                    shape = RoundedCornerShape(12.dp),
+                    isError = inputValue.length == maxLength,
+                    supportingText = {
+                        Text(
+                            text = "${inputValue.length} / $maxLength",
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.End
+                        )
+                    }
+                )
+            }
         },
         confirmButton = {
-            Button(onClick = { onConfirm(inputValue) }) {
+            Button(
+                onClick = { onConfirm(inputValue.trim()) },
+                enabled = isInputValid
+            ) {
                 Text(confirmText)
             }
         },
