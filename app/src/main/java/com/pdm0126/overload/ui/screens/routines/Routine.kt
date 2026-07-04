@@ -28,6 +28,7 @@ import com.pdm0126.overload.domain.model.RoutineMicrocycle
 import com.pdm0126.overload.ui.components.OverloadConfirmDialog
 import com.pdm0126.overload.ui.components.OverloadInfoDialog
 import com.pdm0126.overload.ui.components.OverloadScaffold
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -51,7 +52,8 @@ fun RoutinesListContent(
     onStartCreating: () -> Unit,
     onNavigateToRoutineEditor: (Long) -> Unit
 ) {
-    var showBlockedEditorDialog by rememberSaveable { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
     OverloadScaffold(
         title = "Mis Rutinas",
@@ -63,7 +65,7 @@ fun RoutinesListContent(
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Nueva Rutina")
             }
-        }
+        },
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
             if (state.savedMicrocycles.isEmpty()) {
@@ -89,7 +91,6 @@ fun RoutinesListContent(
             } else {
                 LazyColumn(
                     contentPadding = PaddingValues(vertical = 16.dp),
-                    /*verticalArrangement = Arrangement.spacedBy(16.dp),*/
                     modifier = Modifier.fillMaxSize()
                 ) {
                     items(state.savedMicrocycles, key = { it.microcycleId }) { microcycle ->
@@ -98,7 +99,13 @@ fun RoutinesListContent(
                             microcycle = microcycle,
                             onNavigateToRoutineEditor = { clickedId ->
                                 if (isEditorBlocked) {
-                                    showBlockedEditorDialog = true
+                                    coroutineScope.launch {
+                                        snackbarHostState.currentSnackbarData?.dismiss()
+                                        snackbarHostState.showSnackbar(
+                                            message = "No puedes modificar tu rutina mientras entrenas",
+                                            duration = SnackbarDuration.Short
+                                        )
+                                    }
                                 } else {
                                     onNavigateToRoutineEditor(clickedId)
                                 }
@@ -112,15 +119,13 @@ fun RoutinesListContent(
                     }
                 }
             }
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 88.dp)
+            )
         }
-    }
-    if (showBlockedEditorDialog) {
-        OverloadInfoDialog(
-            title = "Edición Bloqueada",
-            text = "No puedes modificar tu rutina activa mientras tienes un entrenamiento en curso.Finalízalo o cancélalo primero",
-            icon = Icons.Default.Warning,
-            onDismiss = { showBlockedEditorDialog = false }
-        )
     }
 }
 
@@ -170,8 +175,9 @@ fun MicrocycleCard(
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                 }
+                if (!isEditorBlocked)
                 Icon(
-                    imageVector = if (isEditorBlocked) Icons.Default.Lock else Icons.Default.Settings,
+                    imageVector = Icons.Default.Settings,
                     contentDescription = "Administrar Rutina",
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )

@@ -27,6 +27,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pdm0126.overload.ui.components.OverloadConfirmDialog
 import com.pdm0126.overload.ui.components.OverloadInfoDialog
 import com.pdm0126.overload.ui.components.OverloadScaffold
+import kotlinx.coroutines.launch
 
 @Composable
 fun DashboardScreen(
@@ -42,7 +43,9 @@ fun DashboardScreen(
     var workoutId by rememberSaveable { mutableStateOf<Long?>(null) }
 
     var showEmptyWorkoutDialog by rememberSaveable { mutableStateOf(false) }
-    var showBlockedWorkoutDialog by rememberSaveable { mutableStateOf(false) }
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
     OverloadScaffold(
         title = "Entrenamiento",
@@ -60,7 +63,7 @@ fun DashboardScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.AccessibleForward,
+                            imageVector = Icons.Default.Star,
                             contentDescription = null,
                             modifier = Modifier.size(64.dp),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
@@ -119,7 +122,13 @@ fun DashboardScreen(
                                                     onNavigateToActiveWorkout()
                                                 }
                                                 hasOtherActiveSession -> {
-                                                    showBlockedWorkoutDialog = true
+                                                    coroutineScope.launch {
+                                                        snackbarHostState.currentSnackbarData?.dismiss()
+                                                        snackbarHostState.showSnackbar(
+                                                            message = "Ya tienes otro entrenamiento en curso",
+                                                            duration = SnackbarDuration.Short
+                                                        )
+                                                    }
                                                 }
                                                 day.slots.isEmpty() -> {
                                                     showEmptyWorkoutDialog = true
@@ -186,21 +195,16 @@ fun DashboardScreen(
                     }
                 }
             }
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )
         }
         if (showEmptyWorkoutDialog) {
             OverloadInfoDialog(
                 title = "Rutina sin ejercicios",
                 text = "Esta rutina no tiene ejercicios programados. Debes añadir ejercicios desde el editor de rutinas.",
                 onDismiss = { showEmptyWorkoutDialog = false }
-            )
-        }
-
-        if (showBlockedWorkoutDialog) {
-            OverloadInfoDialog(
-                title = "Sesión en curso",
-                text = "Ya tienes un entrenamiento en progreso. Finalízalo o cancélalo antes de iniciar uno nuevo.",
-                icon = Icons.Default.Warning,
-                onDismiss = { showBlockedWorkoutDialog = false }
             )
         }
         if (startWorkoutDialog) {

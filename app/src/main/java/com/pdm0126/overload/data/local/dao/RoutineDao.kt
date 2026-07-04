@@ -33,6 +33,9 @@ interface RoutineDao {
     @Update
     suspend fun updateDay(day: DayEntity)
 
+    @Query("UPDATE slots_table SET targetReps = :targetReps WHERE slotId = :slotId")
+    suspend fun updateSlotTargetReps(slotId: Long, targetReps: Int?)
+
     @Query("DELETE FROM slots_table WHERE slotId = :slotId")
     suspend fun deleteSlotById(slotId: Long?)
 

@@ -88,7 +88,7 @@ class ExerciseRepositoryImp(
     }
 }
 //----------------------------------------------------------------------------------------------------------------
-class RoutineRepositoryImp(
+/*class RoutineRepositoryImp(
     private val routineDao: RoutineDao
 ) : RoutineRepository {
 
@@ -164,7 +164,7 @@ class RoutineRepositoryImp(
     override suspend fun updateActiveMicrocycle(microcycleId: Long) {
         routineDao.updateActiveMicrocycle(microcycleId)
     }
-}
+}*/
 //----------------------------------------------------------------------------------------------------------------
 class WorkoutRepositoryImp(
     private val workoutDao: WorkoutDao

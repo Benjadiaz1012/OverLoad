@@ -29,6 +29,7 @@ data class SlotEntity(
     val dayId: Long,
     val exerciseId: String,   // Referencia directa a cualquier ejercicio del catálogo
     val order: Int,           // Orden secuencial dentro del día (1 a 12)
-    val targetSets: Int       // Objetivo de series (entre 1 y 6)
+    val targetSets: Int,       // Objetivo de series (entre 1 y 6)
+    val targetReps: Int? = null // 1-20 o null
 )
 

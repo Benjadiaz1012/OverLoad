@@ -116,6 +116,17 @@ fun RoutineEditorScreen(
                     )
                 }
             }
+        },
+        floatingActionButton = {
+            if (microcycle.days.size < 9) {
+                FloatingActionButton(
+                    onClick = { viewModel.addDay() },
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ) {
+                    Icon(imageVector = Icons.Default.Add, contentDescription = "Agregar Día")
+                }
+            }
         }
     ) { paddingValues ->
         LazyColumn(
@@ -259,22 +270,6 @@ fun RoutineEditorScreen(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
                     )
-                }
-            }
-
-            if (microcycle.days.size < 9) {
-                item() {
-                    OutlinedButton(
-                        onClick = { viewModel.addDay() },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Icon(imageVector = Icons.Default.Add, contentDescription = null)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Añadir Día")
-                    }
                 }
             }
         }

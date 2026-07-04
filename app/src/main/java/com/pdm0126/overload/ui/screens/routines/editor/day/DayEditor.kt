@@ -136,18 +136,20 @@ fun DayEditorScreen(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     itemsIndexed(state.day!!.slots, key = { _, slot -> slot.slotId }) { index, slot ->
-                        var expandedDropdown by remember { mutableStateOf(false) }
+                        var expandedSetsDropdown by remember { mutableStateOf(false) }
+                        var expandedRepsDropdown by remember { mutableStateOf(false) }
 
                         Column(modifier = Modifier.fillMaxWidth()) {
                             Row(
-                                modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                                modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.Top
                             ) {
                                 Row(
                                     modifier = Modifier
                                         .weight(1f)
                                         .clickable { onNavigateToExerciseDetail(slot.exercise.id) }
-                                        .padding(16.dp)
+                                        .padding(start = 16.dp, top = 16.dp, bottom = 8.dp, end = 8.dp),
+                                    verticalAlignment = Alignment.Top
                                 ) {
                                     Text(
                                         text = "${index + 1}",
@@ -173,66 +175,119 @@ fun DayEditorScreen(
                                     }
                                 }
 
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.padding(16.dp)
+
+                                IconButton(
+                                    onClick = { showDeleteExerciseDialog = true ; slotToDeleteId = slot.slotId },
+                                    modifier = Modifier
+                                        .padding(top = 16.dp, end = 16.dp)
+                                        .size(32.dp)
                                 ) {
+                                    Icon(
+                                        imageVector = Icons.Default.DeleteOutline,
+                                        contentDescription = "Borrar",
+                                        tint = MaterialTheme.colorScheme.error,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+                            }
 
-                                    Box {
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            modifier = Modifier
-                                                .clip(shape = CircleShape)
-                                                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
-                                                .clickable { expandedDropdown = true }
-                                                .padding(16.dp)
-                                        ) {
-                                            Text(
-                                                text = "x${slot.targetSets}",
-                                                style = MaterialTheme.typography.labelMedium,
-                                                fontWeight = FontWeight.Bold,
-                                                color = MaterialTheme.colorScheme.onSurface
-                                            )
-                                            Spacer(modifier = Modifier.width(4.dp))
-                                            Icon(
-                                                imageVector = Icons.Default.ArrowDropDown,
-                                                contentDescription = "Cambiar series",
-                                                tint = MaterialTheme.colorScheme.onSurface,
-                                                modifier = Modifier.size(18.dp)
-                                            )
-                                        }
-
-                                        DropdownMenu(
-                                            expanded = expandedDropdown,
-                                            onDismissRequest = { expandedDropdown = false }
-                                        ) {
-                                            (1..6).forEach { setAmount ->
-                                                DropdownMenuItem(
-                                                    text = { Text("$setAmount Series") },
-                                                    onClick = {
-                                                        viewModel.updateTargetSets(slot.slotId, setAmount)
-                                                        expandedDropdown = false
-                                                    }
-                                                )
-                                            }
-                                        }
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 44.dp, end = 16.dp, bottom = 16.dp),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Box {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier
+                                            /*.clip(shape = CircleShape)*/
+                                            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                                            .clickable { expandedSetsDropdown = true }
+                                            .padding(horizontal = 12.dp, vertical = 8.dp)
+                                    ) {
+                                        Text(
+                                            text = "${slot.targetSets} Series",
+                                            style = MaterialTheme.typography.labelMedium,
+                                            fontWeight = FontWeight.Bold,
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Icon(
+                                            imageVector = Icons.Default.ArrowDropDown,
+                                            contentDescription = "Cambiar series",
+                                            tint = MaterialTheme.colorScheme.onSurface,
+                                            modifier = Modifier.size(18.dp)
+                                        )
                                     }
 
-                                    Spacer(modifier = Modifier.width(8.dp))
-
-                                    IconButton(
-                                        onClick = { showDeleteExerciseDialog = true ; slotToDeleteId = slot.slotId },
-                                        modifier = Modifier.size(32.dp)
+                                    DropdownMenu(
+                                        expanded = expandedSetsDropdown,
+                                        onDismissRequest = { expandedSetsDropdown = false },
+                                        modifier = Modifier.heightIn(max = 250.dp)
                                     ) {
-                                        Icon(
-                                            imageVector = Icons.Default.DeleteOutline,
-                                            contentDescription = "Borrar",
-                                            tint = MaterialTheme.colorScheme.error,
-                                            modifier = Modifier.size(20.dp)
+                                        (1..10).forEach { setAmount -> // Aumentado a 10 según tu ViewModel
+                                            DropdownMenuItem(
+                                                text = { Text("$setAmount Series") },
+                                                onClick = {
+                                                    viewModel.updateTargetSets(slot.slotId, setAmount)
+                                                    expandedSetsDropdown = false
+                                                }
+                                            )
+                                        }
+                                    }
+                                }
+
+                                Box {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier
+                                            /*.clip(shape = CircleShape)*/
+                                            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                                            .clickable { expandedRepsDropdown = true }
+                                            .padding(horizontal = 12.dp, vertical = 8.dp)
+                                    ) {
+                                        Text(
+                                            text = if (slot.targetReps != null) "${slot.targetReps} Reps" else "Libres",
+                                            style = MaterialTheme.typography.labelMedium,
+                                            fontWeight = FontWeight.Bold,
+                                            color = MaterialTheme.colorScheme.onSurface
                                         )
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Icon(
+                                            imageVector = Icons.Default.ArrowDropDown,
+                                            contentDescription = "Cambiar repeticiones",
+                                            tint = MaterialTheme.colorScheme.onSurface,
+                                            modifier = Modifier.size(18.dp)
+                                        )
+                                    }
+
+                                    DropdownMenu(
+                                        expanded = expandedRepsDropdown,
+                                        onDismissRequest = { expandedRepsDropdown = false },
+                                        modifier = Modifier.heightIn(max = 250.dp)
+                                    ) {
+                                        DropdownMenuItem(
+                                            text = { Text("Libres") },
+                                            onClick = {
+                                                viewModel.updateTargetReps(slot.slotId, null)
+                                                expandedRepsDropdown = false
+                                            }
+                                        )
+                                        (1..20).forEach { repAmount ->
+                                            DropdownMenuItem(
+                                                text = { Text("$repAmount Reps") },
+                                                onClick = {
+                                                    viewModel.updateTargetReps(slot.slotId, repAmount)
+                                                    expandedRepsDropdown = false
+                                                }
+                                            )
+                                        }
                                     }
                                 }
                             }
+
                             HorizontalDivider(
                                 modifier = Modifier.padding(horizontal = 16.dp),
                                 color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)

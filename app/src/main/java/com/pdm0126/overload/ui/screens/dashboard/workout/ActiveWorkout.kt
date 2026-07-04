@@ -192,7 +192,7 @@ fun ActiveSlotItem(
     onDeleteSet: (Long) -> Unit
 ) {
     var weightInput by rememberSaveable { mutableStateOf("") }
-    var repsInput by rememberSaveable { mutableIntStateOf(8) }
+    var repsInput by rememberSaveable { mutableIntStateOf(slot.targetReps ?: 8) }
 
     var isRirEnabled by rememberSaveable { mutableStateOf(true) }
     var rirInput by rememberSaveable { mutableIntStateOf(2) }
@@ -227,7 +227,7 @@ fun ActiveSlotItem(
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = "Objetivo: ${slot.targetSets} Series",
+                    text = "Objetivo: ${slot.targetSets} Series" + if (slot.targetReps != null) " de ${slot.targetReps} reps" else "",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
