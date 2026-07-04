@@ -88,8 +88,8 @@ fun RoutinesListContent(
                 }
             } else {
                 LazyColumn(
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    contentPadding = PaddingValues(vertical = 16.dp),
+                    /*verticalArrangement = Arrangement.spacedBy(16.dp),*/
                     modifier = Modifier.fillMaxSize()
                 ) {
                     items(state.savedMicrocycles, key = { it.microcycleId }) { microcycle ->
@@ -105,8 +105,10 @@ fun RoutinesListContent(
                             },
                             isEditorBlocked = isEditorBlocked
                         )
-                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                        Spacer(modifier = Modifier.height(8.dp))
+                        HorizontalDivider(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                        )
                     }
                 }
             }

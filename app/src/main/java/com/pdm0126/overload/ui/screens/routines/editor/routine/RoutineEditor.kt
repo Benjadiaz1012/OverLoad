@@ -119,7 +119,7 @@ fun RoutineEditorScreen(
         }
     ) { paddingValues ->
         LazyColumn(
-            contentPadding = PaddingValues(16.dp),
+            contentPadding = PaddingValues(vertical = 16.dp),
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
@@ -127,7 +127,7 @@ fun RoutineEditorScreen(
             item {
                 Column(modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 8.dp)) {
+                    .padding(16.dp)) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -162,7 +162,10 @@ fun RoutineEditorScreen(
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                    )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = "Editar Días",
@@ -178,9 +181,8 @@ fun RoutineEditorScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(RoundedCornerShape(8.dp))
                             .clickable { onNavigateToDayEditor(day.dayId) }
-                            .padding(vertical = 12.dp),
+                            .padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
@@ -253,12 +255,15 @@ fun RoutineEditorScreen(
                             }
                         }
                     }
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                    )
                 }
             }
 
             if (microcycle.days.size < 9) {
-                item {
+                item() {
                     OutlinedButton(
                         onClick = { viewModel.addDay() },
                         modifier = Modifier

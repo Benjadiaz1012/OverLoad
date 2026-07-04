@@ -132,7 +132,7 @@ fun DayEditorScreen(
                 )
             } else {
                 LazyColumn(
-                    contentPadding = PaddingValues(bottom = 100.dp, start = 16.dp, end = 16.dp, top = 16.dp),
+                    contentPadding = PaddingValues(vertical = 16.dp),
                     modifier = Modifier.fillMaxSize()
                 ) {
                     itemsIndexed(state.day!!.slots, key = { _, slot -> slot.slotId }) { index, slot ->
@@ -140,15 +140,14 @@ fun DayEditorScreen(
 
                         Column(modifier = Modifier.fillMaxWidth()) {
                             Row(
-                                modifier = Modifier.padding(vertical = 12.dp).fillMaxWidth(),
+                                modifier = Modifier.padding(16.dp).fillMaxWidth(),
                                 verticalAlignment = Alignment.Top
                             ) {
                                 Row(
                                     modifier = Modifier
                                         .weight(1f)
-                                        .clip(RoundedCornerShape(8.dp))
                                         .clickable { onNavigateToExerciseDetail(slot.exercise.id) }
-                                        .padding(end = 12.dp, top = 4.dp, bottom = 4.dp)
+                                        .padding(16.dp)
                                 ) {
                                     Text(
                                         text = "${index + 1}",
@@ -174,7 +173,10 @@ fun DayEditorScreen(
                                     }
                                 }
 
-                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.padding(16.dp)
+                                ) {
 
                                     Box {
                                         Row(
@@ -183,7 +185,7 @@ fun DayEditorScreen(
                                                 .clip(shape = CircleShape)
                                                 .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
                                                 .clickable { expandedDropdown = true }
-                                                .padding(horizontal = 12.dp, vertical = 8.dp)
+                                                .padding(16.dp)
                                         ) {
                                             Text(
                                                 text = "x${slot.targetSets}",
@@ -231,7 +233,10 @@ fun DayEditorScreen(
                                     }
                                 }
                             }
-                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                            HorizontalDivider(
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                            )
                         }
                     }
                 }

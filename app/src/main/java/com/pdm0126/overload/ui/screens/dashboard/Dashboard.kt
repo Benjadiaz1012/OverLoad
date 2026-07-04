@@ -76,11 +76,11 @@ fun DashboardScreen(
                 }
                 else -> {
                     LazyColumn(
-                        contentPadding = PaddingValues(16.dp),
+                        contentPadding = PaddingValues(vertical = 16.dp),
                         modifier = Modifier.fillMaxSize()
                     ) {
                         item {
-                            Column(modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)) {
+                            Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
                                 Text(
                                     text = "Plan actual",
                                     style = MaterialTheme.typography.labelMedium,
@@ -109,7 +109,6 @@ fun DashboardScreen(
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .clip(RoundedCornerShape(6.dp))
                                         .background(
                                             if (isThisDayActive) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
                                             else Color.Transparent
@@ -133,7 +132,7 @@ fun DashboardScreen(
                                         }
                                         .padding(
                                             vertical =  16.dp,
-                                            horizontal = if (isThisDayActive) 12.dp else 0.dp
+                                            horizontal = if (isThisDayActive) 24.dp else 16.dp
                                         ),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
@@ -177,7 +176,10 @@ fun DashboardScreen(
                                 }
 
                                 if (!isThisDayActive && !isNextDayActive) {
-                                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                                    HorizontalDivider(
+                                        modifier = Modifier.padding(horizontal = 16.dp),
+                                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                                    )
                                 }
                             }
                         }

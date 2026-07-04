@@ -174,7 +174,7 @@ fun LibraryScreen(
                     } else {
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(16.dp),
+                            contentPadding = PaddingValues(vertical = 16.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             items(state.localExercises, key = { it.id }) { exercise ->
@@ -230,7 +230,7 @@ fun LibraryScreen(
                         else -> {
                             LazyColumn(
                                 modifier = Modifier.fillMaxSize(),
-                                contentPadding = PaddingValues(16.dp),
+                                contentPadding = PaddingValues(vertical = 16.dp),
                                 verticalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
                                 items(state.remoteState.results, key = { it.id }) { exercise ->
