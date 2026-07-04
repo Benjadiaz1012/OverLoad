@@ -1,5 +1,6 @@
 package com.pdm0126.overload.ui.screens.dashboard
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -23,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pdm0126.overload.ui.components.OverloadConfirmDialog
+import com.pdm0126.overload.ui.components.OverloadInfoDialog
 import com.pdm0126.overload.ui.components.OverloadScaffold
 
 @Composable
@@ -33,10 +36,13 @@ fun DashboardScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isLoading = uiState.isLoading
     val activeMicrocycle = uiState.activeMicrocycle
+    val activeSessionDayId = uiState.activeSessionDayId
 
     var startWorkoutDialog by rememberSaveable { mutableStateOf(false) }
     var workoutId by rememberSaveable { mutableStateOf<Long?>(null) }
+
     var showEmptyWorkoutDialog by rememberSaveable { mutableStateOf(false) }
+    var showBlockedWorkoutDialog by rememberSaveable { mutableStateOf(false) }
 
     OverloadScaffold(
         title = "Entrenamiento",
@@ -95,18 +101,40 @@ fun DashboardScreen(
                         }
 
                         itemsIndexed(activeMicrocycle.days, key = { _, day -> day.dayId }) { index, day ->
+
+                            val isThisDayActive = activeSessionDayId == day.dayId
+                            val hasOtherActiveSession = activeSessionDayId != null && !isThisDayActive
+
                             Column(modifier = Modifier.fillMaxWidth()) {
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .clip(RoundedCornerShape(8.dp))
-                                        .clickable { workoutId = day.dayId
-                                            if (day.slots.isEmpty()) {
-                                                showEmptyWorkoutDialog = true
-                                            } else {
-                                                startWorkoutDialog = true
-                                            } }
-                                        .padding(vertical = 16.dp),
+                                        .clip(RoundedCornerShape(6.dp))
+                                        .background(
+                                            if (isThisDayActive) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+                                            else Color.Transparent
+                                        )
+                                        .clickable {
+                                            when {
+                                                isThisDayActive -> {
+                                                    onNavigateToActiveWorkout()
+                                                }
+                                                hasOtherActiveSession -> {
+                                                    showBlockedWorkoutDialog = true
+                                                }
+                                                day.slots.isEmpty() -> {
+                                                    showEmptyWorkoutDialog = true
+                                                }
+                                                else -> {
+                                                    workoutId = day.dayId
+                                                    startWorkoutDialog = true
+                                                }
+                                            }
+                                        }
+                                        .padding(
+                                            vertical =  16.dp,
+                                            horizontal = if (isThisDayActive) 12.dp else 0.dp
+                                        ),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Text(
@@ -134,13 +162,23 @@ fun DashboardScreen(
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                     }
+                                    if (!hasOtherActiveSession)
                                     Icon(
                                         imageVector = Icons.Default.Start,
-                                        contentDescription = "Iniciar",
-                                        tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                        contentDescription = if (isThisDayActive) "Reanudar" else "Iniciar",
+                                        tint = if (isThisDayActive) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onPrimaryContainer
                                     )
                                 }
-                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                                val isNextDayActive = remember(activeMicrocycle.days, activeSessionDayId) {
+                                    val nextIndex = index + 1
+                                    if (nextIndex < activeMicrocycle.days.size) {
+                                        activeMicrocycle.days[nextIndex].dayId == activeSessionDayId
+                                    } else false
+                                }
+
+                                if (!isThisDayActive && !isNextDayActive) {
+                                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                                }
                             }
                         }
                     }
@@ -148,31 +186,19 @@ fun DashboardScreen(
             }
         }
         if (showEmptyWorkoutDialog) {
-            AlertDialog(
-                onDismissRequest = { showEmptyWorkoutDialog = false },
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.Info,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.tertiary
-                    )
-                },
-                title = {
-                    Text(text = "Rutina sin ejercicios")
-                },
-                text = {
-                    Text(text = "Esta rutina no tiene ejercicios programados. Debes añadir ejercicios desde el editor de rutinas")
-                },
-                confirmButton = {
-                    TextButton(
-                        onClick = { showEmptyWorkoutDialog = false },
-                        colors = ButtonDefaults.textButtonColors(
-                            contentColor = MaterialTheme.colorScheme.onPrimary,
-                            containerColor = MaterialTheme.colorScheme.primary)
-                    ) {
-                        Text(text = "Entendido")
-                    }
-                }
+            OverloadInfoDialog(
+                title = "Rutina sin ejercicios",
+                text = "Esta rutina no tiene ejercicios programados. Debes añadir ejercicios desde el editor de rutinas.",
+                onDismiss = { showEmptyWorkoutDialog = false }
+            )
+        }
+
+        if (showBlockedWorkoutDialog) {
+            OverloadInfoDialog(
+                title = "Sesión en curso",
+                text = "Ya tienes un entrenamiento en progreso. Finalízalo o cancélalo antes de iniciar uno nuevo.",
+                icon = Icons.Default.Warning,
+                onDismiss = { showBlockedWorkoutDialog = false }
             )
         }
         if (startWorkoutDialog) {

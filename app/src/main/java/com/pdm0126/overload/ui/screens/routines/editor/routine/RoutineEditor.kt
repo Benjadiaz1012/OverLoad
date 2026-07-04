@@ -51,6 +51,7 @@ fun RoutineEditorScreen(
     var showDeleteDayDialog by rememberSaveable { mutableStateOf(false) }
     var dayToDeleteId by rememberSaveable { mutableStateOf<Long?>(null) }
     var dayToDeleteName by rememberSaveable { mutableStateOf("") }
+    val isWorkoutSessionActive = state.isWorkoutSessionActive
 
     OverloadScaffold(
         title = "Editar Rutina",
@@ -83,7 +84,7 @@ fun RoutineEditorScreen(
                             )
                         }
                     )
-                    if (!microcycle.isActive) {
+                    if (!microcycle.isActive && !isWorkoutSessionActive) {
                         DropdownMenuItem(
                             text = { Text("Activar Rutina", color = MaterialTheme.colorScheme.onSurface) },
                             onClick = {
@@ -143,7 +144,7 @@ fun RoutineEditorScreen(
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Sistema Base: ${microcycle.blueprintType}\nLongitud: ${microcycle.days.size}",
+                                text = "Sistema Base: ${microcycle.blueprintType}\nDuración: ${microcycle.days.size}",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )

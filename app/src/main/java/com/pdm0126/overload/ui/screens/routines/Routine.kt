@@ -26,6 +26,7 @@ import com.pdm0126.overload.domain.model.Blueprint
 import com.pdm0126.overload.domain.model.BlueprintCatalog
 import com.pdm0126.overload.domain.model.RoutineMicrocycle
 import com.pdm0126.overload.ui.components.OverloadConfirmDialog
+import com.pdm0126.overload.ui.components.OverloadInfoDialog
 import com.pdm0126.overload.ui.components.OverloadScaffold
 
 
@@ -50,6 +51,8 @@ fun RoutinesListContent(
     onStartCreating: () -> Unit,
     onNavigateToRoutineEditor: (Long) -> Unit
 ) {
+    var showBlockedEditorDialog by rememberSaveable { mutableStateOf(false) }
+
     OverloadScaffold(
         title = "Mis Rutinas",
         floatingActionButton = {
@@ -90,9 +93,17 @@ fun RoutinesListContent(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     items(state.savedMicrocycles, key = { it.microcycleId }) { microcycle ->
+                        val isEditorBlocked = microcycle.isActive && state.isWorkoutSessionActive
                         MicrocycleCard(
                             microcycle = microcycle,
-                            onNavigateToRoutineEditor = onNavigateToRoutineEditor
+                            onNavigateToRoutineEditor = { clickedId ->
+                                if (isEditorBlocked) {
+                                    showBlockedEditorDialog = true
+                                } else {
+                                    onNavigateToRoutineEditor(clickedId)
+                                }
+                            },
+                            isEditorBlocked = isEditorBlocked
                         )
                         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                         Spacer(modifier = Modifier.height(8.dp))
@@ -101,12 +112,21 @@ fun RoutinesListContent(
             }
         }
     }
+    if (showBlockedEditorDialog) {
+        OverloadInfoDialog(
+            title = "Edición Bloqueada",
+            text = "No puedes modificar tu rutina activa mientras tienes un entrenamiento en curso.Finalízalo o cancélalo primero",
+            icon = Icons.Default.Warning,
+            onDismiss = { showBlockedEditorDialog = false }
+        )
+    }
 }
 
 @Composable
 fun MicrocycleCard(
     microcycle: RoutineMicrocycle,
-    onNavigateToRoutineEditor: (Long) -> Unit
+    onNavigateToRoutineEditor: (Long) -> Unit,
+    isEditorBlocked: Boolean = false
 ) {
     Column(
         modifier = Modifier
@@ -149,7 +169,7 @@ fun MicrocycleCard(
                     Spacer(modifier = Modifier.width(12.dp))
                 }
                 Icon(
-                    imageVector = Icons.Default.Settings,
+                    imageVector = if (isEditorBlocked) Icons.Default.Lock else Icons.Default.Settings,
                     contentDescription = "Administrar Rutina",
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )

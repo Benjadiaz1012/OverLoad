@@ -9,11 +9,13 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.pdm0126.overload.OverloadApplication
 import com.pdm0126.overload.domain.model.Blueprint
 import com.pdm0126.overload.domain.repository.RoutineRepository
+import com.pdm0126.overload.domain.repository.WorkoutRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class RoutineViewModel(
-    private val routineRepository: RoutineRepository
+    private val routineRepository: RoutineRepository,
+    private val workoutRepository: WorkoutRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RoutinesUiState())
@@ -21,13 +23,20 @@ class RoutineViewModel(
 
     init {
         viewModelScope.launch {
-            routineRepository.getAllMicrocycles().collect { microcycles ->
+            combine(
+                routineRepository.getAllMicrocycles(),
+                workoutRepository.getActiveSession()
+            ) { microcycles, activeSession ->
                 val activeId = microcycles.find { it.isActive }?.microcycleId
                 val sortedMicrocycles = microcycles.sortedByDescending { it.isActive }
-                _uiState.update { it.copy(
+
+                RoutinesUiState(
                     savedMicrocycles = sortedMicrocycles,
-                    activeMicrocycleId = activeId
-                ) }
+                    activeMicrocycleId = activeId,
+                    isWorkoutSessionActive = activeSession != null
+                )
+            }.collect { state ->
+                _uiState.value = state
             }
         }
     }
@@ -55,7 +64,10 @@ class RoutineViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val app = this[APPLICATION_KEY] as OverloadApplication
-                RoutineViewModel(app.overloadProvider.provideRoutineRepository())
+                RoutineViewModel(
+                    routineRepository = app.overloadProvider.provideRoutineRepository(),
+                    workoutRepository = app.overloadProvider.provideWorkoutRepository()
+                )
             }
         }
     }

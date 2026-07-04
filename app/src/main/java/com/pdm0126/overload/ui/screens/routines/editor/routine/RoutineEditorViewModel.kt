@@ -8,17 +8,20 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.pdm0126.overload.OverloadApplication
 import com.pdm0126.overload.domain.model.RoutineMicrocycle
 import com.pdm0126.overload.domain.repository.RoutineRepository
+import com.pdm0126.overload.domain.repository.WorkoutRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 data class RoutineEditorUiState(
     val isLoading: Boolean = true,
-    val microcycle: RoutineMicrocycle? = null
+    val microcycle: RoutineMicrocycle? = null,
+    val isWorkoutSessionActive: Boolean = false
 )
 
 class RoutineEditorViewModel(
     private val microcycleId: Long,
-    private val routineRepository: RoutineRepository
+    private val routineRepository: RoutineRepository,
+    private val workoutRepository: WorkoutRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RoutineEditorUiState())
@@ -26,8 +29,17 @@ class RoutineEditorViewModel(
 
     init {
         viewModelScope.launch {
-            routineRepository.getMicrocycleById(microcycleId).collect { microcycle ->
-                _uiState.update { it.copy(isLoading = false, microcycle = microcycle) }
+            combine(
+                routineRepository.getMicrocycleById(microcycleId),
+                workoutRepository.getActiveSession()
+            ) { microcycle, activeSession ->
+                RoutineEditorUiState(
+                    isLoading = false,
+                    microcycle = microcycle,
+                    isWorkoutSessionActive = activeSession != null
+                )
+            }.collect { state ->
+                _uiState.value = state
             }
         }
     }
@@ -77,7 +89,8 @@ class RoutineEditorViewModel(
                 val app = this[APPLICATION_KEY] as OverloadApplication
                 RoutineEditorViewModel(
                     microcycleId = microcycleId,
-                    routineRepository = app.overloadProvider.provideRoutineRepository()
+                    routineRepository = app.overloadProvider.provideRoutineRepository(),
+                    workoutRepository = app.overloadProvider.provideWorkoutRepository()
                 )
             }
         }

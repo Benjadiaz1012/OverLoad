@@ -22,11 +22,17 @@ class DashboardViewModel(
 
     init {
         viewModelScope.launch {
-            routineRepository.getActiveMicrocycle().collect { microcycle ->
-                _uiState.value = DashboardUiState(
+            combine(
+                routineRepository.getActiveMicrocycle(),
+                workoutRepository.getActiveSession()
+            ) { microcycle, activeSession ->
+                DashboardUiState(
                     isLoading = false,
-                    activeMicrocycle = microcycle
+                    activeMicrocycle = microcycle,
+                    activeSessionDayId = activeSession?.dayId
                 )
+            }.collect { state ->
+                _uiState.value = state
             }
         }
     }
