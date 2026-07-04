@@ -2,21 +2,14 @@ package com.pdm0126.overload.ui.screens.analysis
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ShowChart
-import androidx.compose.material.icons.filled.AddChart
-import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.FitnessCenter
-import androidx.compose.material.icons.filled.Insights
-import androidx.compose.material.icons.filled.QueryStats
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShowChart
 import androidx.compose.material.icons.filled.SwapHoriz
@@ -25,10 +18,10 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -53,14 +46,12 @@ import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
-import com.pdm0126.overload.Exercise
 import com.pdm0126.overload.R
 import com.pdm0126.overload.domain.TechnicalDictionary
 import com.pdm0126.overload.ui.components.OverloadScaffold
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-
 
 @Composable
 internal fun rememberToolTipMarker(
@@ -92,23 +83,32 @@ fun AnalysisScreen(
 
     val muscleFormatter = remember(uiState.muscleDistribution) {
         CartesianValueFormatter { context, x, _ ->
-            val fullName = context.model.extraStore.getOrNull(muscleListKey)?.getOrNull(x.toInt())?.replaceFirstChar { it.uppercase() } ?: ""
-            TechnicalDictionary.muscleAbbreviationMap[fullName] ?: fullName
+            val fullName = context.model.extraStore.getOrNull(muscleListKey)?.getOrNull(x.toInt())?.replaceFirstChar { it.uppercase() }
+            if (fullName.isNullOrBlank()) {
+                "\u200B"
+            } else {
+                TechnicalDictionary.muscleAbbreviationMap[fullName] ?: fullName
+            }
         }
     }
 
     val dateFormatter = remember(uiState.exerciseProgression) {
         CartesianValueFormatter { context, x, _ ->
-            context.model.extraStore.getOrNull(dateListKey)?.getOrNull(x.toInt()) ?: ""
+            val date = context.model.extraStore.getOrNull(dateListKey)?.getOrNull(x.toInt())
+            if (date.isNullOrBlank()) "\u200B" else date
         }
     }
-
     val distributionTooltipFormatter = remember(uiState.muscleDistribution) {
         DefaultCartesianMarker.ValueFormatter { context, targets ->
             val xIndex = targets.first().x.toInt()
             val fullName = context.model.extraStore.getOrNull(muscleListKey)?.getOrNull(xIndex)?.replaceFirstChar { it.uppercase() } ?: ""
-            val volume = uiState.muscleDistribution.getOrNull(xIndex)?.totalEffectiveVolume ?: 0f
-            "$fullName: ${String.format(Locale.US, "%.1f", volume)} Kg"
+
+            if (uiState.muscleDistribution.isEmpty()) {
+                "Sin datos registrados"
+            } else {
+                val volume = uiState.muscleDistribution.getOrNull(xIndex)?.totalEffectiveVolume ?: 0f
+                "$fullName: ${String.format(Locale.US, "%.1f", volume)} Kg"
+            }
         }
     }
 
@@ -116,31 +116,50 @@ fun AnalysisScreen(
         DefaultCartesianMarker.ValueFormatter { context, targets ->
             val xIndex = targets.first().x.toInt()
             val date = context.model.extraStore.getOrNull(dateListKey)?.getOrNull(xIndex) ?: ""
-            val volume = uiState.exerciseProgression.getOrNull(xIndex)?.totalVolume ?: 0f
-            "$date: ${String.format(Locale.US, "%.1f", volume)} Kg"
+
+            if (uiState.exerciseProgression.isEmpty()) {
+                "Sin datos registrados"
+            } else {
+                val volume = uiState.exerciseProgression.getOrNull(xIndex)?.totalVolume ?: 0f
+                "$date: ${String.format(Locale.US, "%.1f", volume)} Kg"
+            }
         }
     }
 
     LaunchedEffect(uiState.muscleDistribution) {
-        if (uiState.muscleDistribution.isNotEmpty()) {
-            val volumes = uiState.muscleDistribution.map { it.totalEffectiveVolume }
-            val muscleNames = uiState.muscleDistribution.map { it.muscleGroup }
-            distributionModelProducer.runTransaction {
-                columnModel { series(volumes) }
-                extras { it[muscleListKey] = muscleNames }
-            }
+        val volumes: List<Float>
+        val muscleNames: List<String>
+
+        if (uiState.muscleDistribution.isEmpty()) {
+            muscleNames = TechnicalDictionary.mainMuscleGroupsList
+            volumes = List(muscleNames.size) { 0f }
+        } else {
+            volumes = uiState.muscleDistribution.map { it.totalEffectiveVolume }
+            muscleNames = uiState.muscleDistribution.map { it.muscleGroup }
+        }
+
+        distributionModelProducer.runTransaction {
+            columnModel { series(volumes) }
+            extras { it[muscleListKey] = muscleNames }
         }
     }
 
-    LaunchedEffect(uiState.exerciseProgression) {
-        if (uiState.exerciseProgression.isNotEmpty()) {
-            val volumes = uiState.exerciseProgression.map { it.totalVolume }
+    LaunchedEffect(uiState.exerciseProgression, uiState.selectedExerciseId) {
+        val volumes: List<Float>
+        val dates: List<String>
+
+        if (uiState.exerciseProgression.isEmpty()) {
+            volumes = listOf(0f, 0f, 0f, 0f, 0f)
+            dates = listOf("\u200B", "\u200B", "\u200B", "\u200B", "\u200B")
+        } else {
+            volumes = uiState.exerciseProgression.map { it.totalVolume }
             val sdf = SimpleDateFormat("dd MMM", Locale.getDefault())
-            val dates = uiState.exerciseProgression.map { sdf.format(Date(it.timestamp)) }
-            trendModelProducer.runTransaction {
-                lineModel { series(volumes) }
-                extras { it[dateListKey] = dates }
-            }
+            dates = uiState.exerciseProgression.map { sdf.format(Date(it.timestamp)) }
+        }
+
+        trendModelProducer.runTransaction {
+            lineModel { series(volumes) }
+            extras { it[dateListKey] = dates }
         }
     }
 
@@ -192,39 +211,31 @@ fun AnalysisScreen(
                                 )
                                 Spacer(modifier = Modifier.height(24.dp))
 
-                                if (uiState.muscleDistribution.isEmpty()) {
-                                    Text(
-                                        text = "Aún no hay datos suficientes. Completa sesiones de entrenamiento",
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                } else {
-                                    CartesianChartHost(
-                                        chart = rememberCartesianChart(
-                                            rememberColumnCartesianLayer(
-                                                columnProvider = ColumnCartesianLayer.ColumnProvider.series(
-                                                    rememberLineComponent(
-                                                        fill = Fill(MaterialTheme.colorScheme.primary),
-                                                        thickness = 38.dp,
-                                                        shape = RoundedCornerShape(topStart = 6.dp, topEnd = 6.dp)
-                                                    )
-                                                ),
+                                CartesianChartHost(
+                                    chart = rememberCartesianChart(
+                                        rememberColumnCartesianLayer(
+                                            columnProvider = ColumnCartesianLayer.ColumnProvider.series(
+                                                rememberLineComponent(
+                                                    fill = Fill(MaterialTheme.colorScheme.primary),
+                                                    thickness = 38.dp,
+                                                    shape = RoundedCornerShape(topStart = 6.dp, topEnd = 6.dp)
+                                                )
                                             ),
-                                            startAxis = VerticalAxis.rememberStart(),
-                                            bottomAxis = HorizontalAxis.rememberBottom(valueFormatter = muscleFormatter),
-                                            marker = rememberToolTipMarker(valueFormatter = distributionTooltipFormatter),
                                         ),
-                                        modelProducer = distributionModelProducer,
-                                        scrollState = rememberVicoScrollState(),
-                                        zoomState = rememberVicoZoomState(zoomEnabled = true),
-                                        modifier = Modifier
-                                            .width(950.dp)
-                                            .height(350.dp)
-                                    )
-                                }
+                                        startAxis = VerticalAxis.rememberStart(),
+                                        bottomAxis = HorizontalAxis.rememberBottom(valueFormatter = muscleFormatter),
+                                        marker = rememberToolTipMarker(valueFormatter = distributionTooltipFormatter),
+                                    ),
+                                    modelProducer = distributionModelProducer,
+                                    scrollState = rememberVicoScrollState(),
+                                    zoomState = rememberVicoZoomState(zoomEnabled = true),
+                                    modifier = Modifier
+                                        .width(950.dp)
+                                        .height(350.dp)
+                                )
                             }
                         }
-                    }
-                    else {
+                    } else {
                         item {
                             Column(modifier = Modifier.fillMaxWidth()) {
                                 Text(
@@ -233,15 +244,10 @@ fun AnalysisScreen(
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.primary
                                 )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = "Evolución de volumen total en el tiempo",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                                Spacer(modifier = Modifier.height(24.dp))
-
                                 val selectedExercise = uiState.availableExercises.find { it.id == uiState.selectedExerciseId }
+
+                                Spacer(modifier = Modifier.height(16.dp))
+
                                 ExerciseSelectorHeader(
                                     selectedExercise = selectedExercise?.name,
                                     onNavigateToLibrary = onNavigateToLibrary,
@@ -250,51 +256,20 @@ fun AnalysisScreen(
 
                                 Spacer(modifier = Modifier.height(24.dp))
 
-                                when {
-                                    uiState.selectedExerciseId == null -> {
-                                        Box(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .height(350.dp)
-                                                .background(
-                                                    MaterialTheme.colorScheme.surfaceVariant.copy(
-                                                        alpha = 0.3f
-                                                    ),
-                                                    RoundedCornerShape(12.dp)
-                                                ),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.Default.QueryStats,
-                                                contentDescription = null,
-                                                modifier = Modifier.size(48.dp),
-                                                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
-                                            )
-                                        }
-                                    }
-                                    uiState.exerciseProgression.isEmpty() -> {
-                                        Text(
-                                            text = "No hay suficientes series completadas de este ejercicio para trazar una tendencia",
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                    }
-                                    else -> {
-                                        CartesianChartHost(
-                                            chart = rememberCartesianChart(
-                                                rememberLineCartesianLayer(),
-                                                startAxis = VerticalAxis.rememberStart(),
-                                                bottomAxis = HorizontalAxis.rememberBottom(valueFormatter = dateFormatter),
-                                                marker = rememberToolTipMarker(valueFormatter = trendTooltipFormatter)
-                                            ),
-                                            modelProducer = trendModelProducer,
-                                            scrollState = rememberVicoScrollState(),
-                                            zoomState = rememberVicoZoomState(zoomEnabled = true),
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .height(350.dp)
-                                        )
-                                    }
-                                }
+                                CartesianChartHost(
+                                    chart = rememberCartesianChart(
+                                        rememberLineCartesianLayer(),
+                                        startAxis = VerticalAxis.rememberStart(),
+                                        bottomAxis = HorizontalAxis.rememberBottom(valueFormatter = dateFormatter),
+                                        marker = rememberToolTipMarker(valueFormatter = trendTooltipFormatter)
+                                    ),
+                                    modelProducer = trendModelProducer,
+                                    scrollState = rememberVicoScrollState(),
+                                    zoomState = rememberVicoZoomState(zoomEnabled = true),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(350.dp)
+                                )
                             }
                         }
                     }
@@ -303,22 +278,29 @@ fun AnalysisScreen(
         }
     }
 }
-
 @Composable
 fun ExerciseSelectorHeader(
     selectedExercise: String?,
     onNavigateToLibrary: () -> Unit,
     onClearSelection: () -> Unit
 ) {
-    if (selectedExercise == null) {
-        OutlinedCard(
+    val isExerciseSelected = selectedExercise != null
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        ElevatedCard(
             onClick = onNavigateToLibrary,
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.outlinedCardColors(
-                containerColor = MaterialTheme.colorScheme.surface,
+            shape = CardDefaults.elevatedShape,
+            elevation = CardDefaults.elevatedCardElevation(
+                defaultElevation = 12.dp,
+                pressedElevation = 4.dp
             ),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+            colors = CardDefaults.elevatedCardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+            )
         ) {
             Row(
                 modifier = Modifier
@@ -328,67 +310,119 @@ fun ExerciseSelectorHeader(
             ) {
                 Box(
                     modifier = Modifier
-                        .size(48.dp)
+                        .size(38.dp)
                         .background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Buscar",
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                }
-                Spacer(modifier = Modifier.width(16.dp))
-                Column {
-                    Text(
-                        text = "Seleccionar ejercicio",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = "Elige uno de tu biblioteca para analizar",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-        }
-    } else {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                modifier = Modifier.weight(1f),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .background(MaterialTheme.colorScheme.primary, CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ShowChart,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onPrimary
-                    )
+                    if (isExerciseSelected) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ShowChart,
+                            contentDescription = "Buscar ejercicio",
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    } else {
+                        Icon(
+                            painter = painterResource(id = R.drawable.search_insights_24px),
+                            contentDescription = "Analizar ejercicio",
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.width(16.dp))
 
                 Text(
-                    text = selectedExercise,
+                    text = selectedExercise ?: "Buscar ejercicio en la biblioteca",
+                    modifier = Modifier.weight(1f),
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Black,
-                    color = MaterialTheme.colorScheme.onSurface
+                    maxLines = 2,
+                    overflow = Ellipsis,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.Bold
+                )
+
+                if (isExerciseSelected) {
+                    IconButton(
+                        onClick = onClearSelection,
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Quitar ejercicio",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
+        }
+
+        // Texto pequeño de asistencia al usuario
+        if (isExerciseSelected) {
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "Toca arriba para cambiar de ejercicio",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
+/*
+@Composable
+fun ExerciseSelectorHeader(
+    selectedExercise: String?,
+    onNavigateToLibrary: () -> Unit,
+    onClearSelection: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(
+            modifier = Modifier.weight(1f),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .background(
+                        color = if (selectedExercise == null) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.primary,
+                        shape = CircleShape
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ShowChart,
+                    contentDescription = null,
+                    tint = if (selectedExercise == null) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onPrimary
                 )
             }
+            Spacer(modifier = Modifier.width(16.dp))
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = selectedExercise ?: "Seleccionar ejercicio",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Black,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            if (selectedExercise == null) {
+                FilledTonalIconButton(
+                    onClick = onNavigateToLibrary,
+                    modifier = Modifier.size(48.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = "Buscar ejercicio"
+                    )
+                }
+            } else {
                 IconButton(
                     onClick = onClearSelection,
                     modifier = Modifier.size(48.dp)
@@ -414,5 +448,4 @@ fun ExerciseSelectorHeader(
             }
         }
     }
-}
-
+}*/

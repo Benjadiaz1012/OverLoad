@@ -16,7 +16,7 @@ object TechnicalDictionary {
         "Pierna" to "PIE",
         "Gemelos" to "GEM",
         "Antebrazos" to "ANT",
-        "Abdominales" to "ABS"
+        "Abdomen" to "ABS"
     )
 
     val mainMuscleGroupsList = listOf(
