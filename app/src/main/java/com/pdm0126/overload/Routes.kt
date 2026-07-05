@@ -16,4 +16,6 @@ sealed class Routes : NavKey{
 @Serializable
     data object Analysis : Routes(){
 
-    }}
+    }
+@Serializable
+    data object Routine : Routes(){}}

@@ -61,8 +61,9 @@ fun Analysis(
     muscleVolumes: List<MuscleGroupVolume> = fakeMuscleVolumes,
     summary: PeriodSummary = fakeSummary,
     dateRangeLabel: String = "15 Abr – 8 Jul 2024",
-    onBack: () -> Unit = {},
-    onCalendarClick: () -> Unit = {}
+    onNext: () -> Unit = {},
+    onCalendarClick: () -> Unit = {},
+    onBack: () -> Unit = {}
 ) {
     var selectedTab by remember { mutableStateOf(metricTabs.first()) }
     var selectedPeriod by remember { mutableStateOf("3M") }

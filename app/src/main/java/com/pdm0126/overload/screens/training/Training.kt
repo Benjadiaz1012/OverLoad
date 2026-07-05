@@ -93,7 +93,7 @@ fun Training(
                     .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 55.dp)
             ) {
                 Button(
-                    onClick = onStartSession,
+                    onClick = onNext,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),

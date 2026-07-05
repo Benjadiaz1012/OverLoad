@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 data class SystemUiState(
     val isCreating: Boolean = false,
     val error: String? = null,
-    val createdMicrocycleId: Long? = null 
+    val createdMicrocycleId: Long? = null
 )
 
 class SystemViewModel(
