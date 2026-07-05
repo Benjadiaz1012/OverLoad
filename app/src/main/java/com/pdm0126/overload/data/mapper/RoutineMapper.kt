@@ -12,6 +12,7 @@ fun SlotWithExercise.toDomainModel(): RoutineSlot {
         slotId = slot.slotId,
         order = slot.order,
         targetSets = slot.targetSets,
+        targetReps = slot.targetReps,
         exercise = exercise.toDomainModel()
     )
 }

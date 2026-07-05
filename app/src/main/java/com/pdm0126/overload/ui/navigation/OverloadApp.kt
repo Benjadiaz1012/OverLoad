@@ -5,6 +5,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -21,6 +23,7 @@ import com.pdm0126.overload.ui.components.OverloadScaffold
 import com.pdm0126.overload.ui.screens.analysis.AnalysisScreen
 import com.pdm0126.overload.ui.screens.analysis.AnalysisViewModel
 import com.pdm0126.overload.ui.screens.dashboard.DashboardScreen
+import com.pdm0126.overload.ui.screens.dashboard.workout.ActiveWorkoutScreen
 import com.pdm0126.overload.ui.screens.detail.DetailScreen
 import com.pdm0126.overload.ui.screens.library.LibraryScreen
 import com.pdm0126.overload.ui.screens.routines.BlueprintSelectionScreen
@@ -53,15 +56,20 @@ fun OverloadApp() {
     ) { innerPadding ->
         NavDisplay(
             backStack = backStack,
-            // Solo aplicamos el padding inferior, el padding superior lo manejara el OverloadScaffold de cada pantalla
             modifier = Modifier
-                .padding(
-                    bottom = innerPadding.calculateBottomPadding()
-                ),
+                .padding(bottom = innerPadding.calculateBottomPadding())
+                .consumeWindowInsets(PaddingValues(bottom = innerPadding.calculateBottomPadding())),
             onBack = { backStack.removeLastOrNull() },
             entryProvider = entryProvider {
                 entry<Routes.Dashboard> {
-                    DashboardScreen()
+                    DashboardScreen(
+                        onNavigateToActiveWorkout = { backStack.add(Routes.ActiveWorkout) }
+                    )
+                }
+                entry<Routes.ActiveWorkout> {
+                    ActiveWorkoutScreen(
+                        onBack = { backStack.removeLastOrNull() }
+                    )
                 }
                 entry<Routes.Routines> {
                     RoutinesScreen(

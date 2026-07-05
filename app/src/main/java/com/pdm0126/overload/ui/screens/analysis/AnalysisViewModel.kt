@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.pdm0126.overload.OverloadApplication
+import com.pdm0126.overload.domain.model.Exercise
+import com.pdm0126.overload.domain.model.MuscleDistribution
 import com.pdm0126.overload.domain.repository.AnalysisRepository
 import com.pdm0126.overload.domain.repository.ExerciseRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -19,14 +21,23 @@ class AnalysisViewModel(
 ) : ViewModel() {
 
     private val _selectedExerciseId = MutableStateFlow<String?>(null)
+    private val _selectedTabIndex = MutableStateFlow(0)
+
+    private data class AnalysisStateData(
+        val tabIndex: Int,
+        val distribution: List<MuscleDistribution>,
+        val exercises: List<Exercise>,
+        val selectedId: String?
+    )
 
     val uiState: StateFlow<AnalysisUiState> = combine(
+        _selectedTabIndex,
         analysisRepository.getOverallMuscleDistribution(),
         exerciseRepository.getLocalExercises(),
         _selectedExerciseId
-    ) { distribution, exercises, selectedId ->
-        Triple(distribution, exercises, selectedId)
-    }.flatMapLatest { (distribution, exercises, selectedId) ->
+    ) { tabIndex, distribution, exercises, selectedId ->
+        AnalysisStateData(tabIndex, distribution, exercises, selectedId)
+    }.flatMapLatest { ( tabIndex, distribution, exercises, selectedId) ->
 
         // Si hay un ejercicio seleccionado, consultamos su historial en Room
         val trendFlow = if (selectedId != null) {
@@ -35,10 +46,10 @@ class AnalysisViewModel(
             flowOf(emptyList())
         }
 
-        // Mapeamos el resultado final al Estado de la UI
         trendFlow.map { progression ->
             AnalysisUiState(
                 isLoading = false,
+                selectedTabIndex = tabIndex,
                 muscleDistribution = distribution,
                 availableExercises = exercises,
                 selectedExerciseId = selectedId,
@@ -50,12 +61,17 @@ class AnalysisViewModel(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = AnalysisUiState()
     )
-
-    fun selectExercise(exerciseId: String) {
-        _selectedExerciseId.value = exerciseId
+    fun onTabSelected(index: Int) {
+        if (_selectedTabIndex.value != index) {
+            _selectedTabIndex.value = index
+        }
     }
-    fun unselectExercise() {
-        _selectedExerciseId.value = null
+    fun selectExercise(exerciseId: String?) {
+        if (exerciseId == null) {
+            _selectedExerciseId.value = null
+            return
+        }
+        _selectedExerciseId.value = exerciseId
     }
 
     companion object {

@@ -42,7 +42,8 @@ class DayEditorViewModel(
                 dayId = dayId,
                 exerciseId = exerciseId,
                 order = nextOrder,
-                targetSets = 3
+                targetSets = 3,
+                targetReps = null
             )
         }
     }
@@ -51,6 +52,13 @@ class DayEditorViewModel(
         if (newSets in 1..10) {
             viewModelScope.launch {
                 routineRepository.updateSlotTargetSets(slotId, newSets)
+            }
+        }
+    }
+    fun updateTargetReps(slotId: Long, newReps: Int?) {
+        if (newReps == null || newReps in 1..20) {
+            viewModelScope.launch {
+                routineRepository.updateSlotTargetReps(slotId, newReps)
             }
         }
     }

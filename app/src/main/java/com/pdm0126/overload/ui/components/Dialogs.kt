@@ -1,10 +1,51 @@
 package com.pdm0126.overload.ui.components
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+
+@Composable
+fun OverloadInfoDialog(
+    title: String,
+    text: String,
+    icon: ImageVector? = Icons.Default.Info,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        icon = icon?.let {
+            {
+                Icon(
+                    imageVector = it,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.tertiary
+                )
+            }
+        },
+        title = { Text(text = title) },
+        text = { Text(text = text, textAlign = TextAlign.Justify) },
+        confirmButton = {
+            TextButton(
+                onClick = onDismiss,
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            ) {
+                Text(text = "Entendido")
+            }
+        }
+    )
+}
 
 @Composable
 fun OverloadConfirmDialog(
@@ -20,9 +61,13 @@ fun OverloadConfirmDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(title) },
-        text = { Text(text) },
+        text = { Text(text, textAlign = TextAlign.Justify) },
         icon = icon?.let {
-            { Icon(it, contentDescription = null, tint = if (isDestructive) MaterialTheme.colorScheme.error else LocalContentColor.current) }
+            { Icon(
+                imageVector = it,
+                contentDescription = null,
+                tint = if (isDestructive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.tertiary
+            ) }
         },
         confirmButton = {
             Button(
@@ -34,7 +79,7 @@ fun OverloadConfirmDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(dismissText)
+                Text(dismissText, color = MaterialTheme.colorScheme.onPrimary)
             }
         }
     )
@@ -47,31 +92,48 @@ fun OverloadInputDialog(
     label: String,
     confirmText: String = "Guardar",
     dismissText: String = "Cancelar",
+    maxLength: Int = 40,
     onConfirm: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
     var inputValue by remember { mutableStateOf(initialValue) }
+    val isInputValid = inputValue.isNotBlank() && inputValue.length <= maxLength
 
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(title) },
         text = {
-            OutlinedTextField(
-                value = inputValue,
-                onValueChange = { inputValue = it },
-                label = { Text(label) },
-                singleLine = true,
-                shape = RoundedCornerShape(12.dp)
-            )
+            Column {
+                OutlinedTextField(
+                    value = inputValue,
+                    onValueChange = {
+                        if (it.length <= maxLength) inputValue = it
+                    },
+                    label = { Text(label, fontWeight = FontWeight.Bold) },
+                    singleLine = true,
+                    shape = RoundedCornerShape(12.dp),
+                    isError = inputValue.length == maxLength,
+                    supportingText = {
+                        Text(
+                            text = "${inputValue.length} / $maxLength",
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.End
+                        )
+                    }
+                )
+            }
         },
         confirmButton = {
-            Button(onClick = { onConfirm(inputValue) }) {
+            Button(
+                onClick = { onConfirm(inputValue.trim()) },
+                enabled = isInputValid
+            ) {
                 Text(confirmText)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(dismissText)
+                Text(dismissText, color = MaterialTheme.colorScheme.onSurface)
             }
         }
     )

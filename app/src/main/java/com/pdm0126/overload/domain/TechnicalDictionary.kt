@@ -7,22 +7,9 @@ object TechnicalDictionary {
         val generalGroup: String
     )
 
-    // Lista pública para los chips de filtro en la UI
-    val muscleAbbreviationMap = mapOf(
-        "Pecho" to "PEC",
-        "Hombros" to "HOM",
-        "Espalda" to "ESP",
-        "Tríceps" to "TRÍ",
-        "Bíceps" to "BÍC",
-        "Pierna" to "PIE",
-        "Gemelos" to "GEM",
-        "Antebrazos" to "ANT",
-        "Abdominales" to "ABS"
-    )
-
     val mainMuscleGroupsList = listOf(
         "Pecho", "Hombros", "Espalda", "Tríceps", "Bíceps",
-        "Pierna", "Gemelos", "Antebrazos", "Abdominales"
+        "Pierna", "Gemelos", "Antebrazos", "Abdomen"
     )
 
     private val muscleMap = mapOf(
@@ -39,8 +26,8 @@ object TechnicalDictionary {
         "calves" to MuscleInfo("Gemelos", "Gemelos"),
         "forearms" to MuscleInfo("Antebrazos", "Antebrazos"),
         "traps" to MuscleInfo("Trapecios", "Espalda"),
-        "abdominals" to MuscleInfo("Abdominales", "Abdominales"),
-        "abs" to MuscleInfo("Abdominales", "Abdominales"),
+        "abdominals" to MuscleInfo("Abdomen", "Abdomen"),
+        "abs" to MuscleInfo("Abdomen", "Abdomen"),
         "adductors" to MuscleInfo("Aductores", "Pierna"),
         "abductors" to MuscleInfo("Abductores", "Pierna"),
         "neck" to MuscleInfo("Cuello", "Espalda")
@@ -60,6 +47,13 @@ object TechnicalDictionary {
         "foam roll" to "Rollo de foam",
         "other" to "Otro"
     )
+
+    val maxMuscleNameLength = mainMuscleGroupsList.maxOf { it.length }
+
+    fun getPaddedMuscleNameForChart(rawName: String?): String {
+        if (rawName.isNullOrBlank()) return "\u200B"
+        return rawName.padEnd(maxMuscleNameLength, '\u00A0')
+    }
 
     fun getGeneralGroup(apiMuscle: String?): String {
         val key = apiMuscle?.lowercase() ?: ""

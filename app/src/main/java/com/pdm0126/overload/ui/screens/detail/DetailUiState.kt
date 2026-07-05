@@ -6,5 +6,6 @@ data class DetailUiState(
     val isLoading: Boolean = true,
     val exercise: Exercise? = null,
     val isBookmarked: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val isWorkoutSessionActive: Boolean = false
 )

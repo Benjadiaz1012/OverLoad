@@ -8,8 +8,5 @@ import com.pdm0126.overload.domain.model.WorkoutSet
 data class DashboardUiState(
     val isLoading: Boolean = true,
     val activeMicrocycle: RoutineMicrocycle? = null,
-    val activeSession: WorkoutSession? = null,
-    val activeDay: RoutineDay? = null,
-    val sessionSets: List<WorkoutSet> = emptyList(),
-    val lastSets: Map<String, List<WorkoutSet>> = emptyMap()
+    val activeSessionDayId: Long? = null
 )

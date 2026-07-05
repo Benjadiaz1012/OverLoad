@@ -66,7 +66,7 @@ fun ExerciseDto.toDomainModel(): Exercise {
 /*-------------------------------------------------------------------------------------*/
 
 
-fun SlotWithExercise.toDomainModel(): RoutineSlot {
+/*fun SlotWithExercise.toDomainModel(): RoutineSlot {
     return RoutineSlot(
         slotId = slot.slotId,
         order = slot.order,
@@ -93,7 +93,7 @@ fun MicrocycleWithDays.toDomainModel(): RoutineMicrocycle {
         // Ordenamos los días cronológicamente
         days = days.map { it.toDomainModel() }.sortedBy { it.order }
     )
-}
+}*/
 
 
 /*-------------------------------------------------------------------------------------*/

@@ -26,7 +26,9 @@ import com.pdm0126.overload.domain.model.Blueprint
 import com.pdm0126.overload.domain.model.BlueprintCatalog
 import com.pdm0126.overload.domain.model.RoutineMicrocycle
 import com.pdm0126.overload.ui.components.OverloadConfirmDialog
+import com.pdm0126.overload.ui.components.OverloadInfoDialog
 import com.pdm0126.overload.ui.components.OverloadScaffold
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -50,6 +52,9 @@ fun RoutinesListContent(
     onStartCreating: () -> Unit,
     onNavigateToRoutineEditor: (Long) -> Unit
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+
     OverloadScaffold(
         title = "Mis Rutinas",
         floatingActionButton = {
@@ -60,7 +65,7 @@ fun RoutinesListContent(
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Nueva Rutina")
             }
-        }
+        },
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
             if (state.savedMicrocycles.isEmpty()) {
@@ -77,26 +82,49 @@ fun RoutinesListContent(
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = "No tienes rutinas",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             } else {
                 LazyColumn(
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    contentPadding = PaddingValues(vertical = 16.dp),
                     modifier = Modifier.fillMaxSize()
                 ) {
                     items(state.savedMicrocycles, key = { it.microcycleId }) { microcycle ->
+                        val isEditorBlocked = microcycle.isActive && state.isWorkoutSessionActive
                         MicrocycleCard(
                             microcycle = microcycle,
-                            onNavigateToRoutineEditor = onNavigateToRoutineEditor
+                            onNavigateToRoutineEditor = { clickedId ->
+                                if (isEditorBlocked) {
+                                    coroutineScope.launch {
+                                        snackbarHostState.currentSnackbarData?.dismiss()
+                                        snackbarHostState.showSnackbar(
+                                            message = "No puedes modificar tu rutina mientras entrenas",
+                                            duration = SnackbarDuration.Short
+                                        )
+                                    }
+                                } else {
+                                    onNavigateToRoutineEditor(clickedId)
+                                }
+                            },
+                            isEditorBlocked = isEditorBlocked
                         )
-                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                        Spacer(modifier = Modifier.height(8.dp))
+                        HorizontalDivider(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                        )
                     }
                 }
             }
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 88.dp)
+            )
         }
     }
 }
@@ -104,7 +132,8 @@ fun RoutinesListContent(
 @Composable
 fun MicrocycleCard(
     microcycle: RoutineMicrocycle,
-    onNavigateToRoutineEditor: (Long) -> Unit
+    onNavigateToRoutineEditor: (Long) -> Unit,
+    isEditorBlocked: Boolean = false
 ) {
     Column(
         modifier = Modifier
@@ -139,13 +168,14 @@ fun MicrocycleCard(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (microcycle.isActive) {
                     Icon(
-                        imageVector = Icons.Default.StarOutline,
+                        imageVector = Icons.Default.Star,
                         contentDescription = "Activa",
                         tint = MaterialTheme.colorScheme.tertiary,
                         modifier = Modifier.size(22.dp)
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                 }
+                if (!isEditorBlocked)
                 Icon(
                     imageVector = Icons.Default.Settings,
                     contentDescription = "Administrar Rutina",

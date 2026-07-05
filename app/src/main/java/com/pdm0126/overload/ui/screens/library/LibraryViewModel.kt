@@ -21,29 +21,35 @@ class LibraryViewModel(
 ) : ViewModel() {
 
     private val _selectedTabIndex = MutableStateFlow(0)
-    private val _selectedMuscle = MutableStateFlow<String?>(null)
+    private val _selectedMuscles = MutableStateFlow<List<String>>(emptyList())
+    private val _selectedMechanic = MutableStateFlow<String?>(null)
     private val _query = MutableStateFlow("")
     private val _remoteState = MutableStateFlow(RemoteState())
 
-
+    private val _filtersFlow = combine(_selectedMuscles, _selectedMechanic) { muscle, mechanic ->
+        Pair(muscle, mechanic)
+    }
     val uiState: StateFlow<LibraryUiState> = combine(
-        exerciseRepository.getLocalExercises(),           // Flow<List<Exercise>>
-        _selectedTabIndex,                               // MutableStateFlow<Int>
-        _selectedMuscle,                                 // MutableStateFlow<String?>
-        _query,                                          // MutableStateFlow<String>
-        _remoteState                                     // MutableStateFlow<RemoteState>
-    ) { local, tabIndex, muscle, query, remote ->
+        exerciseRepository.getLocalExercises(),
+        _selectedTabIndex,
+        _filtersFlow,
+        _query,
+        _remoteState
+    ) { local, tabIndex, filters, query, remote ->
 
+        val (muscles, mechanic) = filters
         val filteredLocal = local.filter { exercise ->
-            val matchesMuscle = muscle == null || exercise.muscleGroup.equals(muscle, ignoreCase = true)
+            val matchesMuscles = muscles.isEmpty() || muscles.any { muscle -> exercise.muscleGroup.equals(muscle, ignoreCase = true) }
+            val matchesMechanic = mechanic == null || exercise.mechanic.equals(mechanic, ignoreCase = true)
             val matchesQuery = query.isBlank() || exercise.name.contains(query, ignoreCase = true)
-            matchesMuscle && matchesQuery
+            matchesMuscles && matchesMechanic && matchesQuery
         }
 
         val filteredRemote = remote.results.filter { exercise ->
-            val matchesMuscle = muscle == null || exercise.muscleGroup.equals(muscle, ignoreCase = true)
+            val matchesMuscles = muscles.isEmpty() || muscles.any { muscles -> exercise.muscleGroup.equals(muscles, ignoreCase = true) }
+            val matchesMechanic = mechanic == null || exercise.mechanic.equals(mechanic, ignoreCase = true)
             val matchesQuery = query.isBlank() || exercise.name.contains(query, ignoreCase = true)
-            matchesMuscle && matchesQuery
+            matchesMuscles && matchesMechanic && matchesQuery
         }
 
         val localExercisesIds = filteredLocal.map { ex -> ex.id }.toSet()
@@ -52,7 +58,8 @@ class LibraryViewModel(
             selectedTabIndex = tabIndex,
             localExercises = filteredLocal,
             localExercisesIds = localExercisesIds,
-            selectedMuscle = muscle,
+            selectedMuscles = muscles,
+            selectedMechanic = mechanic,
             query = query,
             remoteState = remote.copy(results = filteredRemote)
         )
@@ -65,6 +72,9 @@ class LibraryViewModel(
     fun onTabSelected(index: Int) {
         if (_selectedTabIndex.value != index) {
             _selectedTabIndex.value = index
+            if (index == 1 && _query.value.isNotBlank()) {
+                searchRemoteExercises()
+            }
         }
     }
 
@@ -75,8 +85,21 @@ class LibraryViewModel(
         }
     }
 
-    fun onMuscleFilterSelected(muscle: String) {
-        _selectedMuscle.value = if (_selectedMuscle.value == muscle) null else muscle
+    fun onMuscleFilterSelected(muscle: String?) {
+        if (muscle == null) {
+            _selectedMuscles.value = emptyList()
+        } else {
+            val currentMuscles = _selectedMuscles.value.toMutableList()
+            if (currentMuscles.contains(muscle)) {
+                currentMuscles.remove(muscle)
+            } else {
+                currentMuscles.add(muscle)
+            }
+            _selectedMuscles.value = currentMuscles
+        }
+    }
+    fun onMechanicFilterSelected(mechanic: String?) {
+        _selectedMechanic.value = if (_selectedMechanic.value == mechanic) null else mechanic
     }
 
     fun searchRemoteExercises() {
@@ -114,12 +137,6 @@ class LibraryViewModel(
             if (!uiState.value.localExercisesIds.contains(exercise.id)) {
                 exerciseRepository.saveRemoteExerciseToLocal(exercise)
             }
-            /*val isBookmarked = uiState.value.localExercisesIds.contains(exercise.id)
-            if (isBookmarked) {
-                exerciseRepository.deleteLocalExercise(exercise)
-            } else {
-                exerciseRepository.saveRemoteExerciseToLocal(exercise)
-            }*/
         }
     }
 

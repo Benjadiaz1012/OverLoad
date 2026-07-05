@@ -1,9 +1,10 @@
 package com.pdm0126.overload.data.remote
 
-import android.util.Log
 import com.pdm0126.overload.data.remote.dto.ExerciseDto
+import android.util.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.request.parameter
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
@@ -19,10 +20,9 @@ import kotlinx.serialization.json.Json
 
 class ExerciseApiClient {
 
-    private val baseUrl = "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/dist/exercises.json"
+    private val baseUrl = "https://overload-api.vercel.app/api/exercises"
 
     val client = HttpClient(OkHttp) {
-        // Parseo automático de JSON
         install(ContentNegotiation) {
             json(Json {
                 ignoreUnknownKeys = true
@@ -32,7 +32,6 @@ class ExerciseApiClient {
             )
         }
 
-        // Plugin de logging
         install(Logging) {
             logger = object : Logger {
                 override fun log(message: String) {
@@ -42,7 +41,6 @@ class ExerciseApiClient {
             level = LogLevel.ALL
         }
 
-        // Configuración aplicada a todas las peticiones
         defaultRequest {
             url(baseUrl)
             header(HttpHeaders.Accept, "application/json")
@@ -54,7 +52,9 @@ class ExerciseApiClient {
         if (cachedExercises != null) {
             return cachedExercises!!
         }
+
         val response: List<ExerciseDto> = client.get("").body()
+
         cachedExercises = response
         return response
     }

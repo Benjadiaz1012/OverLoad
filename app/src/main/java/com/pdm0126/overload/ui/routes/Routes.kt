@@ -7,6 +7,8 @@ sealed class Routes : NavKey {
     @Serializable
     data object Dashboard : Routes()
     @Serializable
+    data object ActiveWorkout : Routes()
+    @Serializable
     data object Routines : Routes()
     @Serializable
     data class RoutineEditor(val microcycleId: Long) : Routes()

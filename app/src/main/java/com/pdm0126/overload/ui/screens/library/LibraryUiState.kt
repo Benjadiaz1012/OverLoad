@@ -6,7 +6,8 @@ data class LibraryUiState(
     val selectedTabIndex: Int = 0,
     val localExercises: List<Exercise> = emptyList(),
     val localExercisesIds: Set<String> = emptySet(),
-    val selectedMuscle: String? = null,
+    val selectedMuscles: List<String> = emptyList(),
+    val selectedMechanic: String? = null,
     val query: String = "",
     val remoteState: RemoteState = RemoteState()
 )

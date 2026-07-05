@@ -19,7 +19,6 @@ fun ExerciseEntity.toDomainModel() : Exercise {
     )
 }
 
-// Para guardar ejercicios externos
 fun Exercise.toEntity() : ExerciseEntity {
     return ExerciseEntity(
         exerciseId = id,
@@ -35,11 +34,8 @@ fun Exercise.toEntity() : ExerciseEntity {
 }
 
 fun ExerciseDto.toDomainModel(): Exercise {
-    val baseUrl = "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/"
-    val generatedId = "ex_${name.trim().lowercase().replace(" ", "_").replace("-", "_")}"
-
     return Exercise(
-        id = generatedId,
+        id = id.lowercase(),
         name = name,
         muscleGroup = TechnicalDictionary.getGeneralGroup(primaryMuscles.first()),
         mechanic = TechnicalDictionary.getMechanic(mechanic),
@@ -47,6 +43,6 @@ fun ExerciseDto.toDomainModel(): Exercise {
         secondaryMuscles = secondaryMuscles.map {muscle -> TechnicalDictionary.getSpecificMuscle(muscle) },
         equipment = TechnicalDictionary.getEquipment(equipment),
         instructions = instructions,
-        remoteImages = images.map { "$baseUrl$it" }
+        remoteImages = images
     )
 }

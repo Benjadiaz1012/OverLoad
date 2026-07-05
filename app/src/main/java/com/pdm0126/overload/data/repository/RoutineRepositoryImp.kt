@@ -39,6 +39,10 @@ class RoutineRepositoryImp(
         routineDao.updateSlotTargetSets(slotId, targetSets)
     }
 
+    override suspend fun updateSlotTargetReps(slotId: Long, targetReps: Int?) {
+        routineDao.updateSlotTargetReps(slotId, targetReps)
+    }
+
     override suspend fun deleteMicrocycle(microcycleId: Long) {
         routineDao.deleteMicrocycle(microcycleId)
     }
@@ -71,12 +75,13 @@ class RoutineRepositoryImp(
         return routineDao.insertDay(newDay) // Retorna el id del día
     }
 
-    override suspend fun addExerciseSlot(dayId: Long, exerciseId: String, order: Int, targetSets: Int): Long {
+    override suspend fun addExerciseSlot(dayId: Long, exerciseId: String, order: Int, targetSets: Int, targetReps: Int?): Long {
         val newSlot = SlotEntity(
             dayId = dayId,
             exerciseId = exerciseId,
             order = order,
-            targetSets = targetSets
+            targetSets = targetSets,
+            targetReps = targetReps
         )
         return routineDao.insertSlot(newSlot) // Retorna el id del slot
     }

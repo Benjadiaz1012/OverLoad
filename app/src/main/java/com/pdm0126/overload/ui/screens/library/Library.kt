@@ -1,5 +1,9 @@
 package com.pdm0126.overload.ui.screens.library
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import com.pdm0126.overload.R
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,6 +14,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
+import androidx.compose.material.icons.automirrored.filled.ShowChart
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.material3.SecondaryTabRow
@@ -17,24 +22,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.pdm0126.overload.domain.TechnicalDictionary
 import com.pdm0126.overload.domain.model.Exercise
-import com.pdm0126.overload.ui.components.BookmarkedIcon
 import com.pdm0126.overload.ui.components.Error
 import com.pdm0126.overload.ui.components.OverloadScaffold
-import com.pdm0126.overload.ui.components.UnBookmarkedIcon
 
 @Composable
 fun LibraryScreen(
@@ -48,6 +53,8 @@ fun LibraryScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
+
+    var showFilterSheet by remember { mutableStateOf(false) }
 
     OverloadScaffold(
         title = "Ejercicios",
@@ -78,12 +85,12 @@ fun LibraryScreen(
             }
 
             val isLocal = state.selectedTabIndex == 0
-            OutlinedTextField(
+            TextField(
                 value = state.query,
                 onValueChange = {  viewModel.onSearchQueryChanged(it) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(top = 16.dp, bottom = 8.dp, start = 16.dp, end = 16.dp ),
                 placeholder = {
                     Text(
                         text = if (isLocal) "Tu biblioteca" else "Buscar ejercicio",
@@ -98,15 +105,26 @@ fun LibraryScreen(
                     )
                               },
                 trailingIcon = {
-                    if (state.query.isNotEmpty()) {
-                        IconButton(
-                            onClick = { viewModel.onSearchQueryChanged(""); focusManager.clearFocus() }
-                        ) {
+                    Row {
+                        IconButton(onClick = { showFilterSheet = true }) {
+                            val isFilterActive = state.selectedMuscles != emptyList<String?>() || state.selectedMechanic != null
                             Icon(
-                                Icons.Default.Cancel,
-                                contentDescription = "Limpiar búsqueda",
-                                tint = MaterialTheme.colorScheme.primary
+                                imageVector = Icons.Default.FilterList,
+                                contentDescription = "Filtros",
+                                tint = if (isFilterActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                             )
+                        }
+
+                        if (state.query.isNotEmpty()) {
+                            IconButton(
+                                onClick = { viewModel.onSearchQueryChanged(""); focusManager.clearFocus() }
+                            ) {
+                                Icon(
+                                    Icons.Default.Cancel,
+                                    contentDescription = "Limpiar búsqueda",
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
                         }
                     }
                 },
@@ -123,29 +141,25 @@ fun LibraryScreen(
                 ),
                 shape = RoundedCornerShape(8.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.background,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.background
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                    disabledContainerColor = MaterialTheme.colorScheme.surface,
                 )
             )
 
-            val muscleGroups = TechnicalDictionary.mainMuscleGroupsList
-            LazyRow(
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                modifier = Modifier.padding(bottom = 8.dp)
-            ) {
-                items(muscleGroups) { muscle ->
-                    FilterChip(
-                        selected = state.selectedMuscle == muscle,
-                        onClick = { viewModel.onMuscleFilterSelected(muscle) },
-                        label = { Text(muscle.replaceFirstChar { it.uppercase() }) },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = MaterialTheme.colorScheme.primary,
-                            selectedLabelColor = MaterialTheme.colorScheme.onPrimary
-                        )
-                    )
+            ActiveFiltersRow(
+                selectedMuscles = state.selectedMuscles,
+                selectedMechanic = state.selectedMechanic,
+                onRemoveMuscle = { muscle ->
+                    viewModel.onMuscleFilterSelected(muscle)
+                },
+                onRemoveMechanic = {
+                    viewModel.onMechanicFilterSelected(null)
                 }
-            }
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
 
             Box(
                 modifier = Modifier.fillMaxSize()
@@ -160,7 +174,7 @@ fun LibraryScreen(
                     } else {
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(16.dp),
+                            contentPadding = PaddingValues(vertical = 16.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             items(state.localExercises, key = { it.id }) { exercise ->
@@ -172,9 +186,7 @@ fun LibraryScreen(
                                     onSelectClick = { onExerciseSelect(exercise) },
                                     onAnalysisClick = { onExerciseAnalysisSelect(exercise) }
                                 )
-                                Spacer(modifier = Modifier.height(8.dp))
-                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                                Spacer(modifier = Modifier.height(8.dp))
+                                ItemDivider()
                             }
                         }
                     }
@@ -195,17 +207,30 @@ fun LibraryScreen(
                         }
 
                         state.remoteState.results.isEmpty() && state.query.isBlank() -> {
-                            Text(
-                                text = "...", // Mensaje de inicio o indicación de búsqueda vacía
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.align(Alignment.Center)
-                            )
+                            Column(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Search,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(64.dp),
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                                )
+                                Text(
+                                    text = "Busca un ejercicio",
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                )
+                            }
                         }
 
                         else -> {
                             LazyColumn(
                                 modifier = Modifier.fillMaxSize(),
-                                contentPadding = PaddingValues(16.dp),
+                                contentPadding = PaddingValues(vertical = 16.dp),
                                 verticalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
                                 items(state.remoteState.results, key = { it.id }) { exercise ->
@@ -223,13 +248,132 @@ fun LibraryScreen(
                                             onExerciseAnalysisSelect(exercise)
                                         }
                                     )
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                                    Spacer(modifier = Modifier.height(8.dp))
+                                    ItemDivider()
                                 }
                             }
                         }
                     }
+                }
+            }
+        }
+        if (showFilterSheet) {
+            ExerciseFilterBottomSheet(
+                selectedMuscles = state.selectedMuscles,
+                selectedMechanic = state.selectedMechanic,
+                onMuscleSelect = { viewModel.onMuscleFilterSelected(it) },
+                onMechanicSelect = { viewModel.onMechanicFilterSelected(it) },
+                onDismiss = { showFilterSheet = false }
+            )
+        }
+    }
+}
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@Composable
+fun ExerciseFilterBottomSheet(
+    selectedMuscles: List<String>,
+    selectedMechanic: String?,
+    onMuscleSelect: (String?) -> Unit,
+    onMechanicSelect: (String?) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+        containerColor = MaterialTheme.colorScheme.surface,
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp)
+                .padding(bottom = 48.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .defaultMinSize(minHeight = 48.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Filtros",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+
+                if (selectedMuscles.isNotEmpty() || selectedMechanic != null) {
+                    TextButton(onClick = {
+                        onMuscleSelect(null)
+                        onMechanicSelect(null)
+                    }) {
+                        Text("Limpiar todo", fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "Grupo Muscular",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                val muscles = TechnicalDictionary.mainMuscleGroupsList
+                muscles.forEach { muscle ->
+                    FilterChip(
+                        selected = selectedMuscles.contains(muscle),
+                        onClick = { onMuscleSelect(muscle) },
+                        label = { Text(muscle) },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                            selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = "Mecánica",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                val mechanics = listOf("Compuesto", "Aislamiento")
+                mechanics.forEach { mechanic ->
+                    FilterChip(
+                        selected = selectedMechanic == mechanic,
+                        onClick = { onMechanicSelect(if (selectedMechanic == mechanic) null else mechanic) },
+                        label = {
+                            Text(
+                                text = mechanic,
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center
+                            )
+                        },
+                        modifier = Modifier.weight(1f),
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                            selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    )
                 }
             }
         }
@@ -248,7 +392,7 @@ fun ExerciseCard(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { if (isSelectionMode) onExerciseClick() }
+            .clickable { onExerciseClick() }
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -258,7 +402,7 @@ fun ExerciseCard(
             contentDescription = exercise.name,
             modifier = Modifier
                 .size(100.dp)
-                .clip(RoundedCornerShape(8.dp)),
+                .clip(RoundedCornerShape(4.dp)),
             contentScale = ContentScale.Crop
         )
 
@@ -292,10 +436,9 @@ fun ExerciseCard(
         } else if (isAnalysisMode) {
             IconButton(onClick = { onAnalysisClick(exercise) }) {
                 Icon(
-                    imageVector = Icons.Default.Insights,
+                    painter = painterResource(id = R.drawable.search_insights_24px),
                     contentDescription = "Analizar",
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(32.dp)
                 )
             }
         }
@@ -311,4 +454,88 @@ fun ExerciseCard(
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ActiveFiltersRow(
+    selectedMuscles: List<String>,
+    selectedMechanic: String?,
+    onRemoveMuscle: (String) -> Unit,
+    onRemoveMechanic: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val hasFilters = selectedMuscles.isNotEmpty() || selectedMechanic != null
+
+    AnimatedVisibility(
+        visible = hasFilters,
+        enter = expandVertically(),
+        exit = shrinkVertically()
+    ) {
+        LazyRow(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(selectedMuscles) { muscle ->
+                InputChip(
+                    selected = true,
+                    onClick = { onRemoveMuscle(muscle) },
+                    label = {
+                        Text(
+                            text = muscle,
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    },
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Quitar filtro $muscle",
+                            modifier = Modifier.size(16.dp)
+                        )
+                    },
+                    colors = InputChipDefaults.inputChipColors(
+                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    ),
+                    border = null
+                )
+            }
+
+            selectedMechanic?.let { mechanic ->
+                item {
+                    InputChip(
+                        selected = true,
+                        onClick = { onRemoveMechanic() },
+                        label = {
+                            Text(
+                                text = mechanic,
+                                style = MaterialTheme.typography.labelMedium
+                            )
+                        },
+                        trailingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "Quitar filtro $mechanic",
+                                modifier = Modifier.size(16.dp)
+                            )
+                        },
+                        colors = InputChipDefaults.inputChipColors(
+                            selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            selectedLabelColor = MaterialTheme.colorScheme.onSecondaryContainer
+                        ),
+                        border = null
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ItemDivider() {
+    Spacer(modifier = Modifier.height(4.dp))
+    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+    Spacer(modifier = Modifier.height(4.dp))
 }

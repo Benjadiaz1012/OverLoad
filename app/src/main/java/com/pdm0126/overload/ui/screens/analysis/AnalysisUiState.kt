@@ -7,15 +7,11 @@ import com.pdm0126.overload.domain.model.MuscleProgressionRecord
 
 data class AnalysisUiState(
     val isLoading: Boolean = true,
-
+    val selectedTabIndex: Int = 0,
     val muscleDistribution: List<MuscleDistribution> = emptyList(),
-
-    // Filtro y Gráfica Micro (Líneas)
-    val availableExercises: List<Exercise> = emptyList(), // NUEVO: Para el menú desplegable
+    val availableExercises: List<Exercise> = emptyList(),
     val selectedExerciseId: String? = null,
     val exerciseProgression: List<ExerciseVolumeRecord> = emptyList(),
-
-    // (Opcional para el futuro) Progreso por músculo
     val selectedMuscle: String? = null,
     val muscleProgression: List<MuscleProgressionRecord> = emptyList()
 )

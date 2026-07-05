@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessibilityNew
+import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.FormatListNumbered
 import androidx.compose.material.icons.filled.Settings
@@ -55,15 +56,15 @@ fun DetailScreen(
         snackbarHost = {
             SnackbarHost(snackbarHostState) { data ->
                 Snackbar(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(12.dp)
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        if (!state.isBookmarked) UnBookmarkedIcon() else BookmarkedIcon()
+                        if (!state.isWorkoutSessionActive) {
+                            if (!state.isBookmarked) UnBookmarkedIcon() else BookmarkedIcon()
+                        }
 
                         Spacer(modifier = Modifier.width(12.dp))
 
@@ -81,7 +82,17 @@ fun DetailScreen(
                     isBookmarked = state.isBookmarked,
                     onCheckedChange = { isNowBookmarked ->
                         if (!isNowBookmarked) {
-                            showUnbookmarkDialog = true
+                            if (state.isWorkoutSessionActive) {
+                                coroutineScope.launch {
+                                    snackbarHostState.currentSnackbarData?.dismiss()
+                                    snackbarHostState.showSnackbar(
+                                        message = "No puedes eliminar ejercicios mientras entrenas",
+                                        duration = SnackbarDuration.Short
+                                    )
+                                }
+                            } else {
+                                showUnbookmarkDialog = true
+                            }
                         } else {
                             viewModel.toggleBookmark()
                             coroutineScope.launch {
@@ -117,6 +128,7 @@ fun DetailScreen(
                     text = "Si eliminas este ejercicio de tu biblioteca, desaparecera de tus rutinas. ¿Quieres continuar?",
                     confirmText = "Eliminar",
                     dismissText = "Cancelar",
+                    icon = Icons.Default.DeleteOutline,
                     isDestructive = true,
                     onConfirm = {
                         viewModel.toggleBookmark()
@@ -137,7 +149,6 @@ fun DetailScreen(
 fun ExerciseDetailContent(exercise: Exercise) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        //contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item {
@@ -366,7 +377,7 @@ fun AnimatedExerciseImage(
     LaunchedEffect(imageUrls) {
         if (imageUrls.size > 1) {
             while (true) {
-                delay(1200) // cambia imagen cada 1.2 segundos
+                delay(1200)
                 currentIndex = (currentIndex + 1) % imageUrls.size
             }
         }
