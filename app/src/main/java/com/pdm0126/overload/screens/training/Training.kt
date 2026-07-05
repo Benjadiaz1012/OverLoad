@@ -78,7 +78,8 @@ fun Training(
     onCalendarClick: () -> Unit = {},
     onDaySelectorClick: () -> Unit = {},
     onExerciseClick: (ExerciseItem) -> Unit = {},
-    onStartSession: () -> Unit = {}
+    onStartSession: () -> Unit = {},
+    onNext: () -> Unit
 ) {
     Scaffold(
         containerColor = BackgroundDark,
@@ -92,7 +93,7 @@ fun Training(
                     .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 55.dp)
             ) {
                 Button(
-                    onClick = onStartSession,
+                    onClick = onNext,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),

@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
+import com.pdm0126.overload.screens.analysis.Analysis
 import com.pdm0126.overload.screens.signin.SignIn
 import com.pdm0126.overload.screens.system.System
 import com.pdm0126.overload.screens.training.Training
@@ -21,13 +22,18 @@ fun MainNavigation() {
                     onNext = { backStack.add(Routes.System) }
                 )
             }
-            entry<Routes.System>{
+            entry<Routes.System> {
                 System(
-                    onNext ={backStack.add(Routes.Training)}
+                    onNext = { backStack.add(Routes.Training) }
                 )
             }
-            entry<Routes.Training>{
-                Training()
+            entry<Routes.Training> {
+                Training(
+                    onNext = { backStack.add(Routes.Analysis) }
+                )
+                entry<Routes.Analysis> {
+                    Analysis()
+                }
             }
         }
     )
