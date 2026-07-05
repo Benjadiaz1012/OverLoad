@@ -6,7 +6,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.pdm0126.overload.screens.analysis.Analysis
 import com.pdm0126.overload.screens.signin.SignIn
-import com.pdm0126.overload.screens.system.System
+import com.pdm0126.overload.screens.system.TrainingSystem
 import com.pdm0126.overload.screens.training.Training
 
 
@@ -23,7 +23,7 @@ fun MainNavigation() {
                 )
             }
             entry<Routes.System> {
-                System(
+                TrainingSystem(
                     onNext = { backStack.add(Routes.Training) }
                 )
             }
@@ -31,9 +31,9 @@ fun MainNavigation() {
                 Training(
                     onNext = { backStack.add(Routes.Analysis) }
                 )
-                entry<Routes.Analysis> {
-                    Analysis()
-                }
+            }
+            entry<Routes.Analysis> {
+                Analysis()
             }
         }
     )

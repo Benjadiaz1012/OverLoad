@@ -96,6 +96,8 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     implementation(libs.vico.compose)
     implementation(libs.vico.compose.m3)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
 }
 configurations.configureEach {
     resolutionStrategy.force(

@@ -3,13 +3,11 @@ package com.pdm0126.overload.screens.system
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
@@ -18,7 +16,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
@@ -27,7 +24,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pdm0126.overload.R
-
+import com.pdm0126.overload.domain.model.Blueprint
+import com.pdm0126.overload.domain.model.BlueprintCatalog
 
 private val BackgroundDark = Color(0xFF0E0E0E)
 private val CardDark = Color(0xFF1A1A1A)
@@ -35,58 +33,25 @@ private val GoldAccent = Color(0xFFE8A317)
 private val TextGray = Color(0xFFA0A0A0)
 
 
-data class WorkoutSystem(
-    val id: String,
-    val icon: ImageVector,
-    val title: String,
-    val subtitle: String,
-    val frequency: String
-)
+private fun iconForBlueprint(id: String): ImageVector = when (id) {
+    "ppl" -> Icons.Default.FitnessCenter
+    "arnold" -> Icons.Default.EmojiEvents
+    "upper_lower" -> Icons.Default.Schedule
+    "full_body" -> Icons.Default.Person
+    "heavy_duty" -> Icons.Default.Bolt
+    "blank" -> Icons.Default.Edit
+    else -> Icons.Default.FitnessCenter
+}
 
-private val fakeSystems = listOf(
-    WorkoutSystem(
-        "ppl",
-        Icons.Default.FitnessCenter,
-        "PPL",
-        "Push / Pull / Legs",
-        "6 días / semana"
-    ),
-    WorkoutSystem("full_body", Icons.Default.Person, "Full Body", "Full Body", "3 días / semana"),
-    WorkoutSystem(
-        "arnold_split",
-        Icons.Default.EmojiEvents,
-        "Arnold Split",
-        "Pecho / Espalda / Piernas\nHombros / Brazos",
-        "6 días / semana"
-    ),
-    WorkoutSystem(
-        "upper_lower",
-        Icons.Default.Schedule,
-        "Upper / Lower",
-        "Upper / Lower",
-        "4 días / semana"
-    ),
-    WorkoutSystem(
-        "brosplit",
-        Icons.Default.SportsGymnastics,
-        "Brosplit",
-        "Pecho / Espalda / Piernas\nHombros / Brazos",
-        "5 días / semana"
-    ),
-    WorkoutSystem(
-        "femenino",
-        Icons.Default.Face,
-        "Femenino",
-        "Entrenamiento adaptado\npara mujeres",
-        "4 días / semana"
-    ),
-)
+private fun subtitleForBlueprint(blueprint: Blueprint): String =
+    if (blueprint.defaultDays.isNotEmpty()) blueprint.defaultDays.joinToString(" / ")
+    else "Personalizado"
 
 @Composable
-fun System(
-    systems: List<WorkoutSystem> = fakeSystems,
-    onSystemSelected: (WorkoutSystem) -> Unit = {},
-    onConfirm: (WorkoutSystem?) -> Unit = {},
+fun TrainingSystem(
+    systems: List<Blueprint> = BlueprintCatalog.systems,
+    onSystemSelected: (Blueprint) -> Unit = {},
+    onConfirm: (Blueprint?) -> Unit = {},
     onNext: () -> Unit
 ) {
     var selectedId by remember { mutableStateOf(systems.firstOrNull()?.id) }
@@ -136,13 +101,13 @@ fun System(
                 HeaderSection()
             }
 
-            items(systems) { system ->
+            items(systems) { blueprint ->
                 SystemCard(
-                    system = system,
-                    isSelected = system.id == selectedId,
+                    blueprint = blueprint,
+                    isSelected = blueprint.id == selectedId,
                     onClick = {
-                        selectedId = system.id
-                        onSystemSelected(system)
+                        selectedId = blueprint.id
+                        onSystemSelected(blueprint)
                     }
                 )
             }
@@ -197,7 +162,7 @@ private fun HeaderSection() {
 
 @Composable
 private fun SystemCard(
-    system: WorkoutSystem,
+    blueprint: Blueprint,
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
@@ -221,8 +186,8 @@ private fun SystemCard(
             verticalArrangement = Arrangement.Center
         ) {
             Icon(
-                imageVector = system.icon,
-                contentDescription = system.title,
+                imageVector = iconForBlueprint(blueprint.id),
+                contentDescription = blueprint.name,
                 tint = GoldAccent,
                 modifier = Modifier.size(36.dp)
             )
@@ -230,7 +195,7 @@ private fun SystemCard(
             Spacer(modifier = Modifier.height(10.dp))
 
             Text(
-                text = system.title,
+                text = blueprint.name,
                 color = Color.White,
                 fontWeight = FontWeight.Bold,
                 fontSize = 17.sp,
@@ -240,7 +205,7 @@ private fun SystemCard(
             Spacer(modifier = Modifier.height(6.dp))
 
             Text(
-                text = system.subtitle,
+                text = subtitleForBlueprint(blueprint),
                 color = TextGray,
                 fontSize = 12.sp,
                 textAlign = TextAlign.Center,
@@ -258,7 +223,7 @@ private fun SystemCard(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = system.frequency,
+                    text = blueprint.formattedMicrocycle,
                     color = TextGray,
                     fontSize = 12.sp
                 )
@@ -266,4 +231,3 @@ private fun SystemCard(
         }
     }
 }
-
