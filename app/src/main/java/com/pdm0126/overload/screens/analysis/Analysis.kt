@@ -61,7 +61,6 @@ fun Analysis(
     muscleVolumes: List<MuscleGroupVolume> = fakeMuscleVolumes,
     summary: PeriodSummary = fakeSummary,
     dateRangeLabel: String = "15 Abr – 8 Jul 2024",
-    onNext: () -> Unit = {},
     onCalendarClick: () -> Unit = {},
     onBack: () -> Unit = {}
 ) {

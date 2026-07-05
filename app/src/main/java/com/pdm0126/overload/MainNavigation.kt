@@ -5,7 +5,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
+import androidx.navigation3.ui.R
 import com.pdm0126.overload.screens.analysis.Analysis
+import com.pdm0126.overload.screens.library.Library
 import com.pdm0126.overload.screens.routines.Routines
 import com.pdm0126.overload.screens.signin.SignIn
 import com.pdm0126.overload.screens.system.SystemViewModel
@@ -41,10 +43,13 @@ fun MainNavigation() {
                 )
             }
             entry<Routes.Analysis> {
-                Analysis(onNext ={backStack.add(Routes.Routine)})
+                Analysis()
             }
             entry<Routes.Routine>{
                 Routines()
+            }
+            entry<Routes.Library>{
+                Library()
             }
         }
     )
