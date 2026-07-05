@@ -1,11 +1,13 @@
 package com.pdm0126.overload
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.pdm0126.overload.screens.analysis.Analysis
 import com.pdm0126.overload.screens.signin.SignIn
+import com.pdm0126.overload.screens.system.SystemViewModel
 import com.pdm0126.overload.screens.system.TrainingSystem
 import com.pdm0126.overload.screens.training.Training
 
@@ -23,7 +25,12 @@ fun MainNavigation() {
                 )
             }
             entry<Routes.System> {
+                val viewModel: SystemViewModel = viewModel(factory = SystemViewModel.Factory)
+
                 TrainingSystem(
+                    onConfirm = { blueprint ->
+                        blueprint?.let { viewModel.createMicrocycleFromBlueprint(it) }
+                    },
                     onNext = { backStack.add(Routes.Training) }
                 )
             }
