@@ -1,13 +1,12 @@
 package com.pdm0126.overload
 
 import androidx.compose.runtime.Composable
-import androidx.navigation3.runtime.NavBackStack
-import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.pdm0126.overload.screens.signin.SignIn
-import com.pdm0126.overload.screens.system.SelectSystemScreen
+import com.pdm0126.overload.screens.system.System
+import com.pdm0126.overload.screens.training.Training
 
 
 @Composable
@@ -23,7 +22,12 @@ fun MainNavigation() {
                 )
             }
             entry<Routes.System>{
-                SelectSystemScreen()
+                System(
+                    onNext ={backStack.add(Routes.Training)}
+                )
+            }
+            entry<Routes.Training>{
+                Training()
             }
         }
     )

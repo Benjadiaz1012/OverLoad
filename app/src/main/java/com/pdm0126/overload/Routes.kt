@@ -8,4 +8,8 @@ sealed class Routes : NavKey{
     @Serializable
     data object SignIn: Routes()
 @Serializable
-    data object System : Routes()}
+    data object System : Routes()
+@Serializable
+    data object Training : Routes(){
+
+    }}

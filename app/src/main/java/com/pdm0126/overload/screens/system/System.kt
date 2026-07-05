@@ -44,19 +44,50 @@ data class WorkoutSystem(
 )
 
 private val fakeSystems = listOf(
-    WorkoutSystem("ppl", Icons.Default.FitnessCenter, "PPL", "Push / Pull / Legs", "6 días / semana"),
+    WorkoutSystem(
+        "ppl",
+        Icons.Default.FitnessCenter,
+        "PPL",
+        "Push / Pull / Legs",
+        "6 días / semana"
+    ),
     WorkoutSystem("full_body", Icons.Default.Person, "Full Body", "Full Body", "3 días / semana"),
-    WorkoutSystem("arnold_split", Icons.Default.EmojiEvents, "Arnold Split", "Pecho / Espalda / Piernas\nHombros / Brazos", "6 días / semana"),
-    WorkoutSystem("upper_lower", Icons.Default.Schedule, "Upper / Lower", "Upper / Lower", "4 días / semana"),
-    WorkoutSystem("brosplit", Icons.Default.SportsGymnastics, "Brosplit", "Pecho / Espalda / Piernas\nHombros / Brazos", "5 días / semana"),
-    WorkoutSystem("femenino", Icons.Default.Face, "Femenino", "Entrenamiento adaptado\npara mujeres", "4 días / semana"),
+    WorkoutSystem(
+        "arnold_split",
+        Icons.Default.EmojiEvents,
+        "Arnold Split",
+        "Pecho / Espalda / Piernas\nHombros / Brazos",
+        "6 días / semana"
+    ),
+    WorkoutSystem(
+        "upper_lower",
+        Icons.Default.Schedule,
+        "Upper / Lower",
+        "Upper / Lower",
+        "4 días / semana"
+    ),
+    WorkoutSystem(
+        "brosplit",
+        Icons.Default.SportsGymnastics,
+        "Brosplit",
+        "Pecho / Espalda / Piernas\nHombros / Brazos",
+        "5 días / semana"
+    ),
+    WorkoutSystem(
+        "femenino",
+        Icons.Default.Face,
+        "Femenino",
+        "Entrenamiento adaptado\npara mujeres",
+        "4 días / semana"
+    ),
 )
 
 @Composable
-fun SelectSystemScreen(
+fun System(
     systems: List<WorkoutSystem> = fakeSystems,
     onSystemSelected: (WorkoutSystem) -> Unit = {},
-    onConfirm: (WorkoutSystem?) -> Unit = {}
+    onConfirm: (WorkoutSystem?) -> Unit = {},
+    onNext: () -> Unit
 ) {
     var selectedId by remember { mutableStateOf(systems.firstOrNull()?.id) }
 
@@ -69,7 +100,10 @@ fun SelectSystemScreen(
                     .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 56.dp)
             ) {
                 Button(
-                    onClick = { onConfirm(systems.find { it.id == selectedId }) },
+                    onClick = {
+                        onConfirm(systems.find { it.id == selectedId })
+                        onNext()
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
