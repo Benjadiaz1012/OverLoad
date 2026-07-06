@@ -23,6 +23,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.pdm0126.overload.Interfaz.components.TopBar
 import com.pdm0126.overload.domain.model.Exercise
+import com.pdm0126.overload.domain.model.RoutineDay
 
 private val BackgroundDark = Color(0xFF0E0E0E)
 private val CardDark = Color(0xFF1A1A1A)
@@ -35,11 +36,11 @@ fun Training(
     viewModel: TrainingViewModel = viewModel(factory = TrainingViewModel.Factory),
     onMenuClick: () -> Unit = {},
     onCalendarClick: () -> Unit = {},
-    onDaySelectorClick: () -> Unit = {},
     onExerciseClick: (ExerciseDisplayItem) -> Unit = {},
     onSessionStarted: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var showDaySelector by remember { mutableStateOf(false) }
 
     val isSessionActiveForThisDay = uiState.activeSessionDayId != null &&
             uiState.activeSessionDayId == uiState.day?.dayId
@@ -126,7 +127,7 @@ fun Training(
                         DaySelectorSection(
                             dayTitle = uiState.day?.focus.orEmpty(),
                             exerciseCount = uiState.exercises.size,
-                            onClick = onDaySelectorClick
+                            onClick = { showDaySelector = true }
                         )
                     }
 
@@ -141,6 +142,18 @@ fun Training(
                 }
             }
         }
+    }
+
+    if (showDaySelector) {
+        DaySelectorSheet(
+            days = uiState.activeMicrocycle?.days ?: emptyList(),
+            selectedDayId = uiState.day?.dayId,
+            onSelectDay = { dayId ->
+                viewModel.selectDay(dayId)
+                showDaySelector = false
+            },
+            onDismiss = { showDaySelector = false }
+        )
     }
 }
 
@@ -176,6 +189,74 @@ private fun DaySelectorSection(
             color = TextGray,
             fontSize = 15.sp
         )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DaySelectorSheet(
+    days: List<RoutineDay>,
+    selectedDayId: Long?,
+    onSelectDay: (Long) -> Unit,
+    onDismiss: () -> Unit
+) {
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        containerColor = CardDark
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp)
+                .padding(bottom = 40.dp)
+        ) {
+            Text(
+                text = "Elige un día",
+                color = GoldAccent,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            days.forEach { day ->
+                val isSelected = day.dayId == selectedDayId
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .clickable { onSelectDay(day.dayId) }
+                        .padding(vertical = 14.dp, horizontal = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = day.focus,
+                            color = if (isSelected) GoldAccent else Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp
+                        )
+                        Text(
+                            text = "${day.slots.size} ejercicios",
+                            color = TextGray,
+                            fontSize = 12.sp
+                        )
+                    }
+                    if (isSelected) {
+                        Icon(
+                            imageVector = Icons.Default.Check,
+                            contentDescription = "Seleccionado",
+                            tint = GoldAccent
+                        )
+                    }
+                }
+
+                if (day != days.last()) {
+                    HorizontalDivider(color = DividerGray, thickness = 1.dp)
+                }
+            }
+        }
     }
 }
 
