@@ -3,7 +3,6 @@ package com.pdm0126.overload.Interfaz.screens.library
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -22,51 +21,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.pdm0126.overload.domain.model.Exercise
+
 private val BackgroundDark = Color(0xFF0E0E0E)
 private val CardDark = Color(0xFF1A1A1A)
 private val FieldDark = Color(0xFF222222)
 private val GoldAccent = Color(0xFFE8A317)
 private val TextGray = Color(0xFFA0A0A0)
-private val DividerGray = Color(0xFF2A2A2A)
+
 enum class ExerciseCardMode { DEFAULT, SELECTION, ANALYSIS }
 
-private val previewExercises = listOf(
-    Exercise(
-        id = "press_banca",
-        name = "Press de Banca Plano",
-        muscleGroup = "Pecho",
-        mechanic = "Compuesto",
-        targetMuscles = listOf("Pectoral"),
-        secondaryMuscles = listOf("Tríceps"),
-        equipment = "Barra",
-        instructions = emptyList(),
-        remoteImages = emptyList()
-    ),
-    Exercise(
-        id = "curl_biceps",
-        name = "Curl de Bíceps con Mancuernas",
-        muscleGroup = "Bíceps",
-        mechanic = "Aislamiento",
-        targetMuscles = listOf("Bíceps"),
-        secondaryMuscles = emptyList(),
-        equipment = "Mancuernas",
-        instructions = emptyList(),
-        remoteImages = emptyList()
-    )
-)
-
-private val muscleGroupOptions = listOf("Pecho", "Espalda", "Piernas", "Hombros", "Bíceps", "Tríceps")
+private val muscleGroupOptions =
+    listOf("Pecho", "Espalda", "Piernas", "Hombros", "Bíceps", "Tríceps")
 private val mechanicOptions = listOf("Compuesto", "Aislamiento")
+
 @Composable
 fun Library(
-    savedExercises: List<Exercise> = previewExercises,
-    exploreResults: List<Exercise> = emptyList(),
+    viewModel: LibraryViewModel = viewModel(factory = LibraryViewModel.Factory),
     isSelectionMode: Boolean = false,
     isAnalysisMode: Boolean = false,
     onBackClick: () -> Unit = {},
@@ -74,17 +53,65 @@ fun Library(
     onExerciseSelect: (Exercise) -> Unit = {},
     onExerciseAnalysisSelect: (Exercise) -> Unit = {}
 ) {
-    var selectedTab by remember { mutableStateOf(0) } // 0 = Guardados, 1 = Explorar
-    var query by remember { mutableStateOf("") }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val focusManager = LocalFocusManager.current
     var showFilterSheet by remember { mutableStateOf(false) }
-    var selectedMuscles by remember { mutableStateOf(listOf<String>()) }
-    var selectedMechanic by remember { mutableStateOf<String?>(null) }
 
+    LibraryContent(
+        state = uiState,
+        isSelectionMode = isSelectionMode,
+        isAnalysisMode = isAnalysisMode,
+        showFilterSheet = showFilterSheet,
+        onBackClick = onBackClick,
+        onTabSelected = viewModel::onTabSelected,
+        onQueryChange = viewModel::onSearchQueryChanged,
+        onSearchSubmit = {
+            viewModel.searchRemoteExercises()
+            focusManager.clearFocus()
+        },
+        onOpenFilterSheet = { showFilterSheet = true },
+        onDismissFilterSheet = { showFilterSheet = false },
+        onMuscleFilterToggle = viewModel::onMuscleFilterSelected,
+        onMechanicFilterToggle = viewModel::onMechanicFilterSelected,
+        onExerciseClick = onExerciseClick,
+        onExerciseSelect = { exercise ->
+            // Si viene de "Explorar" (remoto), primero se guarda localmente.
+            if (uiState.selectedTabIndex == 1) viewModel.addExercise(exercise)
+            onExerciseSelect(exercise)
+        },
+        onExerciseAnalysisSelect = { exercise ->
+            if (uiState.selectedTabIndex == 1) viewModel.addExercise(exercise)
+            onExerciseAnalysisSelect(exercise)
+        },
+        onRetrySearch = { viewModel.searchRemoteExercises() }
+    )
+}
+
+@Composable
+private fun LibraryContent(
+    state: LibraryUiState,
+    isSelectionMode: Boolean,
+    isAnalysisMode: Boolean,
+    showFilterSheet: Boolean,
+    onBackClick: () -> Unit,
+    onTabSelected: (Int) -> Unit,
+    onQueryChange: (String) -> Unit,
+    onSearchSubmit: () -> Unit,
+    onOpenFilterSheet: () -> Unit,
+    onDismissFilterSheet: () -> Unit,
+    onMuscleFilterToggle: (String?) -> Unit,
+    onMechanicFilterToggle: (String?) -> Unit,
+    onExerciseClick: (Exercise) -> Unit,
+    onExerciseSelect: (Exercise) -> Unit,
+    onExerciseAnalysisSelect: (Exercise) -> Unit,
+    onRetrySearch: () -> Unit
+) {
     val cardMode = when {
         isSelectionMode -> ExerciseCardMode.SELECTION
         isAnalysisMode -> ExerciseCardMode.ANALYSIS
         else -> ExerciseCardMode.DEFAULT
     }
+    val isLocal = state.selectedTabIndex == 0
 
     Scaffold(
         containerColor = BackgroundDark,
@@ -98,34 +125,34 @@ fun Library(
                 .padding(innerPadding)
         ) {
             PillTabSelector(
-                selectedIndex = selectedTab,
-                onSelect = { selectedTab = it }
+                selectedIndex = state.selectedTabIndex,
+                onSelect = onTabSelected
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             SearchField(
-                query = query,
-                onQueryChange = { query = it },
-                placeholder = if (selectedTab == 0) "Tu biblioteca" else "Buscar ejercicio",
-                isFilterActive = selectedMuscles.isNotEmpty() || selectedMechanic != null,
-                onFilterClick = { showFilterSheet = true },
-                onClearClick = { query = "" }
+                query = state.query,
+                onQueryChange = onQueryChange,
+                onSearchSubmit = onSearchSubmit,
+                placeholder = if (isLocal) "Tu biblioteca" else "Buscar ejercicio",
+                isFilterActive = state.selectedMuscles.isNotEmpty() || state.selectedMechanic != null,
+                onFilterClick = onOpenFilterSheet
             )
 
             ActiveFiltersRow(
-                selectedMuscles = selectedMuscles,
-                selectedMechanic = selectedMechanic,
-                onRemoveMuscle = { muscle -> selectedMuscles = selectedMuscles - muscle },
-                onRemoveMechanic = { selectedMechanic = null }
+                selectedMuscles = state.selectedMuscles,
+                selectedMechanic = state.selectedMechanic,
+                onRemoveMuscle = { muscle -> onMuscleFilterToggle(muscle) },
+                onRemoveMechanic = { onMechanicFilterToggle(null) }
             )
 
             Spacer(modifier = Modifier.height(4.dp))
 
             Box(modifier = Modifier.fillMaxSize()) {
-                if (selectedTab == 0) {
+                if (isLocal) {
                     SavedExercisesContent(
-                        exercises = savedExercises,
+                        exercises = state.localExercises,
                         cardMode = cardMode,
                         onExerciseClick = onExerciseClick,
                         onExerciseSelect = onExerciseSelect,
@@ -133,12 +160,13 @@ fun Library(
                     )
                 } else {
                     ExploreContent(
-                        results = exploreResults,
-                        query = query,
+                        remoteState = state.remoteState,
+                        query = state.query,
                         cardMode = cardMode,
                         onExerciseClick = onExerciseClick,
                         onExerciseSelect = onExerciseSelect,
-                        onExerciseAnalysisSelect = onExerciseAnalysisSelect
+                        onExerciseAnalysisSelect = onExerciseAnalysisSelect,
+                        onRetry = onRetrySearch
                     )
                 }
             }
@@ -147,23 +175,19 @@ fun Library(
 
     if (showFilterSheet) {
         ExerciseFilterSheet(
-            selectedMuscles = selectedMuscles,
-            selectedMechanic = selectedMechanic,
-            onMuscleToggle = { muscle ->
-                selectedMuscles = if (selectedMuscles.contains(muscle)) selectedMuscles - muscle
-                else selectedMuscles + muscle
-            },
-            onMechanicToggle = { mechanic ->
-                selectedMechanic = if (selectedMechanic == mechanic) null else mechanic
-            },
+            selectedMuscles = state.selectedMuscles,
+            selectedMechanic = state.selectedMechanic,
+            onMuscleToggle = onMuscleFilterToggle,
+            onMechanicToggle = onMechanicFilterToggle,
             onClearAll = {
-                selectedMuscles = emptyList()
-                selectedMechanic = null
+                onMuscleFilterToggle(null)
+                onMechanicFilterToggle(null)
             },
-            onDismiss = { showFilterSheet = false }
+            onDismiss = onDismissFilterSheet
         )
     }
 }
+
 @Composable
 private fun TopBar(showBack: Boolean, onBackClick: () -> Unit) {
     Row(
@@ -171,8 +195,7 @@ private fun TopBar(showBack: Boolean, onBackClick: () -> Unit) {
             .fillMaxWidth()
             .background(BackgroundDark)
             .padding(horizontal = 20.dp, vertical = 20.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+        verticalAlignment = Alignment.CenterVertically
     ) {
         if (showBack) {
             IconButton(onClick = onBackClick) {
@@ -188,6 +211,7 @@ private fun TopBar(showBack: Boolean, onBackClick: () -> Unit) {
         )
     }
 }
+
 @Composable
 private fun PillTabSelector(
     selectedIndex: Int,
@@ -224,15 +248,15 @@ private fun PillTabSelector(
         }
     }
 }
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 private fun SearchField(
     query: String,
     onQueryChange: (String) -> Unit,
+    onSearchSubmit: () -> Unit,
     placeholder: String,
     isFilterActive: Boolean,
-    onFilterClick: () -> Unit,
-    onClearClick: () -> Unit
+    onFilterClick: () -> Unit
 ) {
     TextField(
         value = query,
@@ -255,7 +279,7 @@ private fun SearchField(
                     )
                 }
                 if (query.isNotEmpty()) {
-                    IconButton(onClick = onClearClick) {
+                    IconButton(onClick = { onQueryChange("") }) {
                         Icon(Icons.Default.Close, contentDescription = "Limpiar", tint = TextGray)
                     }
                 }
@@ -263,7 +287,7 @@ private fun SearchField(
         },
         singleLine = true,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-        keyboardActions = KeyboardActions(onDone = {}),
+        keyboardActions = KeyboardActions(onSearch = { onSearchSubmit() }),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = FieldDark,
             unfocusedContainerColor = FieldDark,
@@ -276,6 +300,7 @@ private fun SearchField(
         )
     )
 }
+
 @Composable
 private fun ActiveFiltersRow(
     selectedMuscles: List<String>,
@@ -324,6 +349,7 @@ private fun ActiveFilterChip(label: String, onRemove: () -> Unit) {
         )
     }
 }
+
 @Composable
 private fun SavedExercisesContent(
     exercises: List<Exercise>,
@@ -351,17 +377,43 @@ private fun SavedExercisesContent(
         )
     }
 }
+
 @Composable
 private fun ExploreContent(
-    results: List<Exercise>,
+    remoteState: RemoteState,
     query: String,
     cardMode: ExerciseCardMode,
     onExerciseClick: (Exercise) -> Unit,
     onExerciseSelect: (Exercise) -> Unit,
-    onExerciseAnalysisSelect: (Exercise) -> Unit
+    onExerciseAnalysisSelect: (Exercise) -> Unit,
+    onRetry: () -> Unit
 ) {
     when {
-        results.isEmpty() && query.isBlank() -> {
+        remoteState.isLoading -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = GoldAccent)
+            }
+        }
+
+        remoteState.errorMessage != null -> {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = remoteState.errorMessage, color = TextGray, fontSize = 14.sp)
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = "Reintentar",
+                    color = GoldAccent,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 13.sp,
+                    modifier = Modifier.clickable { onRetry() }
+                )
+            }
+        }
+
+        remoteState.results.isEmpty() && query.isBlank() -> {
             Column(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
@@ -383,20 +435,9 @@ private fun ExploreContent(
             }
         }
 
-        results.isEmpty() -> {
-            Text(
-                text = "Sin resultados para \"$query\"",
-                color = TextGray,
-                fontSize = 14.sp,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .wrapContentSize(Alignment.Center)
-            )
-        }
-
         else -> {
             ExerciseList(
-                exercises = results,
+                exercises = remoteState.results,
                 cardMode = cardMode,
                 onExerciseClick = onExerciseClick,
                 onExerciseSelect = onExerciseSelect,
@@ -430,6 +471,7 @@ private fun ExerciseList(
         }
     }
 }
+
 @Composable
 private fun ExerciseCard(
     exercise: Exercise,
@@ -507,6 +549,7 @@ private fun ExerciseCard(
                         )
                     }
                 }
+
                 ExerciseCardMode.ANALYSIS -> {
                     IconButton(onClick = onAnalysisClick) {
                         Icon(
@@ -516,6 +559,7 @@ private fun ExerciseCard(
                         )
                     }
                 }
+
                 ExerciseCardMode.DEFAULT -> {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
@@ -546,13 +590,13 @@ private fun MuscleTag(text: String) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 private fun ExerciseFilterSheet(
     selectedMuscles: List<String>,
     selectedMechanic: String?,
-    onMuscleToggle: (String) -> Unit,
-    onMechanicToggle: (String) -> Unit,
+    onMuscleToggle: (String?) -> Unit,
+    onMechanicToggle: (String?) -> Unit,
     onClearAll: () -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -590,18 +634,46 @@ private fun ExerciseFilterSheet(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            Text(text = "Grupo Muscular", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+            Text(
+                text = "Grupo Muscular",
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
+            )
             Spacer(modifier = Modifier.height(10.dp))
 
-            FlowRowFilters(
-                options = muscleGroupOptions,
-                isSelected = { it in selectedMuscles },
-                onToggle = { onMuscleToggle(it) }
-            )
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                muscleGroupOptions.forEach { option ->
+                    val selected = option in selectedMuscles
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(if (selected) GoldAccent else FieldDark)
+                            .clickable { onMuscleToggle(option) }
+                            .padding(horizontal = 14.dp, vertical = 8.dp)
+                    ) {
+                        Text(
+                            text = option,
+                            color = if (selected) Color.Black else TextGray,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+            }
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Text(text = "Mecánica", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+            Text(
+                text = "Mecánica",
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
+            )
             Spacer(modifier = Modifier.height(10.dp))
 
             Row(
@@ -632,34 +704,3 @@ private fun ExerciseFilterSheet(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-private fun FlowRowFilters(
-    options: List<String>,
-    isSelected: (String) -> Boolean,
-    onToggle: (String) -> Unit
-) {
-    FlowRow(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        options.forEach { option ->
-            val selected = isSelected(option)
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(if (selected) GoldAccent else FieldDark)
-                    .clickable { onToggle(option) }
-                    .padding(horizontal = 14.dp, vertical = 8.dp)
-            ) {
-                Text(
-                    text = option,
-                    color = if (selected) Color.Black else TextGray,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
-        }
-    }
-}
