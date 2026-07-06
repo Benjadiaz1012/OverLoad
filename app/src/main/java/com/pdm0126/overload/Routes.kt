@@ -25,4 +25,9 @@ sealed class Routes : NavKey {
 
     @Serializable
     data object Analysis : Routes()
+
+    @Serializable
+    data object ActiveWorkout : Routes() {
+
+    }
 }

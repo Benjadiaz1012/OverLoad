@@ -5,12 +5,17 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.pdm0126.overload.Interfaz.components.BottomBar
+import com.pdm0126.overload.Interfaz.screens.activeWorkout.ActiveWorkout
+import com.pdm0126.overload.Interfaz.screens.activeWorkout.ActiveWorkoutViewModel
 import com.pdm0126.overload.Interfaz.screens.analysis.Analysis
 import com.pdm0126.overload.Interfaz.screens.analysis.AnalysisViewModel
 import com.pdm0126.overload.Interfaz.screens.library.Library
@@ -56,7 +61,8 @@ fun MainNavigation() {
                 }
 
                 entry<Routes.System> {
-                    val systemViewModel: SystemViewModel = viewModel(factory = SystemViewModel.Factory)
+                    val systemViewModel: SystemViewModel =
+                        viewModel(factory = SystemViewModel.Factory)
 
                     TrainingSystem(
                         onConfirm = { blueprint ->
@@ -68,8 +74,32 @@ fun MainNavigation() {
 
                 entry<Routes.Training> {
                     Training(
-                        onSessionStarted = {
+                        onSessionStarted = { backStack.add(Routes.ActiveWorkout) }
+                    )
+                }
+
+                entry<Routes.ActiveWorkout> {
+                    val viewModel: ActiveWorkoutViewModel =
+                        viewModel(factory = ActiveWorkoutViewModel.Factory)
+                    val isFinished by viewModel.isWorkoutFinished.collectAsStateWithLifecycle()
+                    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+                    LaunchedEffect(isFinished) {
+                        if (isFinished) {
+                            viewModel.resetNavigation()
+                            backStack.removeLastOrNull()
                         }
+                    }
+
+                    ActiveWorkout(
+                        day = uiState.activeDay,
+                        sessionSets = uiState.sessionSets,
+                        lastSets = uiState.lastSets,
+                        isLoading = uiState.isLoading,
+                        onLogSet = viewModel::logSet,
+                        onDeleteSet = viewModel::deleteSet,
+                        onEndWorkout = viewModel::endWorkout,
+                        onCancelWorkout = viewModel::cancelWorkout
                     )
                 }
 
@@ -95,7 +125,8 @@ fun MainNavigation() {
                 }
 
                 entry<Routes.LibraryAnalysisSelection> {
-                    val analysisViewModel: AnalysisViewModel = viewModel(factory = AnalysisViewModel.Factory)
+                    val analysisViewModel: AnalysisViewModel =
+                        viewModel(factory = AnalysisViewModel.Factory)
 
                     Library(
                         isAnalysisMode = true,
@@ -112,5 +143,4 @@ fun MainNavigation() {
         )
     }
 }
-
 
