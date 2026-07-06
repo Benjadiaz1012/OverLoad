@@ -1,6 +1,5 @@
 package com.pdm0126.overload.Interfaz.screens.routines
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -20,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.pdm0126.overload.Interfaz.components.TopBar
 import com.pdm0126.overload.domain.model.RoutineMicrocycle
 import kotlinx.coroutines.launch
 
@@ -42,7 +42,7 @@ fun Routines(
     Scaffold(
         containerColor = BackgroundDark,
         topBar = {
-            TopBar()
+            TopBar(title = "Mis Rutinas")
         },
         floatingActionButton = {
             FloatingActionButton(
@@ -106,24 +106,6 @@ fun Routines(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun TopBar() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(BackgroundDark)
-            .padding(horizontal = 20.dp, vertical = 20.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = "Mis Rutinas",
-            color = Color.White,
-            fontWeight = FontWeight.Bold,
-            fontSize = 26.sp
-        )
     }
 }
 

@@ -21,15 +21,14 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
+import com.pdm0126.overload.Interfaz.components.TopBar
 import com.pdm0126.overload.domain.model.Exercise
-
 
 private val BackgroundDark = Color(0xFF0E0E0E)
 private val CardDark = Color(0xFF1A1A1A)
 private val GoldAccent = Color(0xFFE8A317)
 private val TextGray = Color(0xFFA0A0A0)
 private val DividerGray = Color(0xFF2E2E2E)
-
 
 @Composable
 fun Training(
@@ -48,7 +47,15 @@ fun Training(
     Scaffold(
         containerColor = BackgroundDark,
         topBar = {
-            TopBar(onMenuClick = onMenuClick, onCalendarClick = onCalendarClick)
+            TopBar(
+                title = "Entrenamiento",
+                leadingIcon = Icons.Default.Menu,
+                onLeadingClick = onMenuClick,
+                leadingContentDescription = "Menú",
+                trailingIcon = Icons.Default.CalendarMonth,
+                onTrailingClick = onCalendarClick,
+                trailingContentDescription = "Calendario"
+            )
         },
         bottomBar = {
             Box(
@@ -133,36 +140,6 @@ fun Training(
                     item { Spacer(modifier = Modifier.height(8.dp)) }
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun TopBar(
-    onMenuClick: () -> Unit,
-    onCalendarClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(BackgroundDark)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        IconButton(onClick = onMenuClick) {
-            Icon(Icons.Default.Menu, contentDescription = "Menú", tint = Color.White)
-        }
-
-        Text(
-            text = "Entrenamiento",
-            color = Color.White,
-            fontWeight = FontWeight.Bold,
-            fontSize = 20.sp
-        )
-
-        IconButton(onClick = onCalendarClick) {
-            Icon(Icons.Default.CalendarMonth, contentDescription = "Calendario", tint = Color.White)
         }
     }
 }

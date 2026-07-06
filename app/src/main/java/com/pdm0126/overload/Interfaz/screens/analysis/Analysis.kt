@@ -1,7 +1,9 @@
 package com.pdm0126.overload.Interfaz.screens.analysis
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,19 +15,18 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.pdm0126.overload.Interfaz.components.TopBar
 import com.pdm0126.overload.domain.model.Exercise
 import com.pdm0126.overload.domain.model.MuscleDistribution
 import java.text.SimpleDateFormat
@@ -47,12 +48,13 @@ private val barPalette = listOf(
 fun Analysis(
     viewModel: AnalysisViewModel = viewModel(factory = AnalysisViewModel.Factory),
     onNavigateToLibrary: () -> Unit = {},
+    onBack: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Scaffold(
         containerColor = BackgroundDark,
-        topBar = { TopBar() }
+        topBar = { TopBar(title = "Análisis") }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -91,24 +93,6 @@ fun Analysis(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun TopBar() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(BackgroundDark)
-            .padding(horizontal = 20.dp, vertical = 20.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = "Análisis",
-            color = Color.White,
-            fontWeight = FontWeight.Bold,
-            fontSize = 26.sp
-        )
     }
 }
 
@@ -508,4 +492,3 @@ private fun EmptyHint(text: String) {
         )
     }
 }
-

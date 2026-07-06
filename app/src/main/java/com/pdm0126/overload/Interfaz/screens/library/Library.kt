@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
+import com.pdm0126.overload.Interfaz.components.TopBar
 import com.pdm0126.overload.domain.model.Exercise
 
 private val BackgroundDark = Color(0xFF0E0E0E)
@@ -75,7 +76,6 @@ fun Library(
         onMechanicFilterToggle = viewModel::onMechanicFilterSelected,
         onExerciseClick = onExerciseClick,
         onExerciseSelect = { exercise ->
-            // Si viene de "Explorar" (remoto), primero se guarda localmente.
             if (uiState.selectedTabIndex == 1) viewModel.addExercise(exercise)
             onExerciseSelect(exercise)
         },
@@ -116,7 +116,11 @@ private fun LibraryContent(
     Scaffold(
         containerColor = BackgroundDark,
         topBar = {
-            TopBar(showBack = isSelectionMode || isAnalysisMode, onBackClick = onBackClick)
+            TopBar(
+                title = "Ejercicios",
+                showBackButton = isSelectionMode || isAnalysisMode,
+                onBackClick = onBackClick
+            )
         }
     ) { innerPadding ->
         Column(
@@ -184,30 +188,6 @@ private fun LibraryContent(
                 onMechanicFilterToggle(null)
             },
             onDismiss = onDismissFilterSheet
-        )
-    }
-}
-
-@Composable
-private fun TopBar(showBack: Boolean, onBackClick: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(BackgroundDark)
-            .padding(horizontal = 20.dp, vertical = 20.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        if (showBack) {
-            IconButton(onClick = onBackClick) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Atrás", tint = Color.White)
-            }
-            Spacer(modifier = Modifier.width(4.dp))
-        }
-        Text(
-            text = "Ejercicios",
-            color = Color.White,
-            fontWeight = FontWeight.Bold,
-            fontSize = 26.sp
         )
     }
 }
@@ -703,4 +683,3 @@ private fun ExerciseFilterSheet(
         }
     }
 }
-
