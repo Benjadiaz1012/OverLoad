@@ -15,7 +15,19 @@ sealed class Routes : NavKey {
     data object Training : Routes()
 
     @Serializable
+    data object ActiveWorkout : Routes()
+
+    @Serializable
     data object Routines : Routes()
+
+    @Serializable
+    data class RoutineEditor(val microcycleId: Long) : Routes()
+
+    @Serializable
+    data class DayEditor(val dayId: Long) : Routes()
+
+    @Serializable
+    data class LibrarySelection(val dayId: Long) : Routes()
 
     @Serializable
     data object Library : Routes()
@@ -25,9 +37,4 @@ sealed class Routes : NavKey {
 
     @Serializable
     data object Analysis : Routes()
-
-    @Serializable
-    data object ActiveWorkout : Routes() {
-
-    }
 }
