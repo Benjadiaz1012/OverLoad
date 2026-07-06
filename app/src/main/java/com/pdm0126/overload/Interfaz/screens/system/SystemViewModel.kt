@@ -1,4 +1,4 @@
-package com.pdm0126.overload.screens.system
+package com.pdm0126.overload.Interfaz.screens.system
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

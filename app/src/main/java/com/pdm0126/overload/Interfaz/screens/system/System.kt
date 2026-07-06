@@ -1,4 +1,4 @@
-package com.pdm0126.overload.screens.system
+package com.pdm0126.overload.Interfaz.screens.system
 
 
 import androidx.compose.foundation.BorderStroke
@@ -52,7 +52,7 @@ fun TrainingSystem(
     systems: List<Blueprint> = BlueprintCatalog.systems,
     onSystemSelected: (Blueprint) -> Unit = {},
     onConfirm: (Blueprint?) -> Unit = {},
-    onNext: () -> Unit
+
 ) {
     var selectedId by remember { mutableStateOf(systems.firstOrNull()?.id) }
 
@@ -67,7 +67,7 @@ fun TrainingSystem(
                 Button(
                     onClick = {
                         onConfirm(systems.find { it.id == selectedId })
-                        onNext()
+
                     },
                     modifier = Modifier
                         .fillMaxWidth()

@@ -1,4 +1,4 @@
-package com.pdm0126.overload.screens.training
+package com.pdm0126.overload.Interfaz.screens.training
 
 
 import androidx.compose.foundation.background
@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -79,7 +80,6 @@ fun Training(
     onDaySelectorClick: () -> Unit = {},
     onExerciseClick: (ExerciseItem) -> Unit = {},
     onStartSession: () -> Unit = {},
-    onNext: () -> Unit
 ) {
     Scaffold(
         containerColor = BackgroundDark,
@@ -93,7 +93,7 @@ fun Training(
                     .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 55.dp)
             ) {
                 Button(
-                    onClick = onNext,
+                    onClick = {},
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
@@ -345,7 +345,7 @@ private fun ExerciseCard(
 
 @Composable
 private fun ExerciseStat(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    icon: ImageVector,
     value: String,
     label: String,
     modifier: Modifier = Modifier

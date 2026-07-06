@@ -1,4 +1,4 @@
-package com.pdm0126.overload.screens.analysis
+package com.pdm0126.overload.Interfaz.screens.analysis
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -15,7 +15,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -103,7 +105,7 @@ fun Analysis(
                 color = TextGray,
                 fontSize = 14.sp,
                 modifier = Modifier.fillMaxWidth(),
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                textAlign = TextAlign.Center
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -184,7 +186,7 @@ private fun MetricTabsRow(
                     color = if (isSelected) GoldAccent else TextGray,
                     fontSize = 13.sp,
                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    textAlign = TextAlign.Center
                 )
             }
         }
@@ -387,7 +389,7 @@ private fun PeriodSummaryCard(summary: PeriodSummary) {
 
 @Composable
 private fun SummaryStat(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    icon: ImageVector,
     iconTint: Color,
     value: String,
     label: String,
