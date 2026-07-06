@@ -55,7 +55,7 @@ fun MainNavigation() {
                 entry<Routes.Analysis> {
                     Analysis()
                 }
-                entry<Routes.Routine> {
+                entry<Routes.Routines> {
                     Routines()
                 }
                 entry<Routes.Library> {

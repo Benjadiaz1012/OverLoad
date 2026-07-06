@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.pdm0126.overload.Routes
 
-
+// ---------- Colores base (ajusta a tu Theme.kt) ----------
 private val BarBackground = Color(0xFF161616)
 private val GoldAccent = Color(0xFFE8A317)
 private val TextGray = Color(0xFFA0A0A0)
@@ -28,30 +28,10 @@ data class TopLevelDestination(
 )
 
 val topLevelDestinations = listOf(
-    TopLevelDestination(
-        "Entrenar",
-        Icons.Filled.FitnessCenter,
-        Icons.Outlined.FitnessCenter,
-        Routes.Training
-    ),
-    TopLevelDestination(
-        "Rutinas",
-        Icons.AutoMirrored.Filled.List,
-        Icons.AutoMirrored.Outlined.List,
-        Routes.Routine
-    ),
-    TopLevelDestination(
-        "Biblioteca",
-        Icons.AutoMirrored.Filled.MenuBook,
-        Icons.AutoMirrored.Outlined.MenuBook,
-        Routes.Library
-    ),
-    TopLevelDestination(
-        "Análisis",
-        Icons.Filled.Analytics,
-        Icons.Outlined.Analytics,
-        Routes.Analysis
-    )
+    TopLevelDestination("Entrenar", Icons.Filled.FitnessCenter, Icons.Outlined.FitnessCenter, Routes.Training),
+    TopLevelDestination("Rutinas", Icons.AutoMirrored.Filled.List, Icons.AutoMirrored.Outlined.List, Routes.Routines),
+    TopLevelDestination("Biblioteca", Icons.AutoMirrored.Filled.MenuBook, Icons.AutoMirrored.Outlined.MenuBook, Routes.Library),
+    TopLevelDestination("Análisis", Icons.Filled.Analytics, Icons.Outlined.Analytics, Routes.Analysis)
 )
 
 @Composable
@@ -59,8 +39,7 @@ fun BottomBar(
     currentDestination: Any?,
     onNavigate: (Routes) -> Unit
 ) {
-    val isTopLevel =
-        topLevelDestinations.any { destination -> destination.route == currentDestination }
+    val isTopLevel = topLevelDestinations.any { destination -> destination.route == currentDestination }
     if (!isTopLevel) return
 
     NavigationBar(
