@@ -20,6 +20,9 @@ import com.pdm0126.overload.Interfaz.screens.analysis.Analysis
 import com.pdm0126.overload.Interfaz.screens.analysis.AnalysisViewModel
 import com.pdm0126.overload.Interfaz.screens.library.Library
 import com.pdm0126.overload.Interfaz.screens.routines.Routines
+import com.pdm0126.overload.Interfaz.screens.dayEditor.DayEditor
+import com.pdm0126.overload.Interfaz.screens.dayEditor.DayEditorViewModel
+import com.pdm0126.overload.Interfaz.screens.routineEditor.RoutineEditor
 import com.pdm0126.overload.Interfaz.screens.signin.SignIn
 import com.pdm0126.overload.Interfaz.screens.system.SystemViewModel
 import com.pdm0126.overload.Interfaz.screens.system.TrainingSystem
@@ -107,6 +110,43 @@ fun MainNavigation() {
                     Routines(
                         onCreateRoutine = { backStack.add(Routes.System) },
                         onOpenRoutine = { microcycle ->
+                            backStack.add(Routes.RoutineEditor(microcycle.microcycleId))
+                        }
+                    )
+                }
+
+                entry<Routes.RoutineEditor> { route ->
+                    RoutineEditor(
+                        microcycleId = route.microcycleId,
+                        onBack = { backStack.removeLastOrNull() },
+                        onOpenDay = { dayId -> backStack.add(Routes.DayEditor(dayId)) },
+                        onRoutineDeleted = { backStack.removeLastOrNull() }
+                    )
+                }
+
+                entry<Routes.DayEditor> { route ->
+                    DayEditor(
+                        dayId = route.dayId,
+                        onBack = { backStack.removeLastOrNull() },
+                        onNavigateToLibrarySelection = {
+                            backStack.add(Routes.LibrarySelection(route.dayId))
+                        },
+                        onDayDeleted = { backStack.removeLastOrNull() }
+                    )
+                }
+
+                entry<Routes.LibrarySelection> { route ->
+                    val dayEditorViewModel: DayEditorViewModel = viewModel(
+                        factory = DayEditorViewModel.provideFactory(route.dayId),
+                        key = route.dayId.toString()
+                    )
+
+                    Library(
+                        isSelectionMode = true,
+                        onBackClick = { backStack.removeLastOrNull() },
+                        onExerciseSelect = { exercise ->
+                            dayEditorViewModel.addExerciseToSlot(exercise.id)
+                            backStack.removeLastOrNull()
                         }
                     )
                 }
