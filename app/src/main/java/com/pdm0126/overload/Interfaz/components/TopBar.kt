@@ -3,7 +3,7 @@ package com.pdm0126.overload.Interfaz.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -30,7 +30,8 @@ fun TopBar(
     leadingContentDescription: String? = null,
     trailingIcon: ImageVector? = null,
     onTrailingClick: () -> Unit = {},
-    trailingContentDescription: String? = null
+    trailingContentDescription: String? = null,
+    trailingContent: (@Composable () -> Unit)? = null
 ) {
     Row(
         modifier = modifier
@@ -44,7 +45,11 @@ fun TopBar(
         when {
             showBackButton -> {
                 IconButton(onClick = onBackClick) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Atrás", tint = Color.White)
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Atrás",
+                        tint = Color.White
+                    )
                 }
                 Spacer(modifier = Modifier.width(4.dp))
             }
@@ -69,13 +74,16 @@ fun TopBar(
             modifier = Modifier.weight(1f)
         )
 
-        if (trailingIcon != null) {
-            IconButton(onClick = onTrailingClick) {
-                Icon(
-                    trailingIcon,
-                    contentDescription = trailingContentDescription,
-                    tint = Color.White
-                )
+        when {
+            trailingContent != null -> trailingContent()
+            trailingIcon != null -> {
+                IconButton(onClick = onTrailingClick) {
+                    Icon(
+                        trailingIcon,
+                        contentDescription = trailingContentDescription,
+                        tint = Color.White
+                    )
+                }
             }
         }
     }
