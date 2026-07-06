@@ -18,7 +18,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.pdm0126.overload.domain.model.RoutineDay
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pdm0126.overload.domain.model.RoutineMicrocycle
 import kotlinx.coroutines.launch
 
@@ -26,39 +27,15 @@ private val BackgroundDark = Color(0xFF0E0E0E)
 private val CardDark = Color(0xFF1A1A1A)
 private val GoldAccent = Color(0xFFE8A317)
 private val TextGray = Color(0xFFA0A0A0)
-private val DividerGray = Color(0xFF2E2E2E)
-private val previewMicrocycles = listOf(
-    RoutineMicrocycle(
-        microcycleId = 1L,
-        name = "Nuevo: Push / Pull / Legs",
-        blueprintType = "Push / Pull / Legs",
-        isActive = true,
-        days = listOf(
-            RoutineDay(dayId = 1L, order = 0, focus = "Push", slots = emptyList()),
-            RoutineDay(dayId = 2L, order = 1, focus = "Pull", slots = emptyList()),
-            RoutineDay(dayId = 3L, order = 2, focus = "Legs", slots = emptyList())
-        )
-    ),
-    RoutineMicrocycle(
-        microcycleId = 2L,
-        name = "Arnold Split Verano",
-        blueprintType = "Arnold Split",
-        isActive = false,
-        days = listOf(
-            RoutineDay(dayId = 4L, order = 0, focus = "Pecho & Espalda", slots = emptyList()),
-            RoutineDay(dayId = 5L, order = 1, focus = "Hombros & Brazos", slots = emptyList()),
-            RoutineDay(dayId = 6L, order = 2, focus = "Piernas", slots = emptyList())
-        )
-    )
-)
 
 @Composable
 fun Routines(
-    microcycles: List<RoutineMicrocycle> = previewMicrocycles,
-    isWorkoutSessionActive: Boolean = false,
+    viewModel: RoutinesViewModel = viewModel(factory = RoutinesViewModel.Factory),
     onCreateRoutine: () -> Unit = {},
     onOpenRoutine: (RoutineMicrocycle) -> Unit = {}
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
@@ -85,34 +62,46 @@ fun Routines(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            if (microcycles.isEmpty()) {
-                EmptyState(modifier = Modifier.align(Alignment.Center))
-            } else {
-                LazyColumn(
-                    contentPadding = PaddingValues(vertical = 16.dp, horizontal = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    items(microcycles, key = { it.microcycleId }) { microcycle ->
-                        val isEditorBlocked = microcycle.isActive && isWorkoutSessionActive
+            when {
+                uiState.isLoading -> {
+                    CircularProgressIndicator(
+                        color = GoldAccent,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
 
-                        MicrocycleCard(
-                            microcycle = microcycle,
-                            isEditorBlocked = isEditorBlocked,
-                            onClick = {
-                                if (isEditorBlocked) {
-                                    coroutineScope.launch {
-                                        snackbarHostState.currentSnackbarData?.dismiss()
-                                        snackbarHostState.showSnackbar(
-                                            message = "No puedes modificar tu rutina mientras entrenas",
-                                            duration = SnackbarDuration.Short
-                                        )
+                uiState.savedMicrocycles.isEmpty() -> {
+                    EmptyState(modifier = Modifier.align(Alignment.Center))
+                }
+
+                else -> {
+                    LazyColumn(
+                        contentPadding = PaddingValues(vertical = 16.dp, horizontal = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        items(uiState.savedMicrocycles, key = { it.microcycleId }) { microcycle ->
+                            val isEditorBlocked =
+                                microcycle.isActive && uiState.isWorkoutSessionActive
+
+                            MicrocycleCard(
+                                microcycle = microcycle,
+                                isEditorBlocked = isEditorBlocked,
+                                onClick = {
+                                    if (isEditorBlocked) {
+                                        coroutineScope.launch {
+                                            snackbarHostState.currentSnackbarData?.dismiss()
+                                            snackbarHostState.showSnackbar(
+                                                message = "No puedes modificar tu rutina mientras entrenas",
+                                                duration = SnackbarDuration.Short
+                                            )
+                                        }
+                                    } else {
+                                        onOpenRoutine(microcycle)
                                     }
-                                } else {
-                                    onOpenRoutine(microcycle)
                                 }
-                            }
-                        )
+                            )
+                        }
                     }
                 }
             }
@@ -122,13 +111,12 @@ fun Routines(
 
 @Composable
 private fun TopBar() {
-    Box(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(90.dp)
             .background(BackgroundDark)
-            .padding(bottom = 18.dp),
-        contentAlignment = Alignment.BottomCenter
+            .padding(horizontal = 20.dp, vertical = 20.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = "Mis Rutinas",
