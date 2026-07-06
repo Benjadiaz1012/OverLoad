@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation3.runtime.NavKey
 import com.pdm0126.overload.R
 import com.pdm0126.overload.domain.model.Blueprint
 import com.pdm0126.overload.domain.model.BlueprintCatalog
@@ -52,8 +53,9 @@ fun TrainingSystem(
     systems: List<Blueprint> = BlueprintCatalog.systems,
     onSystemSelected: (Blueprint) -> Unit = {},
     onConfirm: (Blueprint?) -> Unit = {},
+    onNext: () -> Unit,
 
-) {
+    ) {
     var selectedId by remember { mutableStateOf(systems.firstOrNull()?.id) }
 
     Scaffold(
