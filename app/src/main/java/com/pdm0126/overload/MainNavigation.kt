@@ -129,9 +129,8 @@ fun MainNavigation() {
                     DayEditor(
                         dayId = route.dayId,
                         onBack = { backStack.removeLastOrNull() },
-                        onNavigateToLibrarySelection = {
-                            backStack.add(Routes.LibrarySelection(route.dayId))
-                        },
+                        onNavigateToLibrarySelection = { backStack.add(Routes.LibrarySelection(route.dayId)) },
+                        onNavigateToExerciseDetail = { exerciseId -> backStack.add(Routes.Detail(exerciseId)) },
                         onDayDeleted = { backStack.removeLastOrNull() }
                     )
                 }
