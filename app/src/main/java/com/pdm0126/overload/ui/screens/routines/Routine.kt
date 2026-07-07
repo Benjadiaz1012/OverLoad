@@ -11,8 +11,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -22,11 +20,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pdm0126.overload.ui.components.OverloadTopBar
 import com.pdm0126.overload.domain.model.RoutineMicrocycle
 import kotlinx.coroutines.launch
-
-private val BackgroundDark = Color(0xFF0E0E0E)
-private val CardDark = Color(0xFF1A1A1A)
-private val GoldAccent = Color(0xFFE8A317)
-private val TextGray = Color(0xFFA0A0A0)
 
 @Composable
 fun Routines(
@@ -40,15 +33,15 @@ fun Routines(
     val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
-        containerColor = BackgroundDark,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             OverloadTopBar(title = "Mis Rutinas")
         },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onCreateRoutine,
-                containerColor = GoldAccent,
-                contentColor = Color.Black
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Nueva rutina")
             }
@@ -65,7 +58,7 @@ fun Routines(
             when {
                 uiState.isLoading -> {
                     CircularProgressIndicator(
-                        color = GoldAccent,
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
@@ -118,22 +111,21 @@ private fun EmptyState(modifier: Modifier = Modifier) {
         Icon(
             imageVector = Icons.AutoMirrored.Filled.ListAlt,
             contentDescription = null,
-            tint = TextGray,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(64.dp)
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = "No tienes rutinas",
-            color = Color.White,
-            fontWeight = FontWeight.Bold,
-            fontSize = 16.sp,
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.titleSmall,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = "Crea una desde el botón +",
-            color = TextGray,
-            fontSize = 13.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodySmall,
             textAlign = TextAlign.Center
         )
     }
@@ -148,7 +140,7 @@ private fun MicrocycleCard(
     Card(
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = CardDark),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         modifier = Modifier.fillMaxWidth()
     ) {
         Row(
@@ -161,22 +153,21 @@ private fun MicrocycleCard(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = microcycle.name,
-                    color = GoldAccent,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.titleSmall.copy(fontSize = 18.sp),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = "Sistema base: ${microcycle.blueprintType}",
-                    color = TextGray,
-                    fontSize = 13.sp
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodySmall
                 )
                 Text(
                     text = "Duración: ${microcycle.days.size} días",
-                    color = TextGray,
-                    fontSize = 13.sp
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodySmall
                 )
             }
 
@@ -187,7 +178,7 @@ private fun MicrocycleCard(
                     Icon(
                         imageVector = Icons.Default.Star,
                         contentDescription = "Activa",
-                        tint = GoldAccent,
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(22.dp)
                     )
                     Spacer(modifier = Modifier.width(10.dp))
@@ -196,7 +187,7 @@ private fun MicrocycleCard(
                     Icon(
                         imageVector = Icons.Default.Settings,
                         contentDescription = "Administrar rutina",
-                        tint = TextGray
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }

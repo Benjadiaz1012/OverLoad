@@ -10,8 +10,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -21,13 +19,6 @@ import com.pdm0126.overload.ui.components.OverloadConfirmDialog
 import com.pdm0126.overload.ui.components.OverloadInputDialog
 import com.pdm0126.overload.ui.components.OverloadTopBar
 import com.pdm0126.overload.domain.model.RoutineSlot
-
-private val BackgroundDark = Color(0xFF0E0E0E)
-private val CardDark = Color(0xFF1A1A1A)
-private val GoldAccent = Color(0xFFE8A317)
-private val TextGray = Color(0xFFA0A0A0)
-private val DividerGray = Color(0xFF2A2A2A)
-private val ErrorRed = Color(0xFFE53935)
 
 private const val MAX_SLOTS_PER_DAY = 12
 
@@ -57,7 +48,7 @@ fun DayEditor(
     }
 
     Scaffold(
-        containerColor = BackgroundDark,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             OverloadTopBar(
                 title = day?.focus ?: "Editar día",
@@ -82,13 +73,13 @@ fun DayEditor(
                             .height(52.dp),
                         shape = RoundedCornerShape(14.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = GoldAccent,
-                            contentColor = Color.Black
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
                         )
                     ) {
                         Icon(imageVector = Icons.Default.Check, contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(text = "Listo", fontWeight = FontWeight.Bold)
+                        Text(text = "Listo", style = MaterialTheme.typography.labelLarge)
                     }
                 }
             }
@@ -102,7 +93,7 @@ fun DayEditor(
                         .padding(innerPadding),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator(color = GoldAccent)
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                 }
             }
 
@@ -114,7 +105,11 @@ fun DayEditor(
                         .padding(24.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(text = "No se encontró el día.", color = TextGray, fontSize = 14.sp)
+                    Text(
+                        text = "No se encontró el día.",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 }
             }
 
@@ -128,16 +123,15 @@ fun DayEditor(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             text = day.focus,
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            style = MaterialTheme.typography.titleMedium.copy(fontSize = 20.sp),
                             modifier = Modifier.weight(1f)
                         )
                         IconButton(onClick = { showRenameDialog = true }) {
                             Icon(
                                 Icons.Default.Edit,
                                 contentDescription = "Renombrar día",
-                                tint = GoldAccent
+                                tint = MaterialTheme.colorScheme.primary
                             )
                         }
                     }
@@ -147,8 +141,8 @@ fun DayEditor(
                     if (day.slots.isEmpty()) {
                         Text(
                             text = "Sin ejercicios en este día",
-                            color = TextGray,
-                            fontSize = 13.sp
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodySmall
                         )
                     } else {
                         day.slots.forEach { slot ->
@@ -169,7 +163,10 @@ fun DayEditor(
                                 },
                                 onRemove = { slotToRemove = slot }
                             )
-                            HorizontalDivider(color = DividerGray, thickness = 1.dp)
+                            HorizontalDivider(
+                                color = MaterialTheme.colorScheme.outlineVariant,
+                                thickness = 1.dp
+                            )
                         }
                     }
 
@@ -177,20 +174,23 @@ fun DayEditor(
 
                     if (day.slots.size < MAX_SLOTS_PER_DAY) {
                         TextButton(onClick = onNavigateToLibrarySelection) {
-                            Icon(Icons.Default.Add, contentDescription = null, tint = GoldAccent)
+                            Icon(
+                                Icons.Default.Add,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
+                            )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
                                 text = "Agregar ejercicio",
-                                color = GoldAccent,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 14.sp
+                                color = MaterialTheme.colorScheme.primary,
+                                style = MaterialTheme.typography.labelMedium.copy(fontSize = 14.sp)
                             )
                         }
                     } else {
                         Text(
                             text = "Alcanzaste el máximo de $MAX_SLOTS_PER_DAY ejercicios por día.",
-                            color = TextGray,
-                            fontSize = 12.sp
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp)
                         )
                     }
                 }
@@ -260,9 +260,8 @@ private fun SlotEditorRow(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = slot.exercise.name,
-                color = Color.White,
-                fontWeight = FontWeight.Bold,
-                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.Bold),
                 modifier = Modifier
                     .weight(1f)
                     .clickable { onExerciseClick() }
@@ -271,7 +270,7 @@ private fun SlotEditorRow(
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = "Quitar ejercicio",
-                    tint = ErrorRed,
+                    tint = MaterialTheme.colorScheme.error,
                     modifier = Modifier.size(16.dp)
                 )
             }
@@ -288,15 +287,21 @@ private fun SlotEditorRow(
                         newValue.toIntOrNull()?.let { onTargetSetsChange(it) }
                     }
                 },
-                label = { Text("Series", color = TextGray, fontSize = 12.sp) },
+                label = {
+                    Text(
+                        "Series",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 12.sp
+                    )
+                },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedBorderColor = GoldAccent,
-                    unfocusedBorderColor = TextGray,
-                    cursorColor = GoldAccent
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    cursorColor = MaterialTheme.colorScheme.primary
                 ),
                 modifier = Modifier.weight(1f)
             )
@@ -308,15 +313,21 @@ private fun SlotEditorRow(
                         onTargetRepsChange(newValue.toIntOrNull())
                     }
                 },
-                label = { Text("Reps (opcional)", color = TextGray, fontSize = 12.sp) },
+                label = {
+                    Text(
+                        "Reps (opcional)",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 12.sp
+                    )
+                },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedBorderColor = GoldAccent,
-                    unfocusedBorderColor = TextGray,
-                    cursorColor = GoldAccent
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    cursorColor = MaterialTheme.colorScheme.primary
                 ),
                 modifier = Modifier.weight(1f)
             )

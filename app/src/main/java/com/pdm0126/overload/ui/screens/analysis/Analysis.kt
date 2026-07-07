@@ -34,12 +34,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-private val BackgroundDark = Color(0xFF0E0E0E)
-private val CardDark = Color(0xFF1A1A1A)
-private val FieldDark = Color(0xFF222222)
-private val GoldAccent = Color(0xFFE8A317)
-private val TextGray = Color(0xFFA0A0A0)
-
 private val barPalette = listOf(
     Color(0xFFE53935), Color(0xFF1E88E5), Color(0xFF43A047),
     Color(0xFFFB8C00), Color(0xFF8E24AA), Color(0xFF00ACC1)
@@ -54,7 +48,7 @@ fun Analysis(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Scaffold(
-        containerColor = BackgroundDark,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = { OverloadTopBar(title = "Análisis") }
     ) { innerPadding ->
         Column(
@@ -75,7 +69,7 @@ fun Analysis(
 
             if (uiState.isLoading) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = GoldAccent)
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                 }
             } else {
                 Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
@@ -107,7 +101,7 @@ private fun PillTabRow(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(14.dp))
-            .background(CardDark)
+            .background(MaterialTheme.colorScheme.surface)
             .padding(4.dp)
     ) {
         tabs.forEachIndexed { index, label ->
@@ -116,16 +110,15 @@ private fun PillTabRow(
                 modifier = Modifier
                     .weight(1f)
                     .clip(RoundedCornerShape(10.dp))
-                    .background(if (isSelected) GoldAccent else Color.Transparent)
+                    .background(if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent)
                     .clickable { onSelect(index) }
                     .padding(vertical = 10.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = label,
-                    color = if (isSelected) Color.Black else TextGray,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 13.sp
+                    color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelMedium
                 )
             }
         }
@@ -141,15 +134,14 @@ private fun DistributionSection(muscleDistribution: List<MuscleDistribution>) {
 
     Card(
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = CardDark),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = "Volumen Efectivo por Grupo Muscular",
-                color = GoldAccent,
-                fontWeight = FontWeight.Bold,
-                fontSize = 15.sp
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleSmall.copy(fontSize = 15.sp)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -174,6 +166,8 @@ private fun BarChart(
     modifier: Modifier = Modifier
 ) {
     val maxValue = (data.maxOfOrNull { it.totalEffectiveVolume } ?: 1f).coerceAtLeast(1f)
+    val labelColor = MaterialTheme.colorScheme.onSurface
+    val secondaryColor = MaterialTheme.colorScheme.onSurfaceVariant
 
     Row(
         modifier = modifier.horizontalScroll(rememberScrollState()),
@@ -188,9 +182,8 @@ private fun BarChart(
             ) {
                 Text(
                     text = "%,.0f kg".format(item.totalEffectiveVolume),
-                    color = Color.White,
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.Bold,
+                    color = labelColor,
+                    style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
                     maxLines = 1,
                     textAlign = TextAlign.Center
                 )
@@ -203,6 +196,7 @@ private fun BarChart(
                 } else {
                     0.001f
                 }
+
                 Box(
                     modifier = Modifier
                         .weight(1f)
@@ -222,8 +216,8 @@ private fun BarChart(
 
                 Text(
                     text = item.muscleGroup.replaceFirstChar { it.uppercase() },
-                    color = TextGray,
-                    fontSize = 10.sp,
+                    color = secondaryColor,
+                    style = MaterialTheme.typography.bodySmall.copy(fontSize = 10.sp),
                     textAlign = TextAlign.Center,
                     maxLines = 2,
                     lineHeight = 12.sp
@@ -251,15 +245,13 @@ private fun EvolutionSection(
 
         when (uiState.evolutionMode) {
             EvolutionMode.EXERCISE -> {
-                val selectedExercise =
-                    uiState.availableExercises.find { it.id == uiState.selectedExerciseId }
+                val selectedExercise = uiState.availableExercises.find { it.id == uiState.selectedExerciseId }
                 ExerciseSelectorCard(
                     selectedExercise = selectedExercise,
                     onNavigateToLibrary = onNavigateToLibrary,
                     onClear = onClearExercise
                 )
             }
-
             EvolutionMode.MUSCLE_GROUP -> {
                 MuscleGroupSelector(
                     options = uiState.availableMuscleGroups,
@@ -273,15 +265,14 @@ private fun EvolutionSection(
 
         Card(
             shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = CardDark),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
                     text = "Sobrecarga Progresiva",
-                    color = GoldAccent,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 15.sp
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.titleSmall.copy(fontSize = 15.sp)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -341,16 +332,15 @@ private fun ModeChip(
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(10.dp))
-            .background(if (isSelected) GoldAccent else CardDark)
+            .background(if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface)
             .clickable { onClick() }
             .padding(vertical = 10.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = label,
-            color = if (isSelected) Color.Black else TextGray,
-            fontWeight = FontWeight.Bold,
-            fontSize = 13.sp
+            color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.labelMedium
         )
     }
 }
@@ -364,7 +354,7 @@ private fun ExerciseSelectorCard(
     Card(
         onClick = onNavigateToLibrary,
         shape = RoundedCornerShape(14.dp),
-        colors = CardDefaults.cardColors(containerColor = CardDark),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         modifier = Modifier.fillMaxWidth()
     ) {
         Row(
@@ -376,22 +366,21 @@ private fun ExerciseSelectorCard(
             Icon(
                 imageVector = Icons.Default.Search,
                 contentDescription = null,
-                tint = GoldAccent,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(22.dp)
             )
             Spacer(modifier = Modifier.width(12.dp))
             Text(
                 text = selectedExercise?.name ?: "Buscar ejercicio en la biblioteca",
-                color = Color.White,
-                fontWeight = FontWeight.Bold,
-                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                 modifier = Modifier.weight(1f)
             )
             if (selectedExercise != null) {
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = "Quitar selección",
-                    tint = TextGray,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier
                         .size(20.dp)
                         .clickable { onClear() }
@@ -423,15 +412,14 @@ private fun MuscleGroupSelector(
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(20.dp))
-                    .background(if (isSelected) GoldAccent else FieldDark)
+                    .background(if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant)
                     .clickable { onSelect(if (isSelected) null else muscle) }
                     .padding(horizontal = 14.dp, vertical = 8.dp)
             ) {
                 Text(
                     text = muscle.replaceFirstChar { it.uppercase() },
-                    color = if (isSelected) Color.Black else TextGray,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.SemiBold
+                    color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelMedium
                 )
             }
         }
@@ -453,6 +441,8 @@ private fun LineChart(
     val range = (maxValue - minValue).coerceAtLeast(1f)
 
     val sdf = remember { SimpleDateFormat("dd MMM", Locale.getDefault()) }
+    val lineColor = MaterialTheme.colorScheme.primary
+    val dateColor = MaterialTheme.colorScheme.onSurfaceVariant
 
     Column(modifier = modifier) {
         Canvas(
@@ -475,7 +465,7 @@ private fun LineChart(
 
             drawPath(
                 path = path,
-                color = GoldAccent,
+                color = lineColor,
                 style = Stroke(width = 4f, pathEffect = PathEffect.cornerPathEffect(8f))
             )
 
@@ -483,7 +473,7 @@ private fun LineChart(
                 val x = index * stepX
                 val normalized = (point.volume - minValue) / range
                 val y = size.height - (normalized * size.height)
-                drawCircle(color = GoldAccent, radius = 6f, center = Offset(x, y))
+                drawCircle(color = lineColor, radius = 6f, center = Offset(x, y))
             }
         }
 
@@ -492,8 +482,8 @@ private fun LineChart(
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             val firstDate = points.firstOrNull()?.timestamp?.let { sdf.format(Date(it)) } ?: ""
             val lastDate = points.lastOrNull()?.timestamp?.let { sdf.format(Date(it)) } ?: ""
-            Text(text = firstDate, color = TextGray, fontSize = 11.sp)
-            Text(text = lastDate, color = TextGray, fontSize = 11.sp)
+            Text(text = firstDate, color = dateColor, style = MaterialTheme.typography.labelSmall)
+            Text(text = lastDate, color = dateColor, style = MaterialTheme.typography.labelSmall)
         }
     }
 }
@@ -508,8 +498,8 @@ private fun EmptyHint(text: String) {
     ) {
         Text(
             text = text,
-            color = TextGray,
-            fontSize = 13.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodySmall,
             textAlign = TextAlign.Center
         )
     }

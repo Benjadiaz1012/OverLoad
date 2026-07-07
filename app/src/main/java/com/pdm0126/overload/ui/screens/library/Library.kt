@@ -25,7 +25,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -33,16 +32,10 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
-import com.pdm0126.overload.ui.components.OverloadTopBar
 import com.pdm0126.overload.ui.components.ExerciseNavCache
+import com.pdm0126.overload.ui.components.OverloadTopBar
 import com.pdm0126.overload.domain.TechnicalDictionary
 import com.pdm0126.overload.domain.model.Exercise
-
-private val BackgroundDark = Color(0xFF0E0E0E)
-private val CardDark = Color(0xFF1A1A1A)
-private val FieldDark = Color(0xFF222222)
-private val GoldAccent = Color(0xFFE8A317)
-private val TextGray = Color(0xFFA0A0A0)
 
 enum class ExerciseCardMode { DEFAULT, SELECTION, ANALYSIS }
 
@@ -122,7 +115,7 @@ private fun LibraryContent(
     val isLocal = state.selectedTabIndex == 0
 
     Scaffold(
-        containerColor = BackgroundDark,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             OverloadTopBar(
                 title = "Ejercicios",
@@ -212,7 +205,7 @@ private fun PillTabSelector(
             .fillMaxWidth()
             .padding(horizontal = 20.dp)
             .clip(RoundedCornerShape(14.dp))
-            .background(CardDark)
+            .background(MaterialTheme.colorScheme.surface)
             .padding(4.dp)
     ) {
         tabs.forEachIndexed { index, label ->
@@ -221,16 +214,15 @@ private fun PillTabSelector(
                 modifier = Modifier
                     .weight(1f)
                     .clip(RoundedCornerShape(10.dp))
-                    .background(if (isSelected) GoldAccent else Color.Transparent)
+                    .background(if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent)
                     .clickable { onSelect(index) }
                     .padding(vertical = 10.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = label,
-                    color = if (isSelected) Color.Black else TextGray,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 13.sp
+                    color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelMedium
                 )
             }
         }
@@ -253,9 +245,18 @@ private fun SearchField(
             .fillMaxWidth()
             .padding(horizontal = 20.dp, vertical = 12.dp)
             .clip(RoundedCornerShape(14.dp)),
-        placeholder = { Text(text = placeholder, color = TextGray) },
+        placeholder = {
+            Text(
+                text = placeholder,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        },
         leadingIcon = {
-            Icon(imageVector = Icons.Default.Search, contentDescription = null, tint = GoldAccent)
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary
+            )
         },
         trailingIcon = {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -263,12 +264,16 @@ private fun SearchField(
                     Icon(
                         imageVector = Icons.Default.Tune,
                         contentDescription = "Filtros",
-                        tint = if (isFilterActive) GoldAccent else TextGray
+                        tint = if (isFilterActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
                 if (query.isNotEmpty()) {
                     IconButton(onClick = { onQueryChange("") }) {
-                        Icon(Icons.Default.Close, contentDescription = "Limpiar", tint = TextGray)
+                        Icon(
+                            Icons.Default.Close,
+                            contentDescription = "Limpiar",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 }
             }
@@ -277,14 +282,14 @@ private fun SearchField(
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
         keyboardActions = KeyboardActions(onSearch = { onSearchSubmit() }),
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = FieldDark,
-            unfocusedContainerColor = FieldDark,
-            disabledContainerColor = FieldDark,
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+            disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
-            cursorColor = GoldAccent,
-            focusedTextColor = Color.White,
-            unfocusedTextColor = Color.White
+            cursorColor = MaterialTheme.colorScheme.primary,
+            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+            unfocusedTextColor = MaterialTheme.colorScheme.onSurface
         )
     )
 }
@@ -321,16 +326,20 @@ private fun ActiveFilterChip(label: String, onRemove: () -> Unit) {
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(20.dp))
-            .background(GoldAccent.copy(alpha = 0.15f))
+            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f))
             .padding(horizontal = 12.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = label, color = GoldAccent, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+        Text(
+            text = label,
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.labelMedium.copy(fontSize = 12.sp)
+        )
         Spacer(modifier = Modifier.width(6.dp))
         Icon(
             imageVector = Icons.Default.Close,
             contentDescription = "Quitar filtro $label",
-            tint = GoldAccent,
+            tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier
                 .size(14.dp)
                 .clickable { onRemove() }
@@ -349,8 +358,8 @@ private fun SavedExercisesContent(
     if (exercises.isEmpty()) {
         Text(
             text = "No tienes ejercicios guardados",
-            color = TextGray,
-            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier
                 .fillMaxSize()
                 .wrapContentSize(Alignment.Center)
@@ -385,7 +394,7 @@ private fun ExploreContent(
         when {
             remoteState.isLoading && remoteState.results.isEmpty() -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = GoldAccent)
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                 }
             }
 
@@ -400,23 +409,22 @@ private fun ExploreContent(
                     Icon(
                         imageVector = Icons.Default.WifiOff,
                         contentDescription = null,
-                        tint = TextGray,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(48.dp)
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
                         text = remoteState.errorMessage,
-                        color = TextGray,
-                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(horizontal = 32.dp)
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
                         text = "Reintentar",
-                        color = GoldAccent,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 13.sp,
+                        color = MaterialTheme.colorScheme.primary,
+                        style = MaterialTheme.typography.labelMedium,
                         modifier = Modifier.clickable { onRetry() }
                     )
                 }
@@ -433,15 +441,14 @@ private fun ExploreContent(
                     Icon(
                         imageVector = Icons.Default.TravelExplore,
                         contentDescription = null,
-                        tint = TextGray,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(56.dp)
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
                         text = "Busca un ejercicio",
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 15.sp
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.titleSmall.copy(fontSize = 15.sp)
                     )
                 }
             }
@@ -495,7 +502,7 @@ private fun ExerciseCard(
     Card(
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = CardDark),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         modifier = Modifier.fillMaxWidth()
     ) {
         Row(
@@ -508,7 +515,7 @@ private fun ExerciseCard(
                 modifier = Modifier
                     .size(64.dp)
                     .clip(CircleShape)
-                    .background(FieldDark),
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
                 contentAlignment = Alignment.Center
             ) {
                 val imageUrl = exercise.remoteImages.firstOrNull()
@@ -525,7 +532,7 @@ private fun ExerciseCard(
                     Icon(
                         imageVector = Icons.Default.FitnessCenter,
                         contentDescription = exercise.name,
-                        tint = GoldAccent,
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(28.dp)
                     )
                 }
@@ -536,17 +543,24 @@ private fun ExerciseCard(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = exercise.name,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 15.sp
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.titleSmall.copy(fontSize = 15.sp)
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     MuscleTag(text = exercise.muscleGroup)
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text(text = "•", color = TextGray, fontSize = 12.sp)
+                    Text(
+                        text = "•",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp)
+                    )
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text(text = exercise.mechanic, color = TextGray, fontSize = 12.sp)
+                    Text(
+                        text = exercise.mechanic,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp)
+                    )
                 }
             }
 
@@ -556,7 +570,7 @@ private fun ExerciseCard(
                         Icon(
                             imageVector = Icons.Default.AddCircleOutline,
                             contentDescription = "Seleccionar",
-                            tint = GoldAccent,
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(28.dp)
                         )
                     }
@@ -567,7 +581,7 @@ private fun ExerciseCard(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ShowChart,
                             contentDescription = "Analizar",
-                            tint = GoldAccent
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 }
@@ -576,7 +590,7 @@ private fun ExerciseCard(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
                         contentDescription = "Ver más",
-                        tint = TextGray,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(16.dp)
                     )
                 }
@@ -590,14 +604,13 @@ private fun MuscleTag(text: String) {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(6.dp))
-            .background(GoldAccent.copy(alpha = 0.15f))
+            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f))
             .padding(horizontal = 8.dp, vertical = 2.dp)
     ) {
         Text(
             text = text.replaceFirstChar { it.uppercase() },
-            color = GoldAccent,
-            fontSize = 11.sp,
-            fontWeight = FontWeight.Bold
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.labelSmall
         )
     }
 }
@@ -614,7 +627,7 @@ private fun ExerciseFilterSheet(
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        containerColor = CardDark
+        containerColor = MaterialTheme.colorScheme.surface
     ) {
         Column(
             modifier = Modifier
@@ -629,16 +642,14 @@ private fun ExerciseFilterSheet(
             ) {
                 Text(
                     text = "Filtros",
-                    color = GoldAccent,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.titleMedium.copy(fontSize = 20.sp)
                 )
                 if (selectedMuscles.isNotEmpty() || selectedMechanic != null) {
                     Text(
                         text = "Limpiar todo",
-                        color = TextGray,
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.labelMedium,
                         modifier = Modifier.clickable { onClearAll() }
                     )
                 }
@@ -648,9 +659,8 @@ private fun ExerciseFilterSheet(
 
             Text(
                 text = "Grupo Muscular",
-                color = Color.White,
-                fontWeight = FontWeight.Bold,
-                fontSize = 15.sp
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.titleSmall.copy(fontSize = 15.sp)
             )
             Spacer(modifier = Modifier.height(10.dp))
 
@@ -664,15 +674,14 @@ private fun ExerciseFilterSheet(
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(20.dp))
-                            .background(if (selected) GoldAccent else FieldDark)
+                            .background(if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant)
                             .clickable { onMuscleToggle(option) }
                             .padding(horizontal = 14.dp, vertical = 8.dp)
                     ) {
                         Text(
                             text = option,
-                            color = if (selected) Color.Black else TextGray,
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.SemiBold
+                            color = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.labelMedium
                         )
                     }
                 }
@@ -682,9 +691,8 @@ private fun ExerciseFilterSheet(
 
             Text(
                 text = "Mecánica",
-                color = Color.White,
-                fontWeight = FontWeight.Bold,
-                fontSize = 15.sp
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.titleSmall.copy(fontSize = 15.sp)
             )
             Spacer(modifier = Modifier.height(10.dp))
 
@@ -698,16 +706,15 @@ private fun ExerciseFilterSheet(
                         modifier = Modifier
                             .weight(1f)
                             .clip(RoundedCornerShape(10.dp))
-                            .background(if (isSelected) GoldAccent else FieldDark)
+                            .background(if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant)
                             .clickable { onMechanicToggle(mechanic) }
                             .padding(vertical = 12.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = mechanic,
-                            color = if (isSelected) Color.Black else TextGray,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 13.sp
+                            color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.labelMedium
                         )
                     }
                 }

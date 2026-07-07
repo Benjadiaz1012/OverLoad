@@ -15,9 +15,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -28,12 +26,6 @@ import com.pdm0126.overload.ui.components.OverloadTopBar
 import com.pdm0126.overload.domain.model.Exercise
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
-private val BackgroundDark = Color(0xFF0E0E0E)
-private val CardDark = Color(0xFF1A1A1A)
-private val FieldDark = Color(0xFF222222)
-private val GoldAccent = Color(0xFFE8A317)
-private val TextGray = Color(0xFFA0A0A0)
 
 @Composable
 fun Detail(
@@ -52,7 +44,7 @@ fun Detail(
     var showUnbookmarkDialog by remember { mutableStateOf(false) }
 
     Scaffold(
-        containerColor = BackgroundDark,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             OverloadTopBar(
                 title = exercise?.name ?: "Detalle",
@@ -89,7 +81,7 @@ fun Detail(
                             Icon(
                                 imageVector = if (uiState.isBookmarked) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
                                 contentDescription = if (uiState.isBookmarked) "Quitar de biblioteca" else "Guardar en biblioteca",
-                                tint = GoldAccent
+                                tint = MaterialTheme.colorScheme.primary
                             )
                         }
                     }
@@ -106,7 +98,7 @@ fun Detail(
                         .padding(innerPadding),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator(color = GoldAccent)
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                 }
             }
 
@@ -118,7 +110,11 @@ fun Detail(
                         .padding(24.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(text = uiState.errorMessage ?: "", color = TextGray, fontSize = 14.sp)
+                    Text(
+                        text = uiState.errorMessage ?: "",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 }
             }
 
@@ -156,8 +152,8 @@ fun Detail(
                     if (exercise.instructions.isEmpty()) {
                         Text(
                             text = "Este ejercicio aún no tiene instrucciones.",
-                            color = TextGray,
-                            fontSize = 13.sp
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodySmall
                         )
                     } else {
                         exercise.instructions.forEachIndexed { index, step ->
@@ -200,14 +196,14 @@ private fun HeroImage(exercise: Exercise) {
             .fillMaxWidth()
             .height(220.dp)
             .clip(RoundedCornerShape(16.dp))
-            .background(FieldDark),
+            .background(MaterialTheme.colorScheme.surfaceVariant),
         contentAlignment = Alignment.Center
     ) {
         if (imageUrls.isEmpty()) {
             Icon(
                 imageVector = Icons.Default.FitnessCenter,
                 contentDescription = exercise.name,
-                tint = GoldAccent,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(64.dp)
             )
         } else {
@@ -237,21 +233,24 @@ private fun InfoTag(text: String) {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
-            .background(CardDark)
+            .background(MaterialTheme.colorScheme.surface)
             .padding(horizontal = 12.dp, vertical = 6.dp)
     ) {
         Text(
             text = text.replaceFirstChar { it.uppercase() },
-            color = Color.White,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.SemiBold
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.labelMedium.copy(fontSize = 12.sp)
         )
     }
 }
 
 @Composable
 private fun SectionTitle(text: String) {
-    Text(text = text, color = GoldAccent, fontWeight = FontWeight.Bold, fontSize = 17.sp)
+    Text(
+        text = text,
+        color = MaterialTheme.colorScheme.primary,
+        style = MaterialTheme.typography.titleSmall.copy(fontSize = 17.sp)
+    )
 }
 
 @Composable
@@ -274,14 +273,16 @@ private fun TagsFlow(items: List<String>, isPrimary: Boolean) {
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(20.dp))
-                    .background(if (isPrimary) GoldAccent.copy(alpha = 0.15f) else FieldDark)
+                    .background(
+                        if (isPrimary) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+                        else MaterialTheme.colorScheme.surfaceVariant
+                    )
                     .padding(horizontal = 12.dp, vertical = 6.dp)
             ) {
                 Text(
                     text = muscle,
-                    color = if (isPrimary) GoldAccent else TextGray,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.SemiBold
+                    color = if (isPrimary) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelMedium.copy(fontSize = 12.sp)
                 )
             }
         }
@@ -299,21 +300,20 @@ private fun InstructionStep(number: Int, text: String) {
             modifier = Modifier
                 .size(24.dp)
                 .clip(RoundedCornerShape(50))
-                .background(GoldAccent),
+                .background(MaterialTheme.colorScheme.primary),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "$number",
-                color = Color.Black,
-                fontWeight = FontWeight.Bold,
-                fontSize = 12.sp
+                color = MaterialTheme.colorScheme.onPrimary,
+                style = MaterialTheme.typography.labelMedium.copy(fontSize = 12.sp)
             )
         }
         Spacer(modifier = Modifier.width(12.dp))
         Text(
             text = text,
-            color = Color.White,
-            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.weight(1f)
         )
     }

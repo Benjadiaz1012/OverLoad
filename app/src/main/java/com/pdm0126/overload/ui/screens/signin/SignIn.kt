@@ -22,6 +22,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -49,7 +50,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pdm0126.overload.R
 
-
 @Composable
 fun SignIn(onNext: () -> Unit) {
     var password by rememberSaveable { mutableStateOf("") }
@@ -57,7 +57,7 @@ fun SignIn(onNext: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF000000)),
+            .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -80,18 +80,18 @@ fun SignIn(onNext: () -> Unit) {
                 text = buildAnnotatedString {
                     withStyle(
                         SpanStyle(
-                            color = Color(0xFFEBEBEB),
+                            color = MaterialTheme.colorScheme.onBackground,
                             fontWeight = FontWeight.Bold
                         )
                     ) { append("Over") }
                     withStyle(
                         SpanStyle(
-                            color = Color(0xFFB8860B),
+                            color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold
                         )
                     ) { append("load") }
                 },
-                fontSize = 28.sp
+                style = MaterialTheme.typography.titleLarge.copy(fontSize = 28.sp)
             )
 
             Spacer(modifier = Modifier.height(36.dp))
@@ -122,8 +122,8 @@ fun SignIn(onNext: () -> Unit) {
             ) {
                 Text(
                     text = "¿Olvidaste tu contraseña?",
-                    color = Color(0xFFEBEBEB),
-                    fontSize = 13.sp,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.bodySmall.copy(fontSize = 13.sp),
                     textDecoration = TextDecoration.Underline
                 )
             }
@@ -137,14 +137,13 @@ fun SignIn(onNext: () -> Unit) {
                     .height(52.dp),
                 shape = RoundedCornerShape(50),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFB8860B),
-                    contentColor = Color(0xFF000000)
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
                 )
             ) {
                 Text(
                     text = "Iniciar Sesion",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.labelLarge
                 )
             }
 
@@ -154,16 +153,19 @@ fun SignIn(onNext: () -> Unit) {
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "¿No tienes cuenta?  ", color = Color(0xFFEBEBEB), fontSize = 14.sp)
+                Text(
+                    text = "¿No tienes cuenta?  ",
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.bodyMedium
+                )
                 TextButton(
                     onClick = { null },
                     contentPadding = PaddingValues(0.dp)
                 ) {
                     Text(
                         text = "Registrate",
-                        color = Color(0xFFB8860B),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary,
+                        style = MaterialTheme.typography.labelMedium.copy(fontSize = 14.sp),
                         textDecoration = TextDecoration.Underline
                     )
                 }
@@ -186,9 +188,8 @@ private fun SignInTextField(
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = label,
-            color = Color(0xFFEBEBEB),
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
         )
         Spacer(modifier = Modifier.height(4.dp))
         TextField(
@@ -197,8 +198,8 @@ private fun SignInTextField(
             placeholder = {
                 Text(
                     text = placeholder,
-                    color = Color(0x99EBEBEB),
-                    fontSize = 14.sp
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium
                 )
             },
             visualTransformation = if (isPassword && !visiblePassword) {
@@ -220,7 +221,7 @@ private fun SignInTextField(
                             } else {
                                 "Mostrar contraseña"
                             },
-                            tint = Color(0xFFEBEBEB)
+                            tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
                 }
@@ -228,18 +229,18 @@ private fun SignInTextField(
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
             singleLine = true,
             textStyle = TextStyle(
-                color = Color(0xFFEBEBEB),
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 14.sp,
                 textAlign = TextAlign.Start
             ),
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color.Transparent,
                 unfocusedContainerColor = Color.Transparent,
-                focusedIndicatorColor = Color(0xFFB8860B),
-                unfocusedIndicatorColor = Color(0xFFEBEBEB),
-                cursorColor = Color(0xFFB8860B),
-                focusedTextColor = Color(0xFFEBEBEB),
-                unfocusedTextColor = Color(0xFFEBEBEB)
+                focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                unfocusedIndicatorColor = MaterialTheme.colorScheme.onBackground,
+                cursorColor = MaterialTheme.colorScheme.primary,
+                focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                unfocusedTextColor = MaterialTheme.colorScheme.onBackground
             ),
             modifier = Modifier.fillMaxWidth()
         )

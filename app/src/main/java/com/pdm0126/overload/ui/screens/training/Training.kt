@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -27,12 +26,6 @@ import com.pdm0126.overload.ui.components.OverloadTopBar
 import com.pdm0126.overload.domain.model.Exercise
 import com.pdm0126.overload.domain.model.RoutineDay
 import kotlinx.coroutines.launch
-
-private val BackgroundDark = Color(0xFF0E0E0E)
-private val CardDark = Color(0xFF1A1A1A)
-private val GoldAccent = Color(0xFFE8A317)
-private val TextGray = Color(0xFFA0A0A0)
-private val DividerGray = Color(0xFF2E2E2E)
 
 @Composable
 fun Training(
@@ -67,7 +60,7 @@ fun Training(
         }
     ) {
         Scaffold(
-            containerColor = BackgroundDark,
+            containerColor = MaterialTheme.colorScheme.background,
             topBar = {
                 OverloadTopBar(
                     title = "Entrenamiento",
@@ -118,8 +111,8 @@ fun Training(
                             .height(56.dp),
                         shape = RoundedCornerShape(16.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = GoldAccent,
-                            contentColor = Color.Black
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
                         )
                     ) {
                         Icon(imageVector = Icons.Default.PlayArrow, contentDescription = null)
@@ -130,8 +123,7 @@ fun Training(
                                 hasAnyActiveSession -> "Otro entrenamiento en curso"
                                 else -> "Iniciar Sesión de entrenamiento"
                             },
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp
+                            style = MaterialTheme.typography.labelLarge
                         )
                     }
                 }
@@ -145,7 +137,7 @@ fun Training(
                             .padding(innerPadding),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator(color = GoldAccent)
+                        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                     }
                 }
 
@@ -159,8 +151,8 @@ fun Training(
                     ) {
                         Text(
                             text = "No tienes una rutina activa. Crea una desde el tab \"Rutinas\".",
-                            color = TextGray,
-                            fontSize = 14.sp
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyMedium
                         )
                     }
                 }
@@ -237,25 +229,30 @@ private fun TrainingDrawerContent(
     onProfileClick: () -> Unit
 ) {
     ModalDrawerSheet(
-        drawerContainerColor = CardDark
+        drawerContainerColor = MaterialTheme.colorScheme.surface
     ) {
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
             text = "OVERLOAD",
-            color = GoldAccent,
-            fontWeight = FontWeight.Bold,
-            fontSize = 20.sp,
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.titleMedium.copy(fontSize = 20.sp),
             modifier = Modifier.padding(horizontal = 24.dp)
         )
 
         Spacer(modifier = Modifier.height(24.dp))
-        HorizontalDivider(color = DividerGray, thickness = 1.dp)
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
         Spacer(modifier = Modifier.height(8.dp))
 
         NavigationDrawerItem(
-            label = { Text(text = "Perfil", color = Color.White) },
-            icon = { Icon(Icons.Default.Person, contentDescription = null, tint = TextGray) },
+            label = { Text(text = "Perfil", color = MaterialTheme.colorScheme.onSurface) },
+            icon = {
+                Icon(
+                    Icons.Default.Person,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
             selected = false,
             onClick = onProfileClick,
             colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent)
@@ -276,15 +273,14 @@ private fun DaySelectorSection(
         ) {
             Text(
                 text = dayTitle,
-                color = GoldAccent,
-                fontWeight = FontWeight.Bold,
-                fontSize = 26.sp
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleLarge.copy(fontSize = 26.sp)
             )
             Spacer(modifier = Modifier.width(4.dp))
             Icon(
                 imageVector = Icons.Default.KeyboardArrowDown,
                 contentDescription = "Cambiar día",
-                tint = GoldAccent
+                tint = MaterialTheme.colorScheme.primary
             )
         }
 
@@ -292,8 +288,8 @@ private fun DaySelectorSection(
 
         Text(
             text = "$exerciseCount ejercicios",
-            color = TextGray,
-            fontSize = 15.sp
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium.copy(fontSize = 15.sp)
         )
     }
 }
@@ -308,7 +304,7 @@ private fun DaySelectorSheet(
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        containerColor = CardDark
+        containerColor = MaterialTheme.colorScheme.surface
     ) {
         Column(
             modifier = Modifier
@@ -318,9 +314,8 @@ private fun DaySelectorSheet(
         ) {
             Text(
                 text = "Elige un día",
-                color = GoldAccent,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleMedium.copy(fontSize = 20.sp)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -339,27 +334,29 @@ private fun DaySelectorSheet(
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = day.focus,
-                            color = if (isSelected) GoldAccent else Color.White,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp
+                            color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                            style = MaterialTheme.typography.titleSmall
                         )
                         Text(
                             text = "${day.slots.size} ejercicios",
-                            color = TextGray,
-                            fontSize = 12.sp
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp)
                         )
                     }
                     if (isSelected) {
                         Icon(
                             imageVector = Icons.Default.Check,
                             contentDescription = "Seleccionado",
-                            tint = GoldAccent
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 }
 
                 if (day != days.last()) {
-                    HorizontalDivider(color = DividerGray, thickness = 1.dp)
+                    HorizontalDivider(
+                        color = MaterialTheme.colorScheme.outlineVariant,
+                        thickness = 1.dp
+                    )
                 }
             }
         }
@@ -377,7 +374,7 @@ private fun ExerciseCard(
     Card(
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = CardDark),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -390,30 +387,33 @@ private fun ExerciseCard(
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = exercise.name,
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.titleSmall
                     )
                     Text(
                         text = exercise.muscleGroup,
-                        color = TextGray,
-                        fontSize = 12.sp
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp)
                     )
                 }
 
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowDown,
                     contentDescription = "Expandir",
-                    tint = Color.White
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
 
             Spacer(modifier = Modifier.height(12.dp))
-            HorizontalDivider(color = DividerGray, thickness = 1.dp)
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
             Spacer(modifier = Modifier.height(12.dp))
 
             if (lastSet != null) {
-                Text(text = "Lo último realizado", color = TextGray, fontSize = 13.sp)
+                Text(
+                    text = "Lo último realizado",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodySmall
+                )
                 Spacer(modifier = Modifier.height(10.dp))
                 Row(modifier = Modifier.fillMaxWidth()) {
                     ExerciseStat(
@@ -430,7 +430,11 @@ private fun ExerciseCard(
                     )
                 }
             } else {
-                Text(text = "Objetivo (sin registros previos)", color = TextGray, fontSize = 13.sp)
+                Text(
+                    text = "Objetivo (sin registros previos)",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodySmall
+                )
                 Spacer(modifier = Modifier.height(10.dp))
                 Row(modifier = Modifier.fillMaxWidth()) {
                     ExerciseStat(
@@ -459,7 +463,7 @@ private fun ExerciseThumbnail(exercise: Exercise) {
         modifier = Modifier
             .size(56.dp)
             .clip(RoundedCornerShape(8.dp))
-            .background(Color(0xFF2A2A2A)),
+            .background(MaterialTheme.colorScheme.surfaceVariant),
         contentAlignment = Alignment.Center
     ) {
         if (imageUrl != null) {
@@ -473,7 +477,7 @@ private fun ExerciseThumbnail(exercise: Exercise) {
             Icon(
                 imageVector = Icons.Default.Accessibility,
                 contentDescription = exercise.name,
-                tint = GoldAccent,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(32.dp)
             )
         }
@@ -492,13 +496,21 @@ private fun ExerciseStat(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = GoldAccent,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(16.dp)
             )
             Spacer(modifier = Modifier.width(6.dp))
-            Text(text = value, color = GoldAccent, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+            Text(
+                text = value,
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.labelLarge.copy(fontSize = 15.sp)
+            )
         }
         Spacer(modifier = Modifier.height(2.dp))
-        Text(text = label, color = TextGray, fontSize = 12.sp)
+        Text(
+            text = label,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp)
+        )
     }
 }

@@ -13,8 +13,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -25,14 +23,6 @@ import com.pdm0126.overload.domain.model.RoutineDay
 import com.pdm0126.overload.domain.model.RoutineSlot
 import com.pdm0126.overload.domain.model.WorkoutSet
 import kotlinx.coroutines.launch
-
-private val BackgroundDark = Color(0xFF0E0E0E)
-private val CardDark = Color(0xFF1A1A1A)
-private val FieldDark = Color(0xFF222222)
-private val GoldAccent = Color(0xFFE8A317)
-private val TextGray = Color(0xFFA0A0A0)
-private val DividerGray = Color(0xFF2A2A2A)
-private val ErrorRed = Color(0xFFE53935)
 
 data class LogSetRequest(
     val slotId: Long,
@@ -72,7 +62,7 @@ fun ActiveWorkout(
     }
 
     Scaffold(
-        containerColor = BackgroundDark,
+        containerColor = MaterialTheme.colorScheme.background,
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             OverloadTopBar(
@@ -83,7 +73,7 @@ fun ActiveWorkout(
                             Icon(
                                 Icons.Default.MoreVert,
                                 contentDescription = "Opciones",
-                                tint = GoldAccent
+                                tint = MaterialTheme.colorScheme.primary
                             )
                         }
                         DropdownMenu(
@@ -96,7 +86,7 @@ fun ActiveWorkout(
                                     Icon(
                                         Icons.Default.DoneAll,
                                         contentDescription = null,
-                                        tint = GoldAccent
+                                        tint = MaterialTheme.colorScheme.primary
                                     )
                                 },
                                 onClick = {
@@ -110,7 +100,7 @@ fun ActiveWorkout(
                                     Icon(
                                         Icons.Default.DeleteOutline,
                                         contentDescription = null,
-                                        tint = ErrorRed
+                                        tint = MaterialTheme.colorScheme.error
                                     )
                                 },
                                 onClick = {
@@ -131,7 +121,7 @@ fun ActiveWorkout(
         ) {
             if (isLoading || day == null) {
                 CircularProgressIndicator(
-                    color = GoldAccent,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.align(Alignment.Center)
                 )
             } else {
@@ -161,13 +151,16 @@ fun ActiveWorkout(
                                 .padding(top = 24.dp),
                             shape = RoundedCornerShape(12.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = GoldAccent,
-                                contentColor = Color.Black
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = MaterialTheme.colorScheme.onPrimary
                             )
                         ) {
                             Icon(imageVector = Icons.Default.DoneAll, contentDescription = null)
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text(text = "Finalizar Entrenamiento", fontWeight = FontWeight.Bold)
+                            Text(
+                                text = "Finalizar Entrenamiento",
+                                style = MaterialTheme.typography.labelLarge
+                            )
                         }
                     }
                 }
@@ -240,9 +233,8 @@ private fun ActiveSlotItem(
         ) {
             Text(
                 text = "$index",
-                color = TextGray,
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.titleSmall,
                 modifier = Modifier.width(28.dp)
             )
 
@@ -250,16 +242,15 @@ private fun ActiveSlotItem(
 
                 Text(
                     text = slot.exercise.name,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.titleSmall
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = "Objetivo: ${slot.targetSets} series" +
                             if (slot.targetReps != null) " de ${slot.targetReps} reps" else "",
-                    color = TextGray,
-                    fontSize = 12.sp
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp)
                 )
 
                 if (lastSets.isNotEmpty() && !isCompleted) {
@@ -272,15 +263,14 @@ private fun ActiveSlotItem(
                             Icon(
                                 imageVector = Icons.Default.History,
                                 contentDescription = null,
-                                tint = GoldAccent,
+                                tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(14.dp)
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
                                 text = "Objetivo a superar: ${refSet.weightKg}kg × ${refSet.reps} reps · $rirText",
-                                color = GoldAccent,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 12.sp
+                                color = MaterialTheme.colorScheme.primary,
+                                style = MaterialTheme.typography.labelMedium.copy(fontSize = 12.sp)
                             )
                         }
                     }
@@ -299,28 +289,28 @@ private fun ActiveSlotItem(
                         ) {
                             Text(
                                 text = "${set.setNumber}",
-                                color = TextGray,
-                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.labelLarge,
                                 modifier = Modifier.width(24.dp)
                             )
                             Text(
                                 text = "${set.weightKg} kg",
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                style = MaterialTheme.typography.labelLarge,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.weight(1f)
                             )
                             Text(
                                 text = "${set.reps} reps",
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                style = MaterialTheme.typography.labelLarge,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.weight(1f)
                             )
                             Text(
                                 text = if (set.isRirEnabled) "RIR ${set.rir}" else "-",
-                                color = GoldAccent,
-                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary,
+                                style = MaterialTheme.typography.labelLarge,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.weight(1f)
                             )
@@ -331,7 +321,7 @@ private fun ActiveSlotItem(
                                 Icon(
                                     imageVector = Icons.Default.Close,
                                     contentDescription = "Borrar serie",
-                                    tint = ErrorRed,
+                                    tint = MaterialTheme.colorScheme.error,
                                     modifier = Modifier.size(16.dp)
                                 )
                             }
@@ -350,13 +340,13 @@ private fun ActiveSlotItem(
                         Icon(
                             imageVector = Icons.Default.CheckCircle,
                             contentDescription = null,
-                            tint = GoldAccent
+                            tint = MaterialTheme.colorScheme.primary
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = "Ejercicio Completado",
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold
+                            color = MaterialTheme.colorScheme.onSurface,
+                            style = MaterialTheme.typography.labelLarge
                         )
                     }
                 } else {
@@ -372,15 +362,20 @@ private fun ActiveSlotItem(
                                     if (newValue.length <= 5) weightInput = newValue
                                 }
                             },
-                            label = { Text("Kg", color = TextGray) },
+                            label = {
+                                Text(
+                                    "Kg",
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                             singleLine = true,
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedTextColor = Color.White,
-                                unfocusedTextColor = Color.White,
-                                focusedBorderColor = GoldAccent,
-                                unfocusedBorderColor = TextGray,
-                                cursorColor = GoldAccent
+                                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                                unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                cursorColor = MaterialTheme.colorScheme.primary
                             ),
                             modifier = Modifier.weight(1f)
                         )
@@ -394,8 +389,8 @@ private fun ActiveSlotItem(
                             ) {
                                 Text(
                                     text = "$repsInput Reps",
-                                    color = Color.White,
-                                    fontSize = 12.sp,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp),
                                     maxLines = 1
                                 )
                             }
@@ -425,8 +420,8 @@ private fun ActiveSlotItem(
                             ) {
                                 Text(
                                     text = if (isRirEnabled) "RIR $rirInput" else "Fijo",
-                                    color = Color.White,
-                                    fontSize = 12.sp,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp),
                                     maxLines = 1
                                 )
                             }
@@ -475,20 +470,20 @@ private fun ActiveSlotItem(
                             },
                             modifier = Modifier
                                 .background(
-                                    color = if (isValidWeight) GoldAccent else FieldDark,
+                                    color = if (isValidWeight) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
                                     shape = RoundedCornerShape(12.dp)
                                 )
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Check,
                                 contentDescription = "Guardar",
-                                tint = if (isValidWeight) Color.Black else TextGray
+                                tint = if (isValidWeight) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
                 }
             }
         }
-        HorizontalDivider(color = DividerGray)
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
     }
 }

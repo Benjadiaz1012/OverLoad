@@ -11,8 +11,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -21,12 +19,6 @@ import com.pdm0126.overload.ui.components.OverloadConfirmDialog
 import com.pdm0126.overload.ui.components.OverloadInputDialog
 import com.pdm0126.overload.ui.components.OverloadTopBar
 import com.pdm0126.overload.domain.model.RoutineDay
-
-private val BackgroundDark = Color(0xFF0E0E0E)
-private val CardDark = Color(0xFF1A1A1A)
-private val GoldAccent = Color(0xFFE8A317)
-private val TextGray = Color(0xFFA0A0A0)
-private val ErrorRed = Color(0xFFE53935)
 
 @Composable
 fun RoutineEditor(
@@ -55,7 +47,7 @@ fun RoutineEditor(
     }
 
     Scaffold(
-        containerColor = BackgroundDark,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             OverloadTopBar(
                 title = microcycle?.name ?: "Editar rutina",
@@ -67,7 +59,7 @@ fun RoutineEditor(
                             Icon(
                                 Icons.Default.MoreVert,
                                 contentDescription = "Opciones",
-                                tint = Color.White
+                                tint = MaterialTheme.colorScheme.onBackground
                             )
                         }
                         DropdownMenu(
@@ -80,7 +72,7 @@ fun RoutineEditor(
                                     Icon(
                                         Icons.Default.Edit,
                                         contentDescription = null,
-                                        tint = GoldAccent
+                                        tint = MaterialTheme.colorScheme.primary
                                     )
                                 },
                                 onClick = {
@@ -95,7 +87,7 @@ fun RoutineEditor(
                                         Icon(
                                             Icons.Default.Star,
                                             contentDescription = null,
-                                            tint = GoldAccent
+                                            tint = MaterialTheme.colorScheme.primary
                                         )
                                     },
                                     onClick = {
@@ -110,7 +102,7 @@ fun RoutineEditor(
                                     Icon(
                                         Icons.Default.DeleteOutline,
                                         contentDescription = null,
-                                        tint = ErrorRed
+                                        tint = MaterialTheme.colorScheme.error
                                     )
                                 },
                                 onClick = {
@@ -132,7 +124,7 @@ fun RoutineEditor(
                         .padding(innerPadding),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator(color = GoldAccent)
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                 }
             }
 
@@ -144,7 +136,11 @@ fun RoutineEditor(
                         .padding(24.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(text = "No se encontró la rutina.", color = TextGray, fontSize = 14.sp)
+                    Text(
+                        text = "No se encontró la rutina.",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 }
             }
 
@@ -168,8 +164,8 @@ fun RoutineEditor(
                         item {
                             Text(
                                 text = "Tienes un entrenamiento en curso con esta rutina.",
-                                color = TextGray,
-                                fontSize = 13.sp
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.bodySmall
                             )
                         }
                     }
@@ -190,12 +186,16 @@ fun RoutineEditor(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            Icon(Icons.Default.Add, contentDescription = null, tint = GoldAccent)
+                            Icon(
+                                Icons.Default.Add,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
+                            )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = "Agregar día",
-                                color = GoldAccent,
-                                fontWeight = FontWeight.Bold
+                                color = MaterialTheme.colorScheme.primary,
+                                style = MaterialTheme.typography.labelLarge
                             )
                         }
                     }
@@ -261,16 +261,15 @@ private fun RoutineNameField(
             Icon(
                 imageVector = Icons.Default.Star,
                 contentDescription = "Rutina activa",
-                tint = GoldAccent,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(20.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
         }
         Text(
             text = name,
-            color = Color.White,
-            fontWeight = FontWeight.Bold,
-            fontSize = 22.sp
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.titleLarge.copy(fontSize = 22.sp)
         )
     }
 }
@@ -286,7 +285,7 @@ private fun DayRow(
         onClick = onClick,
         enabled = enabled,
         shape = RoundedCornerShape(14.dp),
-        colors = CardDefaults.cardColors(containerColor = CardDark),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         modifier = Modifier.fillMaxWidth()
     ) {
         Row(
@@ -298,25 +297,28 @@ private fun DayRow(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = day.focus,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.titleSmall
                 )
-                Text(text = "${day.slots.size} ejercicios", color = TextGray, fontSize = 12.sp)
+                Text(
+                    text = "${day.slots.size} ejercicios",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp)
+                )
             }
 
             IconButton(onClick = onDelete, enabled = enabled) {
                 Icon(
                     Icons.Default.DeleteOutline,
                     contentDescription = "Eliminar día",
-                    tint = ErrorRed
+                    tint = MaterialTheme.colorScheme.error
                 )
             }
 
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
                 contentDescription = "Editar día",
-                tint = TextGray,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(16.dp)
             )
         }
