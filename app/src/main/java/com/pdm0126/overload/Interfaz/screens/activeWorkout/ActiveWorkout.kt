@@ -1,5 +1,6 @@
 package com.pdm0126.overload.Interfaz.screens.activeWorkout
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,10 +21,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pdm0126.overload.Interfaz.components.ConfirmDialog
 import com.pdm0126.overload.Interfaz.components.TopBar
-import com.pdm0126.overload.domain.model.Exercise
 import com.pdm0126.overload.domain.model.RoutineDay
 import com.pdm0126.overload.domain.model.RoutineSlot
 import com.pdm0126.overload.domain.model.WorkoutSet
+import kotlinx.coroutines.launch
 
 private val BackgroundDark = Color(0xFF0E0E0E)
 private val CardDark = Color(0xFF1A1A1A)
@@ -43,36 +44,9 @@ data class LogSetRequest(
     val isRirEnabled: Boolean
 )
 
-private val previewExercise = Exercise(
-    id = "press_banca",
-    name = "Press de Banca Plano",
-    muscleGroup = "Pecho",
-    mechanic = "Compuesto",
-    targetMuscles = listOf("Pectoral"),
-    secondaryMuscles = listOf("Tríceps"),
-    equipment = "Barra",
-    instructions = emptyList(),
-    remoteImages = emptyList()
-)
-
-private val previewDay = RoutineDay(
-    dayId = 1L,
-    order = 0,
-    focus = "Push",
-    slots = listOf(
-        RoutineSlot(
-            slotId = 1L,
-            order = 0,
-            targetSets = 3,
-            targetReps = 8,
-            exercise = previewExercise
-        )
-    )
-)
-
 @Composable
 fun ActiveWorkout(
-    day: RoutineDay? = previewDay,
+    day: RoutineDay?,
     sessionSets: List<WorkoutSet> = emptyList(),
     lastSets: Map<String, List<WorkoutSet>> = emptyMap(),
     isLoading: Boolean = false,
@@ -84,9 +58,22 @@ fun ActiveWorkout(
     var showEndWorkoutDialog by remember { mutableStateOf(false) }
     var showCancelWorkoutDialog by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+
+    BackHandler(enabled = day != null) {
+        coroutineScope.launch {
+            snackbarHostState.currentSnackbarData?.dismiss()
+            snackbarHostState.showSnackbar(
+                message = "Finaliza o cancela el entrenamiento para salir",
+                duration = SnackbarDuration.Short
+            )
+        }
+    }
 
     Scaffold(
         containerColor = BackgroundDark,
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             TopBar(
                 title = if (day != null) "Entrenando: ${day.focus}" else "Cargando sesión...",
