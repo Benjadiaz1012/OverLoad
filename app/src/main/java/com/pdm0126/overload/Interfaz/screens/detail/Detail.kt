@@ -6,13 +6,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.BookmarkBorder
+import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.FitnessCenter
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,8 +23,10 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
+import com.pdm0126.overload.Interfaz.components.ConfirmDialog
 import com.pdm0126.overload.Interfaz.components.TopBar
 import com.pdm0126.overload.domain.model.Exercise
+import kotlinx.coroutines.launch
 
 private val BackgroundDark = Color(0xFF0E0E0E)
 private val CardDark = Color(0xFF1A1A1A)
@@ -44,7 +45,10 @@ fun Detail(
     )
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val exercise = uiState.exercise
-    val isLoading = uiState.isLoading
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+    var showUnbookmarkDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         containerColor = BackgroundDark,
@@ -52,35 +56,67 @@ fun Detail(
             TopBar(
                 title = exercise?.name ?: "Detalle",
                 showBackButton = true,
-                onBackClick = onBack
+                onBackClick = onBack,
+                trailingContent = {
+                    if (exercise != null) {
+                        IconButton(
+                            onClick = {
+                                if (uiState.isBookmarked) {
+                                    if (uiState.isWorkoutSessionActive) {
+                                        coroutineScope.launch {
+                                            snackbarHostState.currentSnackbarData?.dismiss()
+                                            snackbarHostState.showSnackbar(
+                                                message = "No puedes eliminar ejercicios mientras entrenas",
+                                                duration = SnackbarDuration.Short
+                                            )
+                                        }
+                                    } else {
+                                        showUnbookmarkDialog = true
+                                    }
+                                } else {
+                                    viewModel.toggleBookmark()
+                                    coroutineScope.launch {
+                                        snackbarHostState.currentSnackbarData?.dismiss()
+                                        snackbarHostState.showSnackbar(
+                                            message = "Agregado a tu biblioteca",
+                                            duration = SnackbarDuration.Short
+                                        )
+                                    }
+                                }
+                            }
+                        ) {
+                            Icon(
+                                imageVector = if (uiState.isBookmarked) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
+                                contentDescription = if (uiState.isBookmarked) "Quitar de biblioteca" else "Guardar en biblioteca",
+                                tint = GoldAccent
+                            )
+                        }
+                    }
+                }
             )
-        }
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
         when {
-            isLoading -> {
+            uiState.isLoading -> {
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
+                    modifier = Modifier.fillMaxSize().padding(innerPadding),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator(color = GoldAccent)
                 }
             }
 
-            exercise == null -> {
+            uiState.errorMessage != null -> {
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)
-                        .padding(24.dp),
+                    modifier = Modifier.fillMaxSize().padding(innerPadding).padding(24.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(text = "No se encontró el ejercicio.", color = TextGray, fontSize = 14.sp)
+                    Text(text = uiState.errorMessage ?: "", color = TextGray, fontSize = 14.sp)
                 }
             }
 
-            else -> {
+            exercise != null -> {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -127,6 +163,25 @@ fun Detail(
                 }
             }
         }
+    }
+
+    if (showUnbookmarkDialog) {
+        ConfirmDialog(
+            title = "Eliminar de la biblioteca",
+            text = "Si eliminas este ejercicio de tu biblioteca, desaparecerá de tus rutinas. ¿Quieres continuar?",
+            confirmText = "Eliminar",
+            dismissText = "Cancelar",
+            isDestructive = true,
+            icon = Icons.Default.DeleteOutline,
+            onConfirm = {
+                viewModel.toggleBookmark()
+                showUnbookmarkDialog = false
+                coroutineScope.launch {
+                    snackbarHostState.showSnackbar("Eliminado de tu biblioteca")
+                }
+            },
+            onDismiss = { showUnbookmarkDialog = false }
+        )
     }
 }
 
@@ -230,12 +285,7 @@ private fun InstructionStep(number: Int, text: String) {
                 .background(GoldAccent),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = "$number",
-                color = Color.Black,
-                fontWeight = FontWeight.Bold,
-                fontSize = 12.sp
-            )
+            Text(text = "$number", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 12.sp)
         }
         Spacer(modifier = Modifier.width(12.dp))
         Text(
