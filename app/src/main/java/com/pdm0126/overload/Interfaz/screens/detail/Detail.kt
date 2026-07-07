@@ -26,6 +26,7 @@ import coil3.compose.AsyncImage
 import com.pdm0126.overload.Interfaz.components.ConfirmDialog
 import com.pdm0126.overload.Interfaz.components.TopBar
 import com.pdm0126.overload.domain.model.Exercise
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 private val BackgroundDark = Color(0xFF0E0E0E)
@@ -192,7 +193,7 @@ fun Detail(
 
 @Composable
 private fun HeroImage(exercise: Exercise) {
-    val imageUrl = exercise.remoteImages.firstOrNull()
+    val imageUrls = exercise.remoteImages
 
     Box(
         modifier = Modifier
@@ -202,19 +203,30 @@ private fun HeroImage(exercise: Exercise) {
             .background(FieldDark),
         contentAlignment = Alignment.Center
     ) {
-        if (imageUrl != null) {
-            AsyncImage(
-                model = imageUrl,
-                contentDescription = exercise.name,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
-        } else {
+        if (imageUrls.isEmpty()) {
             Icon(
                 imageVector = Icons.Default.FitnessCenter,
                 contentDescription = exercise.name,
                 tint = GoldAccent,
                 modifier = Modifier.size(64.dp)
+            )
+        } else {
+            var currentIndex by remember(imageUrls) { mutableStateOf(0) }
+
+            LaunchedEffect(imageUrls) {
+                if (imageUrls.size > 1) {
+                    while (true) {
+                        delay(1200)
+                        currentIndex = (currentIndex + 1) % imageUrls.size
+                    }
+                }
+            }
+
+            AsyncImage(
+                model = imageUrls[currentIndex],
+                contentDescription = "Ejecución de ${exercise.name}",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
             )
         }
     }
