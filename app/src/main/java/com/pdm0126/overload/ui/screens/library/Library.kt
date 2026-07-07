@@ -1,344 +1,680 @@
 package com.pdm0126.overload.ui.screens.library
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
-import com.pdm0126.overload.R
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.automirrored.filled.ShowChart
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.material3.SecondaryTabRow
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
+import com.pdm0126.overload.ui.components.TopBar
+import com.pdm0126.overload.ui.components.ExerciseNavCache
 import com.pdm0126.overload.domain.TechnicalDictionary
 import com.pdm0126.overload.domain.model.Exercise
-import com.pdm0126.overload.ui.components.Error
-import com.pdm0126.overload.ui.components.OverloadScaffold
+
+private val BackgroundDark = Color(0xFF0E0E0E)
+private val CardDark = Color(0xFF1A1A1A)
+private val FieldDark = Color(0xFF222222)
+private val GoldAccent = Color(0xFFE8A317)
+private val TextGray = Color(0xFFA0A0A0)
+
+enum class ExerciseCardMode { DEFAULT, SELECTION, ANALYSIS }
+
+private val muscleGroupOptions = TechnicalDictionary.mainMuscleGroupsList
+private val mechanicOptions = listOf("Compuesto", "Aislamiento")
 
 @Composable
-fun LibraryScreen(
+fun Library(
     viewModel: LibraryViewModel = viewModel(factory = LibraryViewModel.Factory),
     isSelectionMode: Boolean = false,
     isAnalysisMode: Boolean = false,
     onBackClick: () -> Unit = {},
-    onExerciseClick: (String) -> Unit,
+    onExerciseClick: (Exercise) -> Unit = {},
     onExerciseSelect: (Exercise) -> Unit = {},
     onExerciseAnalysisSelect: (Exercise) -> Unit = {}
 ) {
-    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
-
     var showFilterSheet by remember { mutableStateOf(false) }
 
-    OverloadScaffold(
-        title = "Ejercicios",
-        showBackButton = isSelectionMode || isAnalysisMode,
-        onBackClick = { onBackClick() }
-    ) { paddingValues ->
+    LibraryContent(
+        state = uiState,
+        isSelectionMode = isSelectionMode,
+        isAnalysisMode = isAnalysisMode,
+        showFilterSheet = showFilterSheet,
+        onBackClick = onBackClick,
+        onTabSelected = viewModel::onTabSelected,
+        onQueryChange = viewModel::onSearchQueryChanged,
+        onSearchSubmit = {
+            viewModel.searchRemoteExercises()
+            focusManager.clearFocus()
+        },
+        onOpenFilterSheet = { showFilterSheet = true },
+        onDismissFilterSheet = { showFilterSheet = false },
+        onMuscleFilterToggle = viewModel::onMuscleFilterSelected,
+        onMechanicFilterToggle = viewModel::onMechanicFilterSelected,
+        onExerciseClick = { exercise ->
+            ExerciseNavCache.put(exercise)
+            onExerciseClick(exercise)
+        },
+        onExerciseSelect = { exercise ->
+            if (uiState.selectedTabIndex == 1) viewModel.addExercise(exercise)
+            onExerciseSelect(exercise)
+        },
+        onExerciseAnalysisSelect = { exercise ->
+            if (uiState.selectedTabIndex == 1) viewModel.addExercise(exercise)
+            onExerciseAnalysisSelect(exercise)
+        },
+        onRetrySearch = { viewModel.searchRemoteExercises() }
+    )
+}
+
+@Composable
+private fun LibraryContent(
+    state: LibraryUiState,
+    isSelectionMode: Boolean,
+    isAnalysisMode: Boolean,
+    showFilterSheet: Boolean,
+    onBackClick: () -> Unit,
+    onTabSelected: (Int) -> Unit,
+    onQueryChange: (String) -> Unit,
+    onSearchSubmit: () -> Unit,
+    onOpenFilterSheet: () -> Unit,
+    onDismissFilterSheet: () -> Unit,
+    onMuscleFilterToggle: (String?) -> Unit,
+    onMechanicFilterToggle: (String?) -> Unit,
+    onExerciseClick: (Exercise) -> Unit,
+    onExerciseSelect: (Exercise) -> Unit,
+    onExerciseAnalysisSelect: (Exercise) -> Unit,
+    onRetrySearch: () -> Unit
+) {
+    val cardMode = when {
+        isSelectionMode -> ExerciseCardMode.SELECTION
+        isAnalysisMode -> ExerciseCardMode.ANALYSIS
+        else -> ExerciseCardMode.DEFAULT
+    }
+    val isLocal = state.selectedTabIndex == 0
+
+    Scaffold(
+        containerColor = BackgroundDark,
+        topBar = {
+            TopBar(
+                title = "Ejercicios",
+                showBackButton = isSelectionMode || isAnalysisMode,
+                onBackClick = onBackClick
+            )
+        }
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(innerPadding)
         ) {
-            SecondaryTabRow(
-                selectedTabIndex = state.selectedTabIndex,
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.onSurface,
-            ) {
-                Tab(
-                    selected = state.selectedTabIndex == 0,
-                    onClick = { viewModel.onTabSelected(0) },
-                    text = { Text("Guardados") }
+            PillTabSelector(
+                selectedIndex = state.selectedTabIndex,
+                onSelect = onTabSelected
+            )
 
-                )
-                Tab(
-                    selected = state.selectedTabIndex == 1,
-                    onClick = { viewModel.onTabSelected(1) },
-                    text = { Text("Explorar") }
-                )
-            }
+            Spacer(modifier = Modifier.height(16.dp))
 
-            val isLocal = state.selectedTabIndex == 0
-            TextField(
-                value = state.query,
-                onValueChange = {  viewModel.onSearchQueryChanged(it) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp, bottom = 8.dp, start = 16.dp, end = 16.dp ),
-                placeholder = {
-                    Text(
-                        text = if (isLocal) "Tu biblioteca" else "Buscar ejercicio",
-                        color = MaterialTheme.colorScheme.onSecondaryContainer
-                    )
-                              },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                              },
-                trailingIcon = {
-                    Row {
-                        IconButton(onClick = { showFilterSheet = true }) {
-                            val isFilterActive = state.selectedMuscles != emptyList<String?>() || state.selectedMechanic != null
-                            Icon(
-                                imageVector = Icons.Default.FilterList,
-                                contentDescription = "Filtros",
-                                tint = if (isFilterActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-
-                        if (state.query.isNotEmpty()) {
-                            IconButton(
-                                onClick = { viewModel.onSearchQueryChanged(""); focusManager.clearFocus() }
-                            ) {
-                                Icon(
-                                    Icons.Default.Cancel,
-                                    contentDescription = "Limpiar búsqueda",
-                                    tint = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                        }
-                    }
-                },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                keyboardActions = KeyboardActions(
-                    onSearch = {
-                        if (!isLocal) {
-                            viewModel.searchRemoteExercises()
-                            focusManager.clearFocus()
-                        }
-                    },
-                    onDone = { focusManager.clearFocus() }
-                ),
-                shape = RoundedCornerShape(8.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.surface,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                    disabledContainerColor = MaterialTheme.colorScheme.surface,
-                )
+            SearchField(
+                query = state.query,
+                onQueryChange = onQueryChange,
+                onSearchSubmit = onSearchSubmit,
+                placeholder = if (isLocal) "Tu biblioteca" else "Buscar ejercicio",
+                isFilterActive = state.selectedMuscles.isNotEmpty() || state.selectedMechanic != null,
+                onFilterClick = onOpenFilterSheet
             )
 
             ActiveFiltersRow(
                 selectedMuscles = state.selectedMuscles,
                 selectedMechanic = state.selectedMechanic,
-                onRemoveMuscle = { muscle ->
-                    viewModel.onMuscleFilterSelected(muscle)
-                },
-                onRemoveMechanic = {
-                    viewModel.onMechanicFilterSelected(null)
-                }
+                onRemoveMuscle = { muscle -> onMuscleFilterToggle(muscle) },
+                onRemoveMechanic = { onMechanicFilterToggle(null) }
             )
 
             Spacer(modifier = Modifier.height(4.dp))
 
-
-            Box(
-                modifier = Modifier.fillMaxSize()
-            ) {
+            Box(modifier = Modifier.fillMaxSize()) {
                 if (isLocal) {
-                    if (state.localExercises.isEmpty()) {
-                        Text(
-                            text = "No tienes ejercicios guardados",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                    } else {
-                        LazyColumn(
-                            modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(vertical = 16.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            items(state.localExercises, key = { it.id }) { exercise ->
-                                ExerciseCard(
-                                    exercise = exercise,
-                                    isSelectionMode = isSelectionMode,
-                                    isAnalysisMode = isAnalysisMode,
-                                    onExerciseClick = { onExerciseClick(exercise.id) },
-                                    onSelectClick = { onExerciseSelect(exercise) },
-                                    onAnalysisClick = { onExerciseAnalysisSelect(exercise) }
-                                )
-                                ItemDivider()
-                            }
-                        }
-                    }
+                    SavedExercisesContent(
+                        exercises = state.localExercises,
+                        cardMode = cardMode,
+                        onExerciseClick = onExerciseClick,
+                        onExerciseSelect = onExerciseSelect,
+                        onExerciseAnalysisSelect = onExerciseAnalysisSelect
+                    )
                 } else {
-                    when {
-                        state.remoteState.isLoading -> {
-                            CircularProgressIndicator(
-                                modifier = Modifier.align(Alignment.Center),
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
-
-                        state.remoteState.errorMessage != null -> {
-                            Error(
-                                onRetryClick = { viewModel.searchRemoteExercises() },
-                                error = state.remoteState.errorMessage
-                            )
-                        }
-
-                        state.remoteState.results.isEmpty() && state.query.isBlank() -> {
-                            Column(
-                                modifier = Modifier.fillMaxSize(),
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Search,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(64.dp),
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
-                                )
-                                Text(
-                                    text = "Busca un ejercicio",
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold,
-                                )
-                            }
-                        }
-
-                        else -> {
-                            LazyColumn(
-                                modifier = Modifier.fillMaxSize(),
-                                contentPadding = PaddingValues(vertical = 16.dp),
-                                verticalArrangement = Arrangement.spacedBy(12.dp)
-                            ) {
-                                items(state.remoteState.results, key = { it.id }) { exercise ->
-                                    ExerciseCard(
-                                        exercise = exercise,
-                                        isSelectionMode = isSelectionMode,
-                                        isAnalysisMode = isAnalysisMode,
-                                        onExerciseClick = { onExerciseClick(exercise.id) },
-                                        onSelectClick = {
-                                            viewModel.addExercise(exercise)
-                                            onExerciseSelect(exercise)
-                                        },
-                                        onAnalysisClick = {
-                                            viewModel.addExercise(exercise)
-                                            onExerciseAnalysisSelect(exercise)
-                                        }
-                                    )
-                                    ItemDivider()
-                                }
-                            }
-                        }
-                    }
+                    ExploreContent(
+                        remoteState = state.remoteState,
+                        query = state.query,
+                        cardMode = cardMode,
+                        onExerciseClick = onExerciseClick,
+                        onExerciseSelect = onExerciseSelect,
+                        onExerciseAnalysisSelect = onExerciseAnalysisSelect,
+                        onRetry = onRetrySearch
+                    )
                 }
             }
         }
-        if (showFilterSheet) {
-            ExerciseFilterBottomSheet(
-                selectedMuscles = state.selectedMuscles,
-                selectedMechanic = state.selectedMechanic,
-                onMuscleSelect = { viewModel.onMuscleFilterSelected(it) },
-                onMechanicSelect = { viewModel.onMechanicFilterSelected(it) },
-                onDismiss = { showFilterSheet = false }
+    }
+
+    if (showFilterSheet) {
+        ExerciseFilterSheet(
+            selectedMuscles = state.selectedMuscles,
+            selectedMechanic = state.selectedMechanic,
+            onMuscleToggle = onMuscleFilterToggle,
+            onMechanicToggle = onMechanicFilterToggle,
+            onClearAll = {
+                onMuscleFilterToggle(null)
+                onMechanicFilterToggle(null)
+            },
+            onDismiss = onDismissFilterSheet
+        )
+    }
+}
+
+@Composable
+private fun PillTabSelector(
+    selectedIndex: Int,
+    onSelect: (Int) -> Unit
+) {
+    val tabs = listOf("Guardados", "Explorar")
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp)
+            .clip(RoundedCornerShape(14.dp))
+            .background(CardDark)
+            .padding(4.dp)
+    ) {
+        tabs.forEachIndexed { index, label ->
+            val isSelected = index == selectedIndex
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(if (isSelected) GoldAccent else Color.Transparent)
+                    .clickable { onSelect(index) }
+                    .padding(vertical = 10.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = label,
+                    color = if (isSelected) Color.Black else TextGray,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 13.sp
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SearchField(
+    query: String,
+    onQueryChange: (String) -> Unit,
+    onSearchSubmit: () -> Unit,
+    placeholder: String,
+    isFilterActive: Boolean,
+    onFilterClick: () -> Unit
+) {
+    TextField(
+        value = query,
+        onValueChange = onQueryChange,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp, vertical = 12.dp)
+            .clip(RoundedCornerShape(14.dp)),
+        placeholder = { Text(text = placeholder, color = TextGray) },
+        leadingIcon = {
+            Icon(imageVector = Icons.Default.Search, contentDescription = null, tint = GoldAccent)
+        },
+        trailingIcon = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                IconButton(onClick = onFilterClick) {
+                    Icon(
+                        imageVector = Icons.Default.Tune,
+                        contentDescription = "Filtros",
+                        tint = if (isFilterActive) GoldAccent else TextGray
+                    )
+                }
+                if (query.isNotEmpty()) {
+                    IconButton(onClick = { onQueryChange("") }) {
+                        Icon(Icons.Default.Close, contentDescription = "Limpiar", tint = TextGray)
+                    }
+                }
+            }
+        },
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+        keyboardActions = KeyboardActions(onSearch = { onSearchSubmit() }),
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = FieldDark,
+            unfocusedContainerColor = FieldDark,
+            disabledContainerColor = FieldDark,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            cursorColor = GoldAccent,
+            focusedTextColor = Color.White,
+            unfocusedTextColor = Color.White
+        )
+    )
+}
+
+@Composable
+private fun ActiveFiltersRow(
+    selectedMuscles: List<String>,
+    selectedMechanic: String?,
+    onRemoveMuscle: (String) -> Unit,
+    onRemoveMechanic: () -> Unit
+) {
+    val hasFilters = selectedMuscles.isNotEmpty() || selectedMechanic != null
+    if (!hasFilters) return
+
+    LazyRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(selectedMuscles) { muscle ->
+            ActiveFilterChip(label = muscle, onRemove = { onRemoveMuscle(muscle) })
+        }
+        selectedMechanic?.let { mechanic ->
+            item {
+                ActiveFilterChip(label = mechanic, onRemove = onRemoveMechanic)
+            }
+        }
+    }
+}
+
+@Composable
+private fun ActiveFilterChip(label: String, onRemove: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .clip(RoundedCornerShape(20.dp))
+            .background(GoldAccent.copy(alpha = 0.15f))
+            .padding(horizontal = 12.dp, vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = label, color = GoldAccent, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+        Spacer(modifier = Modifier.width(6.dp))
+        Icon(
+            imageVector = Icons.Default.Close,
+            contentDescription = "Quitar filtro $label",
+            tint = GoldAccent,
+            modifier = Modifier
+                .size(14.dp)
+                .clickable { onRemove() }
+        )
+    }
+}
+
+@Composable
+private fun SavedExercisesContent(
+    exercises: List<Exercise>,
+    cardMode: ExerciseCardMode,
+    onExerciseClick: (Exercise) -> Unit,
+    onExerciseSelect: (Exercise) -> Unit,
+    onExerciseAnalysisSelect: (Exercise) -> Unit
+) {
+    if (exercises.isEmpty()) {
+        Text(
+            text = "No tienes ejercicios guardados",
+            color = TextGray,
+            fontSize = 14.sp,
+            modifier = Modifier
+                .fillMaxSize()
+                .wrapContentSize(Alignment.Center)
+        )
+    } else {
+        ExerciseList(
+            exercises = exercises,
+            cardMode = cardMode,
+            onExerciseClick = onExerciseClick,
+            onExerciseSelect = onExerciseSelect,
+            onExerciseAnalysisSelect = onExerciseAnalysisSelect
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ExploreContent(
+    remoteState: RemoteState,
+    query: String,
+    cardMode: ExerciseCardMode,
+    onExerciseClick: (Exercise) -> Unit,
+    onExerciseSelect: (Exercise) -> Unit,
+    onExerciseAnalysisSelect: (Exercise) -> Unit,
+    onRetry: () -> Unit
+) {
+    PullToRefreshBox(
+        isRefreshing = remoteState.isLoading,
+        onRefresh = onRetry,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        when {
+            remoteState.isLoading && remoteState.results.isEmpty() -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = GoldAccent)
+                }
+            }
+
+            remoteState.errorMessage != null -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.WifiOff,
+                        contentDescription = null,
+                        tint = TextGray,
+                        modifier = Modifier.size(48.dp)
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = remoteState.errorMessage,
+                        color = TextGray,
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(horizontal = 32.dp)
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = "Reintentar",
+                        color = GoldAccent,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 13.sp,
+                        modifier = Modifier.clickable { onRetry() }
+                    )
+                }
+            }
+
+            remoteState.results.isEmpty() && query.isBlank() -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.TravelExplore,
+                        contentDescription = null,
+                        tint = TextGray,
+                        modifier = Modifier.size(56.dp)
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = "Busca un ejercicio",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 15.sp
+                    )
+                }
+            }
+
+            else -> {
+                ExerciseList(
+                    exercises = remoteState.results,
+                    cardMode = cardMode,
+                    onExerciseClick = onExerciseClick,
+                    onExerciseSelect = onExerciseSelect,
+                    onExerciseAnalysisSelect = onExerciseAnalysisSelect
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ExerciseList(
+    exercises: List<Exercise>,
+    cardMode: ExerciseCardMode,
+    onExerciseClick: (Exercise) -> Unit,
+    onExerciseSelect: (Exercise) -> Unit,
+    onExerciseAnalysisSelect: (Exercise) -> Unit
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        items(exercises, key = { it.id }) { exercise ->
+            ExerciseCard(
+                exercise = exercise,
+                mode = cardMode,
+                onClick = { onExerciseClick(exercise) },
+                onSelectClick = { onExerciseSelect(exercise) },
+                onAnalysisClick = { onExerciseAnalysisSelect(exercise) }
             )
         }
     }
 }
+
+@Composable
+private fun ExerciseCard(
+    exercise: Exercise,
+    mode: ExerciseCardMode,
+    onClick: () -> Unit,
+    onSelectClick: () -> Unit,
+    onAnalysisClick: () -> Unit
+) {
+    Card(
+        onClick = onClick,
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = CardDark),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(64.dp)
+                    .clip(CircleShape)
+                    .background(FieldDark),
+                contentAlignment = Alignment.Center
+            ) {
+                val imageUrl = exercise.remoteImages.firstOrNull()
+                if (imageUrl != null) {
+                    AsyncImage(
+                        model = imageUrl,
+                        contentDescription = exercise.name,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(CircleShape)
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.FitnessCenter,
+                        contentDescription = exercise.name,
+                        tint = GoldAccent,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.width(14.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = exercise.name,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    MuscleTag(text = exercise.muscleGroup)
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(text = "•", color = TextGray, fontSize = 12.sp)
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(text = exercise.mechanic, color = TextGray, fontSize = 12.sp)
+                }
+            }
+
+            when (mode) {
+                ExerciseCardMode.SELECTION -> {
+                    IconButton(onClick = onSelectClick) {
+                        Icon(
+                            imageVector = Icons.Default.AddCircleOutline,
+                            contentDescription = "Seleccionar",
+                            tint = GoldAccent,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
+                }
+
+                ExerciseCardMode.ANALYSIS -> {
+                    IconButton(onClick = onAnalysisClick) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ShowChart,
+                            contentDescription = "Analizar",
+                            tint = GoldAccent
+                        )
+                    }
+                }
+
+                ExerciseCardMode.DEFAULT -> {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                        contentDescription = "Ver más",
+                        tint = TextGray,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun MuscleTag(text: String) {
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(6.dp))
+            .background(GoldAccent.copy(alpha = 0.15f))
+            .padding(horizontal = 8.dp, vertical = 2.dp)
+    ) {
+        Text(
+            text = text.replaceFirstChar { it.uppercase() },
+            color = GoldAccent,
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun ExerciseFilterBottomSheet(
+private fun ExerciseFilterSheet(
     selectedMuscles: List<String>,
     selectedMechanic: String?,
-    onMuscleSelect: (String?) -> Unit,
-    onMechanicSelect: (String?) -> Unit,
+    onMuscleToggle: (String?) -> Unit,
+    onMechanicToggle: (String?) -> Unit,
+    onClearAll: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        sheetState = sheetState,
-        containerColor = MaterialTheme.colorScheme.surface,
+        containerColor = CardDark
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp)
-                .padding(bottom = 48.dp)
+                .padding(bottom = 40.dp)
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .defaultMinSize(minHeight = 48.dp),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = "Filtros",
-                    style = MaterialTheme.typography.titleLarge,
+                    color = GoldAccent,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
+                    fontSize = 20.sp
                 )
-
                 if (selectedMuscles.isNotEmpty() || selectedMechanic != null) {
-                    TextButton(onClick = {
-                        onMuscleSelect(null)
-                        onMechanicSelect(null)
-                    }) {
-                        Text("Limpiar todo", fontWeight = FontWeight.Bold)
-                    }
+                    Text(
+                        text = "Limpiar todo",
+                        color = TextGray,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.clickable { onClearAll() }
+                    )
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             Text(
                 text = "Grupo Muscular",
-                style = MaterialTheme.typography.titleMedium,
+                color = Color.White,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
+                fontSize = 15.sp
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                val muscles = TechnicalDictionary.mainMuscleGroupsList
-                muscles.forEach { muscle ->
-                    FilterChip(
-                        selected = selectedMuscles.contains(muscle),
-                        onClick = { onMuscleSelect(muscle) },
-                        label = { Text(muscle) },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                            selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                muscleGroupOptions.forEach { option ->
+                    val selected = option in selectedMuscles
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(if (selected) GoldAccent else FieldDark)
+                            .clickable { onMuscleToggle(option) }
+                            .padding(horizontal = 14.dp, vertical = 8.dp)
+                    ) {
+                        Text(
+                            text = option,
+                            color = if (selected) Color.Black else TextGray,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold
                         )
-                    )
+                    }
                 }
             }
 
@@ -346,196 +682,36 @@ fun ExerciseFilterBottomSheet(
 
             Text(
                 text = "Mecánica",
-                style = MaterialTheme.typography.titleMedium,
+                color = Color.White,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
+                fontSize = 15.sp
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                val mechanics = listOf("Compuesto", "Aislamiento")
-                mechanics.forEach { mechanic ->
-                    FilterChip(
-                        selected = selectedMechanic == mechanic,
-                        onClick = { onMechanicSelect(if (selectedMechanic == mechanic) null else mechanic) },
-                        label = {
-                            Text(
-                                text = mechanic,
-                                modifier = Modifier.fillMaxWidth(),
-                                textAlign = TextAlign.Center
-                            )
-                        },
-                        modifier = Modifier.weight(1f),
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                            selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun ExerciseCard(
-    exercise: Exercise,
-    isSelectionMode: Boolean,
-    isAnalysisMode: Boolean,
-    onExerciseClick: () -> Unit,
-    onSelectClick: () -> Unit,
-    onAnalysisClick : (Exercise) -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onExerciseClick() }
-            .padding(12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-
-        AsyncImage(
-            model = exercise.remoteImages.firstOrNull(),
-            contentDescription = exercise.name,
-            modifier = Modifier
-                .size(100.dp)
-                .clip(RoundedCornerShape(4.dp)),
-            contentScale = ContentScale.Crop
-        )
-
-        Spacer(modifier = Modifier.width(16.dp))
-
-        Column(
-            modifier = Modifier
-                .weight(1f)
-        ) {
-            Text(
-                text = exercise.name,
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = "${exercise.muscleGroup.replaceFirstChar { it.uppercase() }} • ${exercise.mechanic}",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-
-        if (isSelectionMode) {
-            IconButton(onClick = onSelectClick) {
-                Icon(
-                    imageVector = Icons.Default.AddCircleOutline,
-                    contentDescription = "Seleccionar",
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(32.dp)
-                )
-            }
-        } else if (isAnalysisMode) {
-            IconButton(onClick = { onAnalysisClick(exercise) }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.search_insights_24px),
-                    contentDescription = "Analizar",
-                    tint = MaterialTheme.colorScheme.primary,
-                )
-            }
-        }
-
-        else {
-            IconButton(onClick = onExerciseClick) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
-                    contentDescription = "Ver más",
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(32.dp)
-                )
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ActiveFiltersRow(
-    selectedMuscles: List<String>,
-    selectedMechanic: String?,
-    onRemoveMuscle: (String) -> Unit,
-    onRemoveMechanic: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val hasFilters = selectedMuscles.isNotEmpty() || selectedMechanic != null
-
-    AnimatedVisibility(
-        visible = hasFilters,
-        enter = expandVertically(),
-        exit = shrinkVertically()
-    ) {
-        LazyRow(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(selectedMuscles) { muscle ->
-                InputChip(
-                    selected = true,
-                    onClick = { onRemoveMuscle(muscle) },
-                    label = {
+                mechanicOptions.forEach { mechanic ->
+                    val isSelected = mechanic == selectedMechanic
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(if (isSelected) GoldAccent else FieldDark)
+                            .clickable { onMechanicToggle(mechanic) }
+                            .padding(vertical = 12.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
                         Text(
-                            text = muscle,
-                            style = MaterialTheme.typography.labelMedium
+                            text = mechanic,
+                            color = if (isSelected) Color.Black else TextGray,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 13.sp
                         )
-                    },
-                    trailingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Quitar filtro $muscle",
-                            modifier = Modifier.size(16.dp)
-                        )
-                    },
-                    colors = InputChipDefaults.inputChipColors(
-                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                        selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    ),
-                    border = null
-                )
-            }
-
-            selectedMechanic?.let { mechanic ->
-                item {
-                    InputChip(
-                        selected = true,
-                        onClick = { onRemoveMechanic() },
-                        label = {
-                            Text(
-                                text = mechanic,
-                                style = MaterialTheme.typography.labelMedium
-                            )
-                        },
-                        trailingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Close,
-                                contentDescription = "Quitar filtro $mechanic",
-                                modifier = Modifier.size(16.dp)
-                            )
-                        },
-                        colors = InputChipDefaults.inputChipColors(
-                            selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                            selectedLabelColor = MaterialTheme.colorScheme.onSecondaryContainer
-                        ),
-                        border = null
-                    )
+                    }
                 }
             }
         }
     }
-}
-
-@Composable
-fun ItemDivider() {
-    Spacer(modifier = Modifier.height(4.dp))
-    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-    Spacer(modifier = Modifier.height(4.dp))
 }

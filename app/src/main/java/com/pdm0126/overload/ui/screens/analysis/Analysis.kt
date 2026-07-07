@@ -1,119 +1,96 @@
 package com.pdm0126.overload.ui.screens.analysis
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ShowChart
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
-import com.patrykandpatrick.vico.compose.cartesian.axis.HorizontalAxis
-import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.compose.cartesian.data.columnModel
-import com.patrykandpatrick.vico.compose.cartesian.data.lineModel
-import com.patrykandpatrick.vico.compose.cartesian.layer.ColumnCartesianLayer
-import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
-import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
-import com.patrykandpatrick.vico.compose.cartesian.marker.DefaultCartesianMarker
-import com.patrykandpatrick.vico.compose.cartesian.marker.rememberDefaultCartesianMarker
-import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
-import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
-import com.patrykandpatrick.vico.compose.common.Fill
-import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
-import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
-import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.common.data.ExtraStore
-import com.pdm0126.overload.R
+import com.pdm0126.overload.ui.components.TopBar
 import com.pdm0126.overload.domain.TechnicalDictionary
-import com.pdm0126.overload.ui.components.OverloadScaffold
+import com.pdm0126.overload.domain.model.Exercise
+import com.pdm0126.overload.domain.model.MuscleDistribution
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-@Composable
-internal fun rememberToolTipMarker(
-    valueFormatter: DefaultCartesianMarker.ValueFormatter = remember { DefaultCartesianMarker.ValueFormatter.default() }
-) = rememberDefaultCartesianMarker(
-    label = rememberTextComponent(
-        background = rememberShapeComponent(
-            fill = Fill(MaterialTheme.colorScheme.onSurface),
-            shape = RoundedCornerShape(1.dp)
-        )
-    ),
-    valueFormatter = valueFormatter
+private val BackgroundDark = Color(0xFF0E0E0E)
+private val CardDark = Color(0xFF1A1A1A)
+private val FieldDark = Color(0xFF222222)
+private val GoldAccent = Color(0xFFE8A317)
+private val TextGray = Color(0xFFA0A0A0)
+
+private val barPalette = listOf(
+    Color(0xFFE53935), Color(0xFF1E88E5), Color(0xFF43A047),
+    Color(0xFFFB8C00), Color(0xFF8E24AA), Color(0xFF00ACC1)
 )
 
 @Composable
-fun AnalysisScreen(
-    onNavigateToLibrary : () -> Unit,
-    viewModel: AnalysisViewModel = viewModel(factory = AnalysisViewModel.Factory)
+fun Analysis(
+    viewModel: AnalysisViewModel = viewModel(factory = AnalysisViewModel.Factory),
+    onNavigateToLibrary: () -> Unit = {},
+    onBack: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val tabs = listOf("Distribución", "Evolución")
 
-    OverloadScaffold(
-        title = "Análisis",
-        showBackButton = false
-    ) { paddingValues ->
+    Scaffold(
+        containerColor = BackgroundDark,
+        topBar = { TopBar(title = "Análisis") }
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(innerPadding)
+                .padding(horizontal = 20.dp)
         ) {
-            SecondaryTabRow(
-                selectedTabIndex = uiState.selectedTabIndex,
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.onSurface
-            ) {
-                tabs.forEachIndexed { index, title ->
-                    Tab(
-                        selected = uiState.selectedTabIndex == index,
-                        onClick = { viewModel.onTabSelected(index) },
-                        text = { Text(title, fontWeight = FontWeight.Bold) }
-                    )
-                }
-            }
+            Spacer(modifier = Modifier.height(8.dp))
+
+            PillTabRow(
+                tabs = listOf("Distribución", "Evolución"),
+                selectedIndex = uiState.selectedTabIndex,
+                onSelect = { viewModel.onTabSelected(it) }
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             if (uiState.isLoading) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(color = GoldAccent)
                 }
             } else {
-                LazyColumn(
-                    contentPadding = PaddingValues(16.dp),
-                    modifier = Modifier.fillMaxSize()
-                ) {
+                Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                     if (uiState.selectedTabIndex == 0) {
-                        item {
-                            DistributionTab(uiState = uiState)
-                        }
+                        DistributionSection(muscleDistribution = uiState.muscleDistribution)
                     } else {
-                        item {
-                            EvolutionTab(
-                                uiState = uiState,
-                                onNavigateToLibrary = onNavigateToLibrary,
-                                onClearSelection = { viewModel.selectExercise(null) }
-                            )
-                        }
+                        EvolutionSection(
+                            uiState = uiState,
+                            onModeChanged = viewModel::onEvolutionModeChanged,
+                            onNavigateToLibrary = onNavigateToLibrary,
+                            onClearExercise = { viewModel.selectExercise(null) },
+                            onMuscleGroupSelected = { viewModel.selectMuscleGroup(it) }
+                        )
                     }
+                    Spacer(modifier = Modifier.height(24.dp))
                 }
             }
         }
@@ -121,268 +98,419 @@ fun AnalysisScreen(
 }
 
 @Composable
-fun DistributionTab(uiState: AnalysisUiState) {
-    val distributionModelProducer = remember { CartesianChartModelProducer() }
-    val muscleListKey = remember { ExtraStore.Key<List<String>>() }
-
-    val muscleFormatter = remember(uiState.muscleDistribution) {
-        CartesianValueFormatter { context, x, _ ->
-            val fullName = context.model.extraStore.getOrNull(muscleListKey)?.getOrNull(x.toInt())?.replaceFirstChar { it.uppercase() }
-            TechnicalDictionary.getPaddedMuscleNameForChart(fullName)
-        }
-    }
-
-    val distributionTooltipFormatter = remember(uiState.muscleDistribution) {
-        DefaultCartesianMarker.ValueFormatter { context, targets ->
-            val xIndex = targets.first().x.toInt()
-            val fullName = context.model.extraStore.getOrNull(muscleListKey)?.getOrNull(xIndex)?.replaceFirstChar { it.uppercase() } ?: ""
-
-            if (uiState.muscleDistribution.isEmpty()) {
-                "Sin datos registrados"
-            } else {
-                val distributionRecord = uiState.muscleDistribution.find {
-                    it.muscleGroup.equals(fullName.trim(), ignoreCase = true)
-                }
-                val volume = distributionRecord?.totalEffectiveVolume ?: 0f
-                "$fullName: ${String.format(Locale.US, "%.1f", volume)} Kg"
-            }
-        }
-    }
-
-    LaunchedEffect(uiState.muscleDistribution) {
-        val muscleNames = TechnicalDictionary.mainMuscleGroupsList
-        val volumes = mutableListOf<Float>()
-        val distributionMap = uiState.muscleDistribution.associateBy { it.muscleGroup.lowercase() }
-
-        muscleNames.forEach { muscle ->
-            val volume = distributionMap[muscle.lowercase()]?.totalEffectiveVolume ?: 0f
-            volumes.add(volume)
-        }
-        distributionModelProducer.runTransaction {
-            columnModel { series(volumes) }
-            extras { it[muscleListKey] = muscleNames }
-        }
-    }
-
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = "Volumen Efectivo Total",
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = "Distribución ponderada por grupo muscular",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-
-        CartesianChartHost(
-            chart = rememberCartesianChart(
-                rememberColumnCartesianLayer(
-                    columnProvider = ColumnCartesianLayer.ColumnProvider.series(
-                        rememberLineComponent(
-                            fill = Fill(MaterialTheme.colorScheme.primary),
-                            thickness = 58.dp,
-                            shape = RoundedCornerShape(topStart = 6.dp, topEnd = 6.dp)
-                        )
-                    ),
-                ),
-                startAxis = VerticalAxis.rememberStart(),
-                bottomAxis = HorizontalAxis.rememberBottom(
-                    valueFormatter = muscleFormatter,
-                    labelRotationDegrees = -45f,
-                    label = rememberTextComponent(
-                        style = TextStyle(
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontSize = 12.sp
-                        )
-                    )
-                ),
-                marker = rememberToolTipMarker(valueFormatter = distributionTooltipFormatter),
-            ),
-            modelProducer = distributionModelProducer,
-            scrollState = rememberVicoScrollState(),
-            zoomState = rememberVicoZoomState(zoomEnabled = true),
-            modifier = Modifier
-                .width(950.dp)
-                .height(350.dp)
-        )
-    }
-}
-
-@Composable
-fun EvolutionTab(
-    uiState: AnalysisUiState,
-    onNavigateToLibrary: () -> Unit,
-    onClearSelection: () -> Unit
+private fun PillTabRow(
+    tabs: List<String>,
+    selectedIndex: Int,
+    onSelect: (Int) -> Unit
 ) {
-    val trendModelProducer = remember { CartesianChartModelProducer() }
-    val dateListKey = remember { ExtraStore.Key<List<String>>() }
-
-    val dateFormatter = remember(uiState.exerciseProgression) {
-        CartesianValueFormatter { context, x, _ ->
-            val date = context.model.extraStore.getOrNull(dateListKey)?.getOrNull(x.toInt())
-            if (date.isNullOrBlank()) "\u200B" else date
-        }
-    }
-
-    val trendTooltipFormatter = remember(uiState.exerciseProgression) {
-        DefaultCartesianMarker.ValueFormatter { context, targets ->
-            val xIndex = targets.first().x.toInt()
-            val date = context.model.extraStore.getOrNull(dateListKey)?.getOrNull(xIndex) ?: ""
-
-            if (uiState.exerciseProgression.isEmpty()) {
-                "Sin datos registrados"
-            } else {
-                val volume = uiState.exerciseProgression.getOrNull(xIndex)?.totalVolume ?: 0f
-                "$date: ${String.format(Locale.US, "%.1f", volume)} Kg"
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(14.dp))
+            .background(CardDark)
+            .padding(4.dp)
+    ) {
+        tabs.forEachIndexed { index, label ->
+            val isSelected = index == selectedIndex
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(if (isSelected) GoldAccent else Color.Transparent)
+                    .clickable { onSelect(index) }
+                    .padding(vertical = 10.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = label,
+                    color = if (isSelected) Color.Black else TextGray,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 13.sp
+                )
             }
         }
     }
+}
 
-    LaunchedEffect(uiState.exerciseProgression, uiState.selectedExerciseId) {
-        val volumes: List<Float>
-        val dates: List<String>
-
-        if (uiState.exerciseProgression.isEmpty()) {
-            volumes = listOf(0f, 0f, 0f, 0f, 0f)
-            dates = listOf("\u200B", "\u200B", "\u200B", "\u200B", "\u200B")
-        } else {
-            volumes = uiState.exerciseProgression.map { it.totalVolume }
-            val sdf = SimpleDateFormat("dd MMM", Locale.getDefault())
-            dates = uiState.exerciseProgression.map { sdf.format(Date(it.timestamp)) }
-        }
-
-        trendModelProducer.runTransaction {
-            lineModel { series(volumes) }
-            extras { it[dateListKey] = dates }
-        }
+@Composable
+private fun DistributionSection(muscleDistribution: List<MuscleDistribution>) {
+    val distributionByGroup = muscleDistribution.associateBy { it.muscleGroup.lowercase() }
+    val fullDistribution = TechnicalDictionary.mainMuscleGroupsList.map { group ->
+        distributionByGroup[group.lowercase()] ?: MuscleDistribution(group, 0f)
     }
 
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = "Sobrecarga Progresiva",
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = CardDark),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = "Volumen Efectivo por Grupo Muscular",
+                color = GoldAccent,
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (muscleDistribution.isEmpty()) {
+                EmptyHint(text = "Aún no tienes entrenamientos registrados.")
+            } else {
+                BarChart(
+                    data = fullDistribution,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(260.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun BarChart(
+    data: List<MuscleDistribution>,
+    modifier: Modifier = Modifier
+) {
+    val maxValue = (data.maxOfOrNull { it.totalEffectiveVolume } ?: 1f).coerceAtLeast(1f)
+
+    Row(
+        modifier = modifier.horizontalScroll(rememberScrollState()),
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        data.forEachIndexed { index, item ->
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .width(56.dp)
+                    .fillMaxHeight()
+            ) {
+                Text(
+                    text = "%,.0f kg".format(item.totalEffectiveVolume),
+                    color = Color.White,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                val barHeightFraction = item.totalEffectiveVolume / maxValue
+                val displayedFraction = if (item.totalEffectiveVolume > 0f) {
+                    barHeightFraction.coerceIn(0.05f, 1f)
+                } else {
+                    0.001f
+                }
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .width(28.dp),
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxHeight(displayedFraction)
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(topStart = 6.dp, topEnd = 6.dp))
+                            .background(barPalette[index % barPalette.size])
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = item.muscleGroup.replaceFirstChar { it.uppercase() },
+                    color = TextGray,
+                    fontSize = 10.sp,
+                    textAlign = TextAlign.Center,
+                    maxLines = 2,
+                    lineHeight = 12.sp
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun EvolutionSection(
+    uiState: AnalysisUiState,
+    onModeChanged: (EvolutionMode) -> Unit,
+    onNavigateToLibrary: () -> Unit,
+    onClearExercise: () -> Unit,
+    onMuscleGroupSelected: (String?) -> Unit
+) {
+    Column {
+        EvolutionModeSelector(
+            selected = uiState.evolutionMode,
+            onSelect = onModeChanged
         )
-        val selectedExercise = uiState.availableExercises.find { it.id == uiState.selectedExerciseId }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        ExerciseSelectorCard(
-            selectedExercise = selectedExercise?.name,
-            onNavigateToLibrary = onNavigateToLibrary,
-            onClearSelection = onClearSelection
+        when (uiState.evolutionMode) {
+            EvolutionMode.EXERCISE -> {
+                val selectedExercise =
+                    uiState.availableExercises.find { it.id == uiState.selectedExerciseId }
+                ExerciseSelectorCard(
+                    selectedExercise = selectedExercise,
+                    onNavigateToLibrary = onNavigateToLibrary,
+                    onClear = onClearExercise
+                )
+            }
+
+            EvolutionMode.MUSCLE_GROUP -> {
+                MuscleGroupSelector(
+                    options = uiState.availableMuscleGroups,
+                    selected = uiState.selectedMuscleGroup,
+                    onSelect = onMuscleGroupSelected
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = CardDark),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = "Sobrecarga Progresiva",
+                    color = GoldAccent,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                if (uiState.evolutionProgression.isEmpty()) {
+                    EmptyHint(
+                        text = if (uiState.evolutionMode == EvolutionMode.EXERCISE) {
+                            "Selecciona un ejercicio para ver su progreso."
+                        } else {
+                            "Selecciona un grupo muscular para ver su progreso."
+                        }
+                    )
+                } else {
+                    LineChart(
+                        points = uiState.evolutionProgression,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(220.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun EvolutionModeSelector(
+    selected: EvolutionMode,
+    onSelect: (EvolutionMode) -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        ModeChip(
+            label = "Por ejercicio",
+            isSelected = selected == EvolutionMode.EXERCISE,
+            onClick = { onSelect(EvolutionMode.EXERCISE) },
+            modifier = Modifier.weight(1f)
         )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        CartesianChartHost(
-            chart = rememberCartesianChart(
-                rememberLineCartesianLayer(),
-                startAxis = VerticalAxis.rememberStart(),
-                bottomAxis = HorizontalAxis.rememberBottom(valueFormatter = dateFormatter),
-                marker = rememberToolTipMarker(valueFormatter = trendTooltipFormatter)
-            ),
-            modelProducer = trendModelProducer,
-            scrollState = rememberVicoScrollState(),
-            zoomState = rememberVicoZoomState(zoomEnabled = true),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(350.dp)
+        ModeChip(
+            label = "Por músculo",
+            isSelected = selected == EvolutionMode.MUSCLE_GROUP,
+            onClick = { onSelect(EvolutionMode.MUSCLE_GROUP) },
+            modifier = Modifier.weight(1f)
         )
     }
 }
 
 @Composable
-fun ExerciseSelectorCard(
-    selectedExercise: String?,
-    onNavigateToLibrary: () -> Unit,
-    onClearSelection: () -> Unit
+private fun ModeChip(
+    label: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    val isExerciseSelected = selectedExercise != null
-
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(10.dp))
+            .background(if (isSelected) GoldAccent else CardDark)
+            .clickable { onClick() }
+            .padding(vertical = 10.dp),
+        contentAlignment = Alignment.Center
     ) {
-        ElevatedCard(
-            onClick = onNavigateToLibrary,
-            modifier = Modifier.fillMaxWidth(),
-            shape = CardDefaults.elevatedShape,
-            elevation = CardDefaults.elevatedCardElevation(
-                defaultElevation = 12.dp,
-                pressedElevation = 4.dp
-            ),
-            colors = CardDefaults.elevatedCardColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-            )
+        Text(
+            text = label,
+            color = if (isSelected) Color.Black else TextGray,
+            fontWeight = FontWeight.Bold,
+            fontSize = 13.sp
+        )
+    }
+}
+
+@Composable
+private fun ExerciseSelectorCard(
+    selectedExercise: Exercise?,
+    onNavigateToLibrary: () -> Unit,
+    onClear: () -> Unit
+) {
+    Card(
+        onClick = onNavigateToLibrary,
+        shape = RoundedCornerShape(14.dp),
+        colors = CardDefaults.cardColors(containerColor = CardDark),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(14.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = null,
+                tint = GoldAccent,
+                modifier = Modifier.size(22.dp)
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                text = selectedExercise?.name ?: "Buscar ejercicio en la biblioteca",
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 14.sp,
+                modifier = Modifier.weight(1f)
+            )
+            if (selectedExercise != null) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Quitar selección",
+                    tint = TextGray,
                     modifier = Modifier
-                        .size(38.dp)
-                        .background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (isExerciseSelected) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ShowChart,
-                            contentDescription = "Buscar ejercicio",
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                    } else {
-                        Icon(
-                            painter = painterResource(id = R.drawable.search_insights_24px),
-                            contentDescription = "Analizar ejercicio",
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.width(16.dp))
-
-                Text(
-                    text = selectedExercise ?: "Buscar ejercicio en la biblioteca",
-                    modifier = Modifier.weight(1f),
-                    style = MaterialTheme.typography.titleMedium,
-                    maxLines = 2,
-                    overflow = Ellipsis,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontWeight = FontWeight.Bold
+                        .size(20.dp)
+                        .clickable { onClear() }
                 )
+            }
+        }
+    }
+}
 
-                if (isExerciseSelected) {
-                    IconButton(
-                        onClick = onClearSelection,
-                        modifier = Modifier.size(36.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Quitar ejercicio",
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
+@Composable
+private fun MuscleGroupSelector(
+    options: List<String>,
+    selected: String?,
+    onSelect: (String?) -> Unit
+) {
+    if (options.isEmpty()) {
+        EmptyHint(text = "Aún no hay grupos musculares con datos registrados.")
+        return
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .horizontalScrollChips(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        options.forEach { muscle ->
+            val isSelected = muscle == selected
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(if (isSelected) GoldAccent else FieldDark)
+                    .clickable { onSelect(if (isSelected) null else muscle) }
+                    .padding(horizontal = 14.dp, vertical = 8.dp)
+            ) {
+                Text(
+                    text = muscle.replaceFirstChar { it.uppercase() },
+                    color = if (isSelected) Color.Black else TextGray,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun Modifier.horizontalScrollChips(): Modifier = this.then(
+    Modifier.horizontalScroll(rememberScrollState())
+)
+
+@Composable
+private fun LineChart(
+    points: List<ProgressionPoint>,
+    modifier: Modifier = Modifier
+) {
+    val maxValue = (points.maxOfOrNull { it.volume } ?: 1f).coerceAtLeast(1f)
+    val minValue = (points.minOfOrNull { it.volume } ?: 0f)
+    val range = (maxValue - minValue).coerceAtLeast(1f)
+
+    val sdf = remember { SimpleDateFormat("dd MMM", Locale.getDefault()) }
+
+    Column(modifier = modifier) {
+        Canvas(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+        ) {
+            if (points.size < 2) return@Canvas
+
+            val stepX = size.width / (points.size - 1)
+            val path = Path()
+
+            points.forEachIndexed { index, point ->
+                val x = index * stepX
+                val normalized = (point.volume - minValue) / range
+                val y = size.height - (normalized * size.height)
+
+                if (index == 0) path.moveTo(x, y) else path.lineTo(x, y)
+            }
+
+            drawPath(
+                path = path,
+                color = GoldAccent,
+                style = Stroke(width = 4f, pathEffect = PathEffect.cornerPathEffect(8f))
+            )
+
+            points.forEachIndexed { index, point ->
+                val x = index * stepX
+                val normalized = (point.volume - minValue) / range
+                val y = size.height - (normalized * size.height)
+                drawCircle(color = GoldAccent, radius = 6f, center = Offset(x, y))
             }
         }
 
-        if (isExerciseSelected) {
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
-                text = "Toca arriba para cambiar de ejercicio",
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center
-            )
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            val firstDate = points.firstOrNull()?.timestamp?.let { sdf.format(Date(it)) } ?: ""
+            val lastDate = points.lastOrNull()?.timestamp?.let { sdf.format(Date(it)) } ?: ""
+            Text(text = firstDate, color = TextGray, fontSize = 11.sp)
+            Text(text = lastDate, color = TextGray, fontSize = 11.sp)
         }
+    }
+}
+
+@Composable
+private fun EmptyHint(text: String) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(140.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = text,
+            color = TextGray,
+            fontSize = 13.sp,
+            textAlign = TextAlign.Center
+        )
     }
 }

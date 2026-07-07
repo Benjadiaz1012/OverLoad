@@ -2,15 +2,18 @@ package com.pdm0126.overload.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Overload Palette
 
 val OverloadBlack = Color(0xFF000000)
-val OverloadDarkGray = Color(0xFF121212)
-val OverloadMediumGray = Color(0xFF1E1E1E)
-val OverloadLightGray = Color(0xFFBDBDBD)
+val OverloadBackground = Color(0xFF0E0E0E)
+val OverloadSurface = Color(0xFF1A1A1A)
+val OverloadSurfaceVariant = Color(0xFF222222)
+val OverloadOnSurfaceVariant = Color(0xFFA0A0A0)
+val OverloadDivider = Color(0xFF2E2E2E)
 
-val OverloadRed = Color(0xFF8B0000)
-val OverloadRedBright = Color(0xFFb50000)
-val OverloadGold = Color(0xFFB8860B)
+val OverloadGold = Color(0xFFE8A317)
+val OverloadGoldDim = Color(0xFFB8860B)
+
+val OverloadError = Color(0xFFE53935)
+val OverloadErrorContainer = Color(0xFF8B0000)
 
 val OverloadWhite = Color(0xFFF5F5F5)

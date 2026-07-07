@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.pdm0126.overload.OverloadApplication
+import com.pdm0126.overload.domain.TechnicalDictionary
 import com.pdm0126.overload.domain.model.Exercise
 import com.pdm0126.overload.domain.model.MuscleDistribution
 import com.pdm0126.overload.domain.repository.AnalysisRepository
@@ -14,46 +15,98 @@ import com.pdm0126.overload.domain.repository.ExerciseRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 
+data class ProgressionPoint(
+    val timestamp: Long,
+    val volume: Float
+)
+
+enum class EvolutionMode { EXERCISE, MUSCLE_GROUP }
+
+data class AnalysisUiState(
+    val isLoading: Boolean = true,
+    val selectedTabIndex: Int = 0,
+
+    val muscleDistribution: List<MuscleDistribution> = emptyList(),
+
+    val evolutionMode: EvolutionMode = EvolutionMode.EXERCISE,
+    val availableExercises: List<Exercise> = emptyList(),
+    val availableMuscleGroups: List<String> = emptyList(),
+    val selectedExerciseId: String? = null,
+    val selectedMuscleGroup: String? = null,
+    val evolutionProgression: List<ProgressionPoint> = emptyList()
+)
+
 @OptIn(ExperimentalCoroutinesApi::class)
 class AnalysisViewModel(
     private val analysisRepository: AnalysisRepository,
-    private val exerciseRepository: ExerciseRepository // Inyección del repositorio correcto
+    private val exerciseRepository: ExerciseRepository
 ) : ViewModel() {
 
-    private val _selectedExerciseId = MutableStateFlow<String?>(null)
     private val _selectedTabIndex = MutableStateFlow(0)
+    private val _evolutionMode = MutableStateFlow(EvolutionMode.EXERCISE)
+    private val _selectedExerciseId = MutableStateFlow<String?>(null)
+    private val _selectedMuscleGroup = MutableStateFlow<String?>(null)
 
     private data class AnalysisStateData(
         val tabIndex: Int,
+        val evolutionMode: EvolutionMode,
         val distribution: List<MuscleDistribution>,
         val exercises: List<Exercise>,
-        val selectedId: String?
+        val selectedExerciseId: String?,
+        val selectedMuscleGroup: String?
     )
 
     val uiState: StateFlow<AnalysisUiState> = combine(
         _selectedTabIndex,
+        _evolutionMode,
         analysisRepository.getOverallMuscleDistribution(),
         exerciseRepository.getLocalExercises(),
-        _selectedExerciseId
-    ) { tabIndex, distribution, exercises, selectedId ->
-        AnalysisStateData(tabIndex, distribution, exercises, selectedId)
-    }.flatMapLatest { ( tabIndex, distribution, exercises, selectedId) ->
+        combine(_selectedExerciseId, _selectedMuscleGroup) { exerciseId, muscleGroup ->
+            exerciseId to muscleGroup
+        }
+    ) { tabIndex, evolutionMode, distribution, exercises, (exerciseId, muscleGroup) ->
+        AnalysisStateData(tabIndex, evolutionMode, distribution, exercises, exerciseId, muscleGroup)
+    }.flatMapLatest { data ->
 
-        // Si hay un ejercicio seleccionado, consultamos su historial en Room
-        val trendFlow = if (selectedId != null) {
-            analysisRepository.getVolumeProgressionForExercise(selectedId)
-        } else {
-            flowOf(emptyList())
+        val progressionFlow: Flow<List<ProgressionPoint>> = when {
+            data.evolutionMode == EvolutionMode.EXERCISE && data.selectedExerciseId != null -> {
+                analysisRepository.getVolumeProgressionForExercise(data.selectedExerciseId)
+                    .map { records ->
+                        records.map {
+                            ProgressionPoint(
+                                it.timestamp,
+                                it.totalVolume
+                            )
+                        }
+                    }
+            }
+
+            data.evolutionMode == EvolutionMode.MUSCLE_GROUP && data.selectedMuscleGroup != null -> {
+                analysisRepository.getEffectiveVolumeProgressionForMuscle(data.selectedMuscleGroup)
+                    .map { records ->
+                        records.map {
+                            ProgressionPoint(
+                                it.timestamp,
+                                it.effectiveVolume
+                            )
+                        }
+                    }
+            }
+
+            else -> flowOf(emptyList())
         }
 
-        trendFlow.map { progression ->
+        progressionFlow.map { progression ->
             AnalysisUiState(
                 isLoading = false,
-                selectedTabIndex = tabIndex,
-                muscleDistribution = distribution,
-                availableExercises = exercises,
-                selectedExerciseId = selectedId,
-                exerciseProgression = progression
+                selectedTabIndex = data.tabIndex,
+                muscleDistribution = data.distribution,
+                evolutionMode = data.evolutionMode,
+                availableExercises = data.exercises,
+                availableMuscleGroups = TechnicalDictionary.mainMuscleGroupsList,
+                selectedExerciseId = data.selectedExerciseId,
+                selectedMuscleGroup = data.selectedMuscleGroup,
+                evolutionProgression = progression
             )
         }
     }.stateIn(
@@ -61,17 +114,23 @@ class AnalysisViewModel(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = AnalysisUiState()
     )
+
     fun onTabSelected(index: Int) {
         if (_selectedTabIndex.value != index) {
             _selectedTabIndex.value = index
         }
     }
+
+    fun onEvolutionModeChanged(mode: EvolutionMode) {
+        _evolutionMode.value = mode
+    }
+
     fun selectExercise(exerciseId: String?) {
-        if (exerciseId == null) {
-            _selectedExerciseId.value = null
-            return
-        }
         _selectedExerciseId.value = exerciseId
+    }
+
+    fun selectMuscleGroup(muscleGroup: String?) {
+        _selectedMuscleGroup.value = muscleGroup
     }
 
     companion object {

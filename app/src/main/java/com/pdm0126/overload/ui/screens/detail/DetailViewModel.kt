@@ -13,6 +13,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import com.pdm0126.overload.ui.components.ExerciseNavCache
+
+data class DetailUiState(
+    val isLoading: Boolean = true,
+    val exercise: Exercise? = null,
+    val isBookmarked: Boolean = false,
+    val errorMessage: String? = null,
+    val isWorkoutSessionActive: Boolean = false
+)
 
 class DetailViewModel(
     private val exerciseId: String,
@@ -31,9 +40,7 @@ class DetailViewModel(
     private fun observeActiveSession() {
         viewModelScope.launch {
             workoutRepository.getActiveSession().collect { session ->
-                _uiState.value = _uiState.value.copy(
-                    isWorkoutSessionActive = session != null
-                )
+                _uiState.value = _uiState.value.copy(isWorkoutSessionActive = session != null)
             }
         }
     }
@@ -46,9 +53,9 @@ class DetailViewModel(
                 val isBookmarked = exercise != null
 
                 if (exercise == null) {
-                    val remoteCache = exerciseRepository.getRemoteExercises("").getOrNull()
-                    exercise = remoteCache?.find { it.id == exerciseId }
+                    exercise = ExerciseNavCache.get(exerciseId)
                 }
+
                 if (exercise != null) {
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
@@ -83,7 +90,6 @@ class DetailViewModel(
             }
         }
     }
-
 
     companion object {
         fun provideFactory(exerciseId: String) = viewModelFactory {

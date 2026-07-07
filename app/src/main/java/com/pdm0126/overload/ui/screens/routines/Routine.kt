@@ -1,165 +1,182 @@
 package com.pdm0126.overload.ui.screens.routines
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.automirrored.filled.ListAlt
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.pdm0126.overload.domain.model.Blueprint
-import com.pdm0126.overload.domain.model.BlueprintCatalog
+import com.pdm0126.overload.ui.components.TopBar
 import com.pdm0126.overload.domain.model.RoutineMicrocycle
-import com.pdm0126.overload.ui.components.OverloadConfirmDialog
-import com.pdm0126.overload.ui.components.OverloadInfoDialog
-import com.pdm0126.overload.ui.components.OverloadScaffold
 import kotlinx.coroutines.launch
 
+private val BackgroundDark = Color(0xFF0E0E0E)
+private val CardDark = Color(0xFF1A1A1A)
+private val GoldAccent = Color(0xFFE8A317)
+private val TextGray = Color(0xFFA0A0A0)
 
 @Composable
-fun RoutinesScreen(
-    viewModel: RoutineViewModel = viewModel(factory = RoutineViewModel.Factory),
-    onNavigateToCreateRoutine: () -> Unit,
-    onNavigateToRoutineEditor: (Long) -> Unit
+fun Routines(
+    viewModel: RoutinesViewModel = viewModel(factory = RoutinesViewModel.Factory),
+    onCreateRoutine: () -> Unit = {},
+    onOpenRoutine: (RoutineMicrocycle) -> Unit = {}
 ) {
-    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    RoutinesListContent(
-        state = state,
-        onStartCreating = onNavigateToCreateRoutine,
-        onNavigateToRoutineEditor = onNavigateToRoutineEditor
-    )
-}
-
-@Composable
-fun RoutinesListContent(
-    state: RoutinesUiState,
-    onStartCreating: () -> Unit,
-    onNavigateToRoutineEditor: (Long) -> Unit
-) {
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
-    OverloadScaffold(
-        title = "Mis Rutinas",
+    Scaffold(
+        containerColor = BackgroundDark,
+        topBar = {
+            TopBar(title = "Mis Rutinas")
+        },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = onStartCreating,
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
+                onClick = onCreateRoutine,
+                containerColor = GoldAccent,
+                contentColor = Color.Black
             ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Nueva Rutina")
+                Icon(imageVector = Icons.Default.Add, contentDescription = "Nueva rutina")
             }
         },
-    ) { paddingValues ->
-        Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
-            if (state.savedMicrocycles.isEmpty()) {
-                Column(
-                    modifier = Modifier.align(Alignment.Center),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ListAlt,
-                        contentDescription = null,
-                        modifier = Modifier.size(64.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = "No tienes rutinas",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        }
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            when {
+                uiState.isLoading -> {
+                    CircularProgressIndicator(
+                        color = GoldAccent,
+                        modifier = Modifier.align(Alignment.Center)
                     )
                 }
-            } else {
-                LazyColumn(
-                    contentPadding = PaddingValues(vertical = 16.dp),
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    items(state.savedMicrocycles, key = { it.microcycleId }) { microcycle ->
-                        val isEditorBlocked = microcycle.isActive && state.isWorkoutSessionActive
-                        MicrocycleCard(
-                            microcycle = microcycle,
-                            onNavigateToRoutineEditor = { clickedId ->
-                                if (isEditorBlocked) {
-                                    coroutineScope.launch {
-                                        snackbarHostState.currentSnackbarData?.dismiss()
-                                        snackbarHostState.showSnackbar(
-                                            message = "No puedes modificar tu rutina mientras entrenas",
-                                            duration = SnackbarDuration.Short
-                                        )
+
+                uiState.savedMicrocycles.isEmpty() -> {
+                    EmptyState(modifier = Modifier.align(Alignment.Center))
+                }
+
+                else -> {
+                    LazyColumn(
+                        contentPadding = PaddingValues(vertical = 16.dp, horizontal = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        items(uiState.savedMicrocycles, key = { it.microcycleId }) { microcycle ->
+                            val isEditorBlocked =
+                                microcycle.isActive && uiState.isWorkoutSessionActive
+
+                            MicrocycleCard(
+                                microcycle = microcycle,
+                                isEditorBlocked = isEditorBlocked,
+                                onClick = {
+                                    if (isEditorBlocked) {
+                                        coroutineScope.launch {
+                                            snackbarHostState.currentSnackbarData?.dismiss()
+                                            snackbarHostState.showSnackbar(
+                                                message = "No puedes modificar tu rutina mientras entrenas",
+                                                duration = SnackbarDuration.Short
+                                            )
+                                        }
+                                    } else {
+                                        onOpenRoutine(microcycle)
                                     }
-                                } else {
-                                    onNavigateToRoutineEditor(clickedId)
                                 }
-                            },
-                            isEditorBlocked = isEditorBlocked
-                        )
-                        HorizontalDivider(
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                        )
+                            )
+                        }
                     }
                 }
             }
-            SnackbarHost(
-                hostState = snackbarHostState,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 88.dp)
-            )
         }
     }
 }
 
 @Composable
-fun MicrocycleCard(
-    microcycle: RoutineMicrocycle,
-    onNavigateToRoutineEditor: (Long) -> Unit,
-    isEditorBlocked: Boolean = false
-) {
+private fun EmptyState(modifier: Modifier = Modifier) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onNavigateToRoutineEditor(microcycle.microcycleId) }
-            .padding(16.dp)
+        modifier = modifier.padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.ListAlt,
+            contentDescription = null,
+            tint = TextGray,
+            modifier = Modifier.size(64.dp)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "No tienes rutinas",
+            color = Color.White,
+            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp,
+            textAlign = TextAlign.Center
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = "Crea una desde el botón +",
+            color = TextGray,
+            fontSize = 13.sp,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+private fun MicrocycleCard(
+    microcycle: RoutineMicrocycle,
+    isEditorBlocked: Boolean,
+    onClick: () -> Unit
+) {
+    Card(
+        onClick = onClick,
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = CardDark),
+        modifier = Modifier.fillMaxWidth()
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = microcycle.name,
-                    style = MaterialTheme.typography.titleLarge,
+                    color = GoldAccent,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 18.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = "Sistema Base: ${microcycle.blueprintType}\nDuración: ${microcycle.days.size} días",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    text = "Sistema base: ${microcycle.blueprintType}",
+                    color = TextGray,
+                    fontSize = 13.sp
+                )
+                Text(
+                    text = "Duración: ${microcycle.days.size} días",
+                    color = TextGray,
+                    fontSize = 13.sp
                 )
             }
 
@@ -170,166 +187,19 @@ fun MicrocycleCard(
                     Icon(
                         imageVector = Icons.Default.Star,
                         contentDescription = "Activa",
-                        tint = MaterialTheme.colorScheme.tertiary,
+                        tint = GoldAccent,
                         modifier = Modifier.size(22.dp)
                     )
-                    Spacer(modifier = Modifier.width(12.dp))
+                    Spacer(modifier = Modifier.width(10.dp))
                 }
-                if (!isEditorBlocked)
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = "Administrar Rutina",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-fun BlueprintSelectionScreen(
-    viewModel: RoutineViewModel = viewModel(factory = RoutineViewModel.Factory),
-    onBackClick: () -> Unit,
-    onRoutineCreated: () -> Unit
-) {
-    var blueprintToConfirm by rememberSaveable { mutableStateOf<Blueprint?>(null) }
-
-    OverloadScaffold(
-        title = "Elige un Sistema",
-        showBackButton = true,
-        onBackClick = onBackClick
-    ) { paddingValues ->
-        LazyColumn(
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-            modifier = Modifier.fillMaxSize().padding(paddingValues)
-        ) {
-            item {
-                Text(
-                    text = "Selecciona una plantilla base. Podrás modificar los días y el nombre de tu rutina más adelante.",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-
-            items(BlueprintCatalog.systems) { blueprint ->
-                Card(
-                    onClick = { blueprintToConfirm = blueprint },
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.Top
-                        ) {
-                            Text(
-                                text = blueprint.name,
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.weight(1f)
-                            )
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
-                                contentDescription = "Seleccionar",
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            AssistChip(
-                                onClick = {},
-                                label = { Text(blueprint.level.label) },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Default.SignalCellularAlt,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(16.dp)
-                                    )
-                                }
-                            )
-                            AssistChip(
-                                onClick = {},
-                                label = { Text(blueprint.goal.label) },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Default.TrackChanges,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(16.dp)
-                                    )
-                                }
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Text(
-                            text = blueprint.description,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(8.dp)).padding(12.dp)
-                                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
-                                .padding(12.dp),
-                            horizontalArrangement = Arrangement.SpaceAround
-                        ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Text(
-                                    text = "Duración",
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                                Text(
-                                    text = "${blueprint.minMicrocycleDays}-${blueprint.maxMicrocycleDays} días",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Text(
-                                    text = "Frecuencia",
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                                Text(
-                                    text = if (blueprint.id == "blank") "Personalizada" else ("x${blueprint.maxFrequencyPerMuscle}/semana"),
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                        }
-                    }
+                if (!isEditorBlocked) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "Administrar rutina",
+                        tint = TextGray
+                    )
                 }
             }
         }
     }
-    if (blueprintToConfirm != null) {
-        OverloadConfirmDialog(
-            title = "Crear Nueva Rutina",
-            text = "¿Deseas crear un nuevo microciclo basado en el sistema ${blueprintToConfirm!!.name}?",
-            confirmText = "Crear",
-            dismissText = "Cancelar",
-            icon = Icons.Default.Create,
-            onConfirm = {
-                viewModel.createMicrocycleFromBlueprint(blueprintToConfirm!!)
-                blueprintToConfirm = null
-                onRoutineCreated() },
-            onDismiss = { blueprintToConfirm = null }
-        )
-    }
 }
-

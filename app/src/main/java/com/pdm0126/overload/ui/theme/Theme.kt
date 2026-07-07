@@ -4,29 +4,34 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 
-// Overload es nativamente oscuro como el universo de DC
 private val DarkColorScheme = darkColorScheme(
-    primary = OverloadRed,
-    onPrimary = OverloadWhite,
-
-
-    primaryContainer = OverloadRedBright,
+    primary = OverloadGold,
+    onPrimary = OverloadBlack,
+    primaryContainer = OverloadGoldDim,
     onPrimaryContainer = OverloadWhite,
 
-    secondary = OverloadLightGray,
+    secondary = OverloadOnSurfaceVariant,
     onSecondary = OverloadBlack,
 
     tertiary = OverloadGold,
     onTertiary = OverloadBlack,
 
-    background = OverloadBlack,
+    error = OverloadError,
+    onError = OverloadWhite,
+    errorContainer = OverloadErrorContainer,
+    onErrorContainer = OverloadWhite,
+
+    background = OverloadBackground,
     onBackground = OverloadWhite,
 
-    surface = OverloadDarkGray,
+    surface = OverloadSurface,
     onSurface = OverloadWhite,
 
-    surfaceVariant = OverloadMediumGray,
-    onSurfaceVariant = OverloadLightGray
+    surfaceVariant = OverloadSurfaceVariant,
+    onSurfaceVariant = OverloadOnSurfaceVariant,
+
+    outline = OverloadDivider,
+    outlineVariant = OverloadDivider
 )
 
 @Composable

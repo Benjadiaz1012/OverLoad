@@ -7,64 +7,50 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.pdm0126.overload.OverloadApplication
-import com.pdm0126.overload.domain.model.Blueprint
+import com.pdm0126.overload.domain.model.RoutineMicrocycle
 import com.pdm0126.overload.domain.repository.RoutineRepository
 import com.pdm0126.overload.domain.repository.WorkoutRepository
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 
-class RoutineViewModel(
+data class RoutinesUiState(
+    val isLoading: Boolean = true,
+    val savedMicrocycles: List<RoutineMicrocycle> = emptyList(),
+    val activeMicrocycleId: Long? = null,
+    val isWorkoutSessionActive: Boolean = false
+)
+
+class RoutinesViewModel(
     private val routineRepository: RoutineRepository,
     private val workoutRepository: WorkoutRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(RoutinesUiState())
-    val uiState: StateFlow<RoutinesUiState> = _uiState.asStateFlow()
+    val uiState: StateFlow<RoutinesUiState> = combine(
+        routineRepository.getAllMicrocycles(),
+        workoutRepository.getActiveSession()
+    ) { microcycles, activeSession ->
+        val activeId = microcycles.find { it.isActive }?.microcycleId
+        val sortedMicrocycles = microcycles.sortedByDescending { it.isActive }
 
-    init {
-        viewModelScope.launch {
-            combine(
-                routineRepository.getAllMicrocycles(),
-                workoutRepository.getActiveSession()
-            ) { microcycles, activeSession ->
-                val activeId = microcycles.find { it.isActive }?.microcycleId
-                val sortedMicrocycles = microcycles.sortedByDescending { it.isActive }
-
-                RoutinesUiState(
-                    savedMicrocycles = sortedMicrocycles,
-                    activeMicrocycleId = activeId,
-                    isWorkoutSessionActive = activeSession != null
-                )
-            }.collect { state ->
-                _uiState.value = state
-            }
-        }
-    }
-    fun createMicrocycleFromBlueprint(blueprint: Blueprint) {
-        viewModelScope.launch {
-            val state = _uiState.value
-            val isFirst = state.savedMicrocycles.isEmpty()
-
-            val newMicrocycleId = routineRepository.createMicrocycle(
-                name = "Nuevo: ${blueprint.name}",
-                blueprintType = blueprint.name,
-                isActive = isFirst
-            )
-            blueprint.defaultDays.forEachIndexed { index, dayName ->
-                routineRepository.addDayToMicrocycle(
-                    microcycleId = newMicrocycleId,
-                    order = index + 1,
-                    focus = dayName
-                )
-            }
-        }
-    }
+        RoutinesUiState(
+            isLoading = false,
+            savedMicrocycles = sortedMicrocycles,
+            activeMicrocycleId = activeId,
+            isWorkoutSessionActive = activeSession != null
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = RoutinesUiState()
+    )
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val app = this[APPLICATION_KEY] as OverloadApplication
-                RoutineViewModel(
+                RoutinesViewModel(
                     routineRepository = app.overloadProvider.provideRoutineRepository(),
                     workoutRepository = app.overloadProvider.provideWorkoutRepository()
                 )
@@ -72,4 +58,3 @@ class RoutineViewModel(
         }
     }
 }
-

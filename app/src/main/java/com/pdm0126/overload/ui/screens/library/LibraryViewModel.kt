@@ -16,6 +16,22 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+data class RemoteState(
+    val isLoading: Boolean = false,
+    val results: List<Exercise> = emptyList(),
+    val errorMessage: String? = null
+)
+
+data class LibraryUiState(
+    val selectedTabIndex: Int = 0,
+    val localExercises: List<Exercise> = emptyList(),
+    val localExercisesIds: Set<String> = emptySet(),
+    val selectedMuscles: List<String> = emptyList(),
+    val selectedMechanic: String? = null,
+    val query: String = "",
+    val remoteState: RemoteState = RemoteState()
+)
+
 class LibraryViewModel(
     private val exerciseRepository: ExerciseRepository
 ) : ViewModel() {
@@ -26,9 +42,10 @@ class LibraryViewModel(
     private val _query = MutableStateFlow("")
     private val _remoteState = MutableStateFlow(RemoteState())
 
-    private val _filtersFlow = combine(_selectedMuscles, _selectedMechanic) { muscle, mechanic ->
-        Pair(muscle, mechanic)
+    private val _filtersFlow = combine(_selectedMuscles, _selectedMechanic) { muscles, mechanic ->
+        muscles to mechanic
     }
+
     val uiState: StateFlow<LibraryUiState> = combine(
         exerciseRepository.getLocalExercises(),
         _selectedTabIndex,
@@ -38,26 +55,19 @@ class LibraryViewModel(
     ) { local, tabIndex, filters, query, remote ->
 
         val (muscles, mechanic) = filters
+
         val filteredLocal = local.filter { exercise ->
-            val matchesMuscles = muscles.isEmpty() || muscles.any { muscle -> exercise.muscleGroup.equals(muscle, ignoreCase = true) }
-            val matchesMechanic = mechanic == null || exercise.mechanic.equals(mechanic, ignoreCase = true)
-            val matchesQuery = query.isBlank() || exercise.name.contains(query, ignoreCase = true)
-            matchesMuscles && matchesMechanic && matchesQuery
+            matchesFilters(exercise, muscles, mechanic, query)
         }
 
         val filteredRemote = remote.results.filter { exercise ->
-            val matchesMuscles = muscles.isEmpty() || muscles.any { muscles -> exercise.muscleGroup.equals(muscles, ignoreCase = true) }
-            val matchesMechanic = mechanic == null || exercise.mechanic.equals(mechanic, ignoreCase = true)
-            val matchesQuery = query.isBlank() || exercise.name.contains(query, ignoreCase = true)
-            matchesMuscles && matchesMechanic && matchesQuery
+            matchesFilters(exercise, muscles, mechanic, query)
         }
-
-        val localExercisesIds = filteredLocal.map { ex -> ex.id }.toSet()
 
         LibraryUiState(
             selectedTabIndex = tabIndex,
             localExercises = filteredLocal,
-            localExercisesIds = localExercisesIds,
+            localExercisesIds = filteredLocal.map { it.id }.toSet(),
             selectedMuscles = muscles,
             selectedMechanic = mechanic,
             query = query,
@@ -68,6 +78,20 @@ class LibraryViewModel(
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = LibraryUiState()
     )
+
+    private fun matchesFilters(
+        exercise: Exercise,
+        muscles: List<String>,
+        mechanic: String?,
+        query: String
+    ): Boolean {
+        val matchesMuscles = muscles.isEmpty() || muscles.any { muscle ->
+            exercise.muscleGroup.equals(muscle, ignoreCase = true)
+        }
+        val matchesMechanic = mechanic == null || exercise.mechanic.equals(mechanic, ignoreCase = true)
+        val matchesQuery = query.isBlank() || exercise.name.contains(query, ignoreCase = true)
+        return matchesMuscles && matchesMechanic && matchesQuery
+    }
 
     fun onTabSelected(index: Int) {
         if (_selectedTabIndex.value != index) {
@@ -81,57 +105,49 @@ class LibraryViewModel(
     fun onSearchQueryChanged(query: String) {
         _query.value = query
         if (query.isBlank() && _selectedTabIndex.value == 1) {
-            _remoteState.value = RemoteState() // Limpiar resultados de búsqueda
+            _remoteState.value = RemoteState()
         }
     }
 
     fun onMuscleFilterSelected(muscle: String?) {
         if (muscle == null) {
             _selectedMuscles.value = emptyList()
-        } else {
-            val currentMuscles = _selectedMuscles.value.toMutableList()
-            if (currentMuscles.contains(muscle)) {
-                currentMuscles.remove(muscle)
-            } else {
-                currentMuscles.add(muscle)
-            }
-            _selectedMuscles.value = currentMuscles
+            return
         }
+        val current = _selectedMuscles.value.toMutableList()
+        if (current.contains(muscle)) current.remove(muscle) else current.add(muscle)
+        _selectedMuscles.value = current
     }
+
     fun onMechanicFilterSelected(mechanic: String?) {
         _selectedMechanic.value = if (_selectedMechanic.value == mechanic) null else mechanic
     }
 
     fun searchRemoteExercises() {
-        if (_query.value.isBlank() || _selectedTabIndex.value != 1)
-            return
+        if (_query.value.isBlank() || _selectedTabIndex.value != 1) return
+
         viewModelScope.launch {
-            _remoteState.value = RemoteState(isLoading = true, errorMessage = null)
+            _remoteState.value = RemoteState(isLoading = true)
+
             exerciseRepository.getRemoteExercises(_query.value)
                 .onSuccess { remoteExercises ->
-                    if (remoteExercises.isEmpty()) {
-                        _remoteState.value = RemoteState(
-                            errorMessage = "No se encontraron resultados",
-                            isLoading = false
-                        )
+                    _remoteState.value = if (remoteExercises.isEmpty()) {
+                        RemoteState(errorMessage = "No se encontraron resultados")
                     } else {
-                        _remoteState.value = RemoteState(
-                            results = remoteExercises,
-                            errorMessage = null,
-                            isLoading = false
-                        )
+                        RemoteState(results = remoteExercises)
                     }
                 }
                 .onFailure { error ->
-                    _remoteState.value = RemoteState(
-                        errorMessage = error.message ?: "Error desconocido",
-                        isLoading = false
-                    )
+                    val friendlyMessage = if (error is java.io.IOException) {
+                        "Sin conexión a internet. Revisa tu red e intenta de nuevo."
+                    } else {
+                        "Ocurrió un error al buscar. Intenta de nuevo."
+                    }
+                    _remoteState.value = RemoteState(errorMessage = friendlyMessage)
                 }
         }
     }
 
-    // Para el selection mode
     fun addExercise(exercise: Exercise) {
         viewModelScope.launch {
             if (!uiState.value.localExercisesIds.contains(exercise.id)) {

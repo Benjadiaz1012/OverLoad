@@ -17,21 +17,21 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
-import com.pdm0126.overload.Interfaz.components.BottomBar
-import com.pdm0126.overload.Interfaz.screens.activeWorkout.ActiveWorkout
-import com.pdm0126.overload.Interfaz.screens.activeWorkout.ActiveWorkoutViewModel
-import com.pdm0126.overload.Interfaz.screens.analysis.Analysis
-import com.pdm0126.overload.Interfaz.screens.analysis.AnalysisViewModel
-import com.pdm0126.overload.Interfaz.screens.detail.Detail
-import com.pdm0126.overload.Interfaz.screens.library.Library
-import com.pdm0126.overload.Interfaz.screens.routines.Routines
-import com.pdm0126.overload.Interfaz.screens.dayEditor.DayEditor
-import com.pdm0126.overload.Interfaz.screens.dayEditor.DayEditorViewModel
-import com.pdm0126.overload.Interfaz.screens.routineEditor.RoutineEditor
-import com.pdm0126.overload.Interfaz.screens.signin.SignIn
-import com.pdm0126.overload.Interfaz.screens.system.SystemViewModel
-import com.pdm0126.overload.Interfaz.screens.system.TrainingSystem
-import com.pdm0126.overload.Interfaz.screens.training.Training
+import com.pdm0126.overload.ui.components.BottomBar
+import com.pdm0126.overload.ui.screens.activeWorkout.ActiveWorkout
+import com.pdm0126.overload.ui.screens.activeWorkout.ActiveWorkoutViewModel
+import com.pdm0126.overload.ui.screens.analysis.Analysis
+import com.pdm0126.overload.ui.screens.analysis.AnalysisViewModel
+import com.pdm0126.overload.ui.screens.detail.Detail
+import com.pdm0126.overload.ui.screens.library.Library
+import com.pdm0126.overload.ui.screens.routines.Routines
+import com.pdm0126.overload.ui.screens.dayEditor.DayEditor
+import com.pdm0126.overload.ui.screens.dayEditor.DayEditorViewModel
+import com.pdm0126.overload.ui.screens.routineEditor.RoutineEditor
+import com.pdm0126.overload.ui.screens.signin.SignIn
+import com.pdm0126.overload.ui.screens.system.SystemViewModel
+import com.pdm0126.overload.ui.screens.system.TrainingSystem
+import com.pdm0126.overload.ui.screens.training.Training
 
 @Composable
 fun MainNavigation() {

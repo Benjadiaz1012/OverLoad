@@ -1,392 +1,320 @@
 package com.pdm0126.overload.ui.screens.detail
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccessibilityNew
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.FitnessCenter
-import androidx.compose.material.icons.filled.FormatListNumbered
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
+import com.pdm0126.overload.ui.components.ConfirmDialog
+import com.pdm0126.overload.ui.components.TopBar
 import com.pdm0126.overload.domain.model.Exercise
-import com.pdm0126.overload.ui.components.BookmarkButton
-import com.pdm0126.overload.ui.components.BookmarkedIcon
-import com.pdm0126.overload.ui.components.Error
-import com.pdm0126.overload.ui.components.OverloadConfirmDialog
-import com.pdm0126.overload.ui.components.OverloadScaffold
-import com.pdm0126.overload.ui.components.UnBookmarkedIcon
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+private val BackgroundDark = Color(0xFF0E0E0E)
+private val CardDark = Color(0xFF1A1A1A)
+private val FieldDark = Color(0xFF222222)
+private val GoldAccent = Color(0xFFE8A317)
+private val TextGray = Color(0xFFA0A0A0)
+
 @Composable
-fun DetailScreen(
+fun Detail(
     exerciseId: String,
-    viewModel: DetailViewModel = viewModel(
-        key = exerciseId,
-        factory = DetailViewModel.provideFactory(exerciseId = exerciseId)
-    ),
-    onBackClick: () -> Unit
+    onBack: () -> Unit = {}
 ) {
-    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val viewModel: DetailViewModel = viewModel(
+        factory = DetailViewModel.provideFactory(exerciseId),
+        key = exerciseId
+    )
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val exercise = uiState.exercise
 
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
     var showUnbookmarkDialog by remember { mutableStateOf(false) }
 
-    OverloadScaffold(
-        title = state.exercise?.name ?: "Detalles",
-        showBackButton = true,
-        onBackClick = onBackClick,
-        snackbarHost = {
-            SnackbarHost(snackbarHostState) { data ->
-                Snackbar(
-                    modifier = Modifier.padding(12.dp)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        if (!state.isWorkoutSessionActive) {
-                            if (!state.isBookmarked) UnBookmarkedIcon() else BookmarkedIcon()
-                        }
-
-                        Spacer(modifier = Modifier.width(12.dp))
-
-                        Text(
-                            text = data.visuals.message,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                }
-            }
-        },
-        actions = {
-            if (state.exercise != null) {
-                BookmarkButton(
-                    isBookmarked = state.isBookmarked,
-                    onCheckedChange = { isNowBookmarked ->
-                        if (!isNowBookmarked) {
-                            if (state.isWorkoutSessionActive) {
-                                coroutineScope.launch {
-                                    snackbarHostState.currentSnackbarData?.dismiss()
-                                    snackbarHostState.showSnackbar(
-                                        message = "No puedes eliminar ejercicios mientras entrenas",
-                                        duration = SnackbarDuration.Short
-                                    )
+    Scaffold(
+        containerColor = BackgroundDark,
+        topBar = {
+            TopBar(
+                title = exercise?.name ?: "Detalle",
+                showBackButton = true,
+                onBackClick = onBack,
+                trailingContent = {
+                    if (exercise != null) {
+                        IconButton(
+                            onClick = {
+                                if (uiState.isBookmarked) {
+                                    if (uiState.isWorkoutSessionActive) {
+                                        coroutineScope.launch {
+                                            snackbarHostState.currentSnackbarData?.dismiss()
+                                            snackbarHostState.showSnackbar(
+                                                message = "No puedes eliminar ejercicios mientras entrenas",
+                                                duration = SnackbarDuration.Short
+                                            )
+                                        }
+                                    } else {
+                                        showUnbookmarkDialog = true
+                                    }
+                                } else {
+                                    viewModel.toggleBookmark()
+                                    coroutineScope.launch {
+                                        snackbarHostState.currentSnackbarData?.dismiss()
+                                        snackbarHostState.showSnackbar(
+                                            message = "Agregado a tu biblioteca",
+                                            duration = SnackbarDuration.Short
+                                        )
+                                    }
                                 }
-                            } else {
-                                showUnbookmarkDialog = true
                             }
-                        } else {
-                            viewModel.toggleBookmark()
-                            coroutineScope.launch {
-                                snackbarHostState.currentSnackbarData?.dismiss()
-                                snackbarHostState.showSnackbar(
-                                    message = "Agregado a tu biblioteca",
-                                    duration = SnackbarDuration.Short
-                                )
-                            }
-                        }
-                    }
-                )
-            }
-        }
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier.fillMaxSize().padding(paddingValues)
-        ) {
-            when {
-                state.isLoading -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
-                state.errorMessage != null -> {
-                    Error(onRetryClick = { /* Opcional: recargar */ }, error = state.errorMessage)
-                }
-                state.exercise != null -> {
-                    ExerciseDetailContent(exercise = state.exercise!!)
-                }
-            }
-            if (showUnbookmarkDialog) {
-                OverloadConfirmDialog(
-                    title = "Eliminar de la biblioteca",
-                    text = "Si eliminas este ejercicio de tu biblioteca, desaparecera de tus rutinas. ¿Quieres continuar?",
-                    confirmText = "Eliminar",
-                    dismissText = "Cancelar",
-                    icon = Icons.Default.DeleteOutline,
-                    isDestructive = true,
-                    onConfirm = {
-                        viewModel.toggleBookmark()
-                        showUnbookmarkDialog = false
-                        coroutineScope.launch {
-                            snackbarHostState.showSnackbar("Eliminado de tu biblioteca")
-                        }
-                    },
-                    onDismiss = { showUnbookmarkDialog = false }
-                )
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-fun ExerciseDetailContent(exercise: Exercise) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        item {
-            AnimatedExerciseImage(
-                imageUrls = exercise.remoteImages,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1.1f)
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-                        shape = RoundedCornerShape(8.dp)
-                    )
-            )
-        }
-
-        item {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Card(
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        QuickStat(
-                            icon = Icons.Default.Settings,
-                            label = "Mecánica",
-                            value = exercise.mechanic.replaceFirstChar { it.uppercase() }
-                        )
-                        QuickStat(
-                            icon = Icons.Default.FitnessCenter,
-                            label = "Equipo Principal",
-                            value = exercise.equipment
-                        )
-                    }
-                }
-                if (exercise.targetMuscles.isNotEmpty() || exercise.secondaryMuscles.isNotEmpty()) {
-                    Column {
-                        SectionHeader(
-                            icon = Icons.Default.AccessibilityNew, title = "Músculos implicados"
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        FlowRow(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            exercise.targetMuscles.forEach { muscle ->
-                                SuggestionChip(
-                                    onClick = { },
-                                    label = { Text(muscle.replaceFirstChar { it.uppercase() }, fontWeight = FontWeight.Bold) },
-                                    colors = SuggestionChipDefaults.suggestionChipColors(
-                                        containerColor = MaterialTheme.colorScheme.primary,
-                                        labelColor = MaterialTheme.colorScheme.onPrimary
-                                    ),
-                                    border = null
-                                )
-                            }
-                            exercise.secondaryMuscles.forEach { muscle ->
-                                SuggestionChip(
-                                    onClick = { },
-                                    label = { Text(muscle.replaceFirstChar { it.uppercase() }) }
-                                )
-                            }
+                            Icon(
+                                imageVector = if (uiState.isBookmarked) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
+                                contentDescription = if (uiState.isBookmarked) "Quitar de biblioteca" else "Guardar en biblioteca",
+                                tint = GoldAccent
+                            )
                         }
                     }
                 }
-                if (exercise.instructions.isNotEmpty()) {
-                    InstructionsCard(instructions = exercise.instructions)
+            )
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+    ) { innerPadding ->
+        when {
+            uiState.isLoading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = GoldAccent)
                 }
-                else {
-                    Text(
-                        text = "No hay instrucciones disponibles",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+            }
+
+            uiState.errorMessage != null -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .padding(24.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = uiState.errorMessage ?: "", color = TextGray, fontSize = 14.sp)
+                }
+            }
+
+            exercise != null -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 20.dp, vertical = 16.dp)
+                ) {
+                    HeroImage(exercise = exercise)
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        InfoTag(text = exercise.muscleGroup)
+                        InfoTag(text = exercise.mechanic)
+                        InfoTag(text = exercise.equipment)
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    SectionTitle(text = "Músculos trabajados")
+                    Spacer(modifier = Modifier.height(10.dp))
+                    MuscleTagsRow(
+                        primary = exercise.targetMuscles,
+                        secondary = exercise.secondaryMuscles
                     )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    SectionTitle(text = "Instrucciones")
+                    Spacer(modifier = Modifier.height(10.dp))
+                    if (exercise.instructions.isEmpty()) {
+                        Text(
+                            text = "Este ejercicio aún no tiene instrucciones.",
+                            color = TextGray,
+                            fontSize = 13.sp
+                        )
+                    } else {
+                        exercise.instructions.forEachIndexed { index, step ->
+                            InstructionStep(number = index + 1, text = step)
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
                 }
-                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }
-}
 
-@Composable
-fun SectionHeader(
-    icon: ImageVector,
-    title: String
-) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(24.dp)
-        )
-        Spacer(modifier = Modifier.width(12.dp))
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface
+    if (showUnbookmarkDialog) {
+        ConfirmDialog(
+            title = "Eliminar de la biblioteca",
+            text = "Si eliminas este ejercicio de tu biblioteca, desaparecerá de tus rutinas. ¿Quieres continuar?",
+            confirmText = "Eliminar",
+            dismissText = "Cancelar",
+            isDestructive = true,
+            icon = Icons.Default.DeleteOutline,
+            onConfirm = {
+                viewModel.toggleBookmark()
+                showUnbookmarkDialog = false
+                coroutineScope.launch {
+                    snackbarHostState.showSnackbar("Eliminado de tu biblioteca")
+                }
+            },
+            onDismiss = { showUnbookmarkDialog = false }
         )
     }
 }
 
 @Composable
-fun QuickStat(
-    icon: ImageVector,
-    label: String,
-    value: String
-) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(28.dp)
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = value,
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    }
-}
+private fun HeroImage(exercise: Exercise) {
+    val imageUrls = exercise.remoteImages
 
-@Composable
-fun InstructionsCard(instructions: List<String>) {
-    var isExpanded by remember { mutableStateOf(false) }
-    val threshold = 3
-    val showToggleButton = instructions.size > threshold
-
-    Card(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .animateContentSize(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-        shape = RoundedCornerShape(8.dp)
+            .height(220.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .background(FieldDark),
+        contentAlignment = Alignment.Center
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-
-            SectionHeader(
-                icon = Icons.Default.FormatListNumbered,
-                title = "Instrucciones paso a paso"
+        if (imageUrls.isEmpty()) {
+            Icon(
+                imageVector = Icons.Default.FitnessCenter,
+                contentDescription = exercise.name,
+                tint = GoldAccent,
+                modifier = Modifier.size(64.dp)
             )
+        } else {
+            var currentIndex by remember(imageUrls) { mutableStateOf(0) }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            val instructionsToShow = if (isExpanded || !showToggleButton) instructions else instructions.take(threshold)
-
-            instructionsToShow.forEachIndexed { index, instruction ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 12.dp),
-                    verticalAlignment = Alignment.Top
-                ) {
-                    Text(
-                        text = "${index + 1}.",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.width(28.dp)
-                    )
-                    Text(
-                        text = instruction,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+            LaunchedEffect(imageUrls) {
+                if (imageUrls.size > 1) {
+                    while (true) {
+                        delay(1200)
+                        currentIndex = (currentIndex + 1) % imageUrls.size
+                    }
                 }
             }
 
-            if (showToggleButton) {
-                HorizontalDivider(
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+            AsyncImage(
+                model = imageUrls[currentIndex],
+                contentDescription = "Ejecución de ${exercise.name}",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
+}
+
+@Composable
+private fun InfoTag(text: String) {
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(8.dp))
+            .background(CardDark)
+            .padding(horizontal = 12.dp, vertical = 6.dp)
+    ) {
+        Text(
+            text = text.replaceFirstChar { it.uppercase() },
+            color = Color.White,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.SemiBold
+        )
+    }
+}
+
+@Composable
+private fun SectionTitle(text: String) {
+    Text(text = text, color = GoldAccent, fontWeight = FontWeight.Bold, fontSize = 17.sp)
+}
+
+@Composable
+private fun MuscleTagsRow(primary: List<String>, secondary: List<String>) {
+    Column {
+        if (primary.isNotEmpty()) {
+            TagsFlow(items = primary, isPrimary = true)
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+        if (secondary.isNotEmpty()) {
+            TagsFlow(items = secondary, isPrimary = false)
+        }
+    }
+}
+
+@Composable
+private fun TagsFlow(items: List<String>, isPrimary: Boolean) {
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        items.forEach { muscle ->
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(if (isPrimary) GoldAccent.copy(alpha = 0.15f) else FieldDark)
+                    .padding(horizontal = 12.dp, vertical = 6.dp)
+            ) {
+                Text(
+                    text = muscle,
+                    color = if (isPrimary) GoldAccent else TextGray,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold
                 )
-                TextButton(
-                    onClick = { isExpanded = !isExpanded },
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                ) {
-                    Text(
-                        text = if (isExpanded) "Ocultar" else "Ver más (${instructions.size - threshold})",
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
             }
         }
     }
 }
+
 @Composable
-fun AnimatedExerciseImage(
-    imageUrls: List<String>,
-    modifier: Modifier = Modifier
-) {
-    if (imageUrls.isEmpty()) {
+private fun InstructionStep(number: Int, text: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 12.dp)
+    ) {
         Box(
-            modifier = modifier, contentAlignment = Alignment.Center
+            modifier = Modifier
+                .size(24.dp)
+                .clip(RoundedCornerShape(50))
+                .background(GoldAccent),
+            contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Sin imagen",
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                text = "$number",
+                color = Color.Black,
+                fontWeight = FontWeight.Bold,
+                fontSize = 12.sp
             )
         }
-        return
+        Spacer(modifier = Modifier.width(12.dp))
+        Text(
+            text = text,
+            color = Color.White,
+            fontSize = 14.sp,
+            modifier = Modifier.weight(1f)
+        )
     }
-
-    var currentIndex by remember { mutableIntStateOf(0) }
-
-    LaunchedEffect(imageUrls) {
-        if (imageUrls.size > 1) {
-            while (true) {
-                delay(1200)
-                currentIndex = (currentIndex + 1) % imageUrls.size
-            }
-        }
-    }
-
-    AsyncImage(
-        model = imageUrls[currentIndex],
-        contentDescription = "Ejecución del ejercicio",
-        modifier = modifier,
-        contentScale = ContentScale.Crop
-    )
 }
