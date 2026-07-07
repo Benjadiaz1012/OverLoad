@@ -177,13 +177,14 @@ private fun BarChart(
 
     Row(
         modifier = modifier.horizontalScroll(rememberScrollState()),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalAlignment = Alignment.Bottom
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         data.forEachIndexed { index, item ->
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.width(56.dp)
+                modifier = Modifier
+                    .width(56.dp)
+                    .fillMaxHeight()
             ) {
                 Text(
                     text = "%,.0f kg".format(item.totalEffectiveVolume),
@@ -197,14 +198,25 @@ private fun BarChart(
                 Spacer(modifier = Modifier.height(6.dp))
 
                 val barHeightFraction = item.totalEffectiveVolume / maxValue
-
+                val displayedFraction = if (item.totalEffectiveVolume > 0f) {
+                    barHeightFraction.coerceIn(0.05f, 1f)
+                } else {
+                    0.001f
+                }
                 Box(
                     modifier = Modifier
-                        .fillMaxHeight(barHeightFraction.coerceIn(0.05f, 1f))
-                        .width(28.dp)
-                        .clip(RoundedCornerShape(topStart = 6.dp, topEnd = 6.dp))
-                        .background(barPalette[index % barPalette.size])
-                )
+                        .weight(1f)
+                        .width(28.dp),
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxHeight(displayedFraction)
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(topStart = 6.dp, topEnd = 6.dp))
+                            .background(barPalette[index % barPalette.size])
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
