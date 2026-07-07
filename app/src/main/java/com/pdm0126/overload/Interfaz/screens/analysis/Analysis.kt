@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pdm0126.overload.Interfaz.components.TopBar
+import com.pdm0126.overload.domain.TechnicalDictionary
 import com.pdm0126.overload.domain.model.Exercise
 import com.pdm0126.overload.domain.model.MuscleDistribution
 import java.text.SimpleDateFormat
@@ -133,6 +134,11 @@ private fun PillTabRow(
 
 @Composable
 private fun DistributionSection(muscleDistribution: List<MuscleDistribution>) {
+    val distributionByGroup = muscleDistribution.associateBy { it.muscleGroup.lowercase() }
+    val fullDistribution = TechnicalDictionary.mainMuscleGroupsList.map { group ->
+        distributionByGroup[group.lowercase()] ?: MuscleDistribution(group, 0f)
+    }
+
     Card(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = CardDark),
@@ -152,7 +158,7 @@ private fun DistributionSection(muscleDistribution: List<MuscleDistribution>) {
                 EmptyHint(text = "Aún no tienes entrenamientos registrados.")
             } else {
                 BarChart(
-                    data = muscleDistribution,
+                    data = fullDistribution,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(260.dp)
