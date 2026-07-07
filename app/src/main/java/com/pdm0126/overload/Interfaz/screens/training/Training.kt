@@ -22,7 +22,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.pdm0126.overload.Interfaz.components.ConfirmDialog
-import com.pdm0126.overload.Interfaz.components.InfoDialog
+import com.pdm0126.overload.Interfaz.components.OverloadInfoDialog
 import com.pdm0126.overload.Interfaz.components.TopBar
 import com.pdm0126.overload.domain.model.Exercise
 import com.pdm0126.overload.domain.model.RoutineDay
@@ -223,7 +223,7 @@ fun Training(
     }
 
     if (showEmptyWorkoutDialog) {
-        InfoDialog(
+        OverloadInfoDialog(
             title = "Rutina sin ejercicios",
             text = "Esta rutina no tiene ejercicios programados. Debes añadir ejercicios desde el editor de rutinas.",
             icon = Icons.Default.FitnessCenter,
