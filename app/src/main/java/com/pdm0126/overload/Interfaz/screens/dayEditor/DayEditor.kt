@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pdm0126.overload.Interfaz.components.ConfirmDialog
+import com.pdm0126.overload.Interfaz.components.OverloadInputDialog
 import com.pdm0126.overload.Interfaz.components.TopBar
 import com.pdm0126.overload.domain.model.RoutineSlot
 
@@ -44,6 +45,7 @@ fun DayEditor(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     var showDeleteDialog by remember { mutableStateOf(false) }
+    var showRenameDialog by remember { mutableStateOf(false) }
     var slotToRemove by remember { mutableStateOf<RoutineSlot?>(null) }
     val day = uiState.day
 
@@ -97,20 +99,22 @@ fun DayEditor(
                         .padding(innerPadding)
                         .padding(horizontal = 20.dp, vertical = 16.dp)
                 ) {
-                    OutlinedTextField(
-                        value = day.focus,
-                        onValueChange = viewModel::updateDayName,
-                        singleLine = true,
-                        label = { Text("Enfoque del día", color = TextGray) },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White,
-                            focusedBorderColor = GoldAccent,
-                            unfocusedBorderColor = TextGray,
-                            cursorColor = GoldAccent
-                        ),
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = day.focus,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp,
+                            modifier = Modifier.weight(1f)
+                        )
+                        IconButton(onClick = { showRenameDialog = true }) {
+                            Icon(
+                                Icons.Default.Edit,
+                                contentDescription = "Renombrar día",
+                                tint = GoldAccent
+                            )
+                        }
+                    }
 
                     Spacer(modifier = Modifier.height(20.dp))
 
@@ -166,6 +170,19 @@ fun DayEditor(
                 }
             }
         }
+    }
+
+    if (showRenameDialog) {
+        OverloadInputDialog(
+            title = "Renombrar día",
+            initialValue = day?.focus ?: "",
+            label = "Enfoque del día",
+            onConfirm = { newName ->
+                viewModel.updateDayName(newName)
+                showRenameDialog = false
+            },
+            onDismiss = { showRenameDialog = false }
+        )
     }
 
     if (showDeleteDialog) {
