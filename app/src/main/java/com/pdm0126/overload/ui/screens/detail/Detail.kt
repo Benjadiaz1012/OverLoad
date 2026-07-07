@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
-import com.pdm0126.overload.ui.components.ConfirmDialog
+import com.pdm0126.overload.ui.components.OverloadConfirmDialog
 import com.pdm0126.overload.ui.components.OverloadTopBar
 import com.pdm0126.overload.domain.model.Exercise
 import kotlinx.coroutines.delay
@@ -172,7 +172,7 @@ fun Detail(
     }
 
     if (showUnbookmarkDialog) {
-        ConfirmDialog(
+        OverloadConfirmDialog(
             title = "Eliminar de la biblioteca",
             text = "Si eliminas este ejercicio de tu biblioteca, desaparecerá de tus rutinas. ¿Quieres continuar?",
             confirmText = "Eliminar",

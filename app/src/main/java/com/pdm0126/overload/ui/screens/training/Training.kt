@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
-import com.pdm0126.overload.ui.components.ConfirmDialog
+import com.pdm0126.overload.ui.components.OverloadConfirmDialog
 import com.pdm0126.overload.ui.components.OverloadInfoDialog
 import com.pdm0126.overload.ui.components.OverloadTopBar
 import com.pdm0126.overload.domain.model.Exercise
@@ -208,7 +208,7 @@ fun Training(
     }
 
     if (showStartConfirmDialog) {
-        ConfirmDialog(
+        OverloadConfirmDialog(
             title = "Iniciar Rutina",
             text = "¿Estás seguro de que deseas iniciar este entrenamiento?",
             confirmText = "Iniciar",

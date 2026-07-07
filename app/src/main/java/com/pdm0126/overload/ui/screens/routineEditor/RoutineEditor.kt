@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.pdm0126.overload.ui.components.ConfirmDialog
+import com.pdm0126.overload.ui.components.OverloadConfirmDialog
 import com.pdm0126.overload.ui.components.OverloadInputDialog
 import com.pdm0126.overload.ui.components.OverloadTopBar
 import com.pdm0126.overload.domain.model.RoutineDay
@@ -218,7 +218,7 @@ fun RoutineEditor(
     }
 
     if (showDeleteDialog) {
-        ConfirmDialog(
+        OverloadConfirmDialog(
             title = "Eliminar rutina",
             text = "Se eliminará esta rutina y todos sus días. Esta acción no se puede deshacer.",
             confirmText = "Eliminar",
@@ -235,7 +235,7 @@ fun RoutineEditor(
     }
 
     dayToDelete?.let { day ->
-        ConfirmDialog(
+        OverloadConfirmDialog(
             title = "Eliminar día",
             text = "Esta acción borrará todos los ejercicios asignados a \"${day.focus}\". No se puede deshacer.",
             confirmText = "Eliminar",

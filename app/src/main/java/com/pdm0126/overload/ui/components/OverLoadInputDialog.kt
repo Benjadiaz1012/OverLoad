@@ -1,6 +1,7 @@
 package com.pdm0126.overload.ui.components
 
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -10,12 +11,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
-
-private val CardDark = Color(0xFF1A1A1A)
-private val GoldAccent = Color(0xFFE8A317)
-private val TextGray = Color(0xFFA0A0A0)
-private val ErrorRed = Color(0xFFE53935)
 
 private val NAME_INPUT_REGEX = Regex("^[\\p{L}\\p{N} .,'()/-]*$")
 private const val DEFAULT_MAX_LENGTH = 30
@@ -35,8 +30,8 @@ fun OverloadInputDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        containerColor = CardDark,
-        title = { Text(text = title, color = Color.White) },
+        containerColor = MaterialTheme.colorScheme.surface,
+        title = { Text(text = title, color = MaterialTheme.colorScheme.onSurface) },
         text = {
             OutlinedTextField(
                 value = text,
@@ -45,20 +40,20 @@ fun OverloadInputDialog(
                         text = newValue
                     }
                 },
-                label = { Text(label, color = TextGray) },
+                label = { Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant) },
                 supportingText = {
                     Text(
                         text = "${text.length}/$maxLength",
-                        color = TextGray
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 },
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedBorderColor = GoldAccent,
-                    unfocusedBorderColor = TextGray,
-                    cursorColor = GoldAccent
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    cursorColor = MaterialTheme.colorScheme.primary
                 )
             )
         },
@@ -67,12 +62,12 @@ fun OverloadInputDialog(
                 onClick = { onConfirm(text.trim()) },
                 enabled = text.isNotBlank()
             ) {
-                Text(text = confirmText, color = GoldAccent)
+                Text(text = confirmText, color = MaterialTheme.colorScheme.primary)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(text = dismissText, color = TextGray)
+                Text(text = dismissText, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
     )

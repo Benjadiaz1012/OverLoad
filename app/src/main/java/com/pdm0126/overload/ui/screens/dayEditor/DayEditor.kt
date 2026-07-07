@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.pdm0126.overload.ui.components.ConfirmDialog
+import com.pdm0126.overload.ui.components.OverloadConfirmDialog
 import com.pdm0126.overload.ui.components.OverloadInputDialog
 import com.pdm0126.overload.ui.components.OverloadTopBar
 import com.pdm0126.overload.domain.model.RoutineSlot
@@ -212,7 +212,7 @@ fun DayEditor(
     }
 
     if (showDeleteDialog) {
-        ConfirmDialog(
+        OverloadConfirmDialog(
             title = "Eliminar día",
             text = "Se eliminará este día y todos sus ejercicios. Esta acción no se puede deshacer.",
             confirmText = "Eliminar",
@@ -229,7 +229,7 @@ fun DayEditor(
     }
 
     slotToRemove?.let { slot ->
-        ConfirmDialog(
+        OverloadConfirmDialog(
             title = "Quitar ejercicio",
             text = "¿Seguro que quieres quitar \"${slot.exercise.name}\" de este día?",
             confirmText = "Quitar",

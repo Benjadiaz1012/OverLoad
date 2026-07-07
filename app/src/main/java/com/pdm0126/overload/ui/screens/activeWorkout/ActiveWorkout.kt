@@ -19,7 +19,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.pdm0126.overload.ui.components.ConfirmDialog
+import com.pdm0126.overload.ui.components.OverloadConfirmDialog
 import com.pdm0126.overload.ui.components.OverloadTopBar
 import com.pdm0126.overload.domain.model.RoutineDay
 import com.pdm0126.overload.domain.model.RoutineSlot
@@ -177,7 +177,7 @@ fun ActiveWorkout(
 
     if (showEndWorkoutDialog) {
         val hasLoggedSets = sessionSets.isNotEmpty()
-        ConfirmDialog(
+        OverloadConfirmDialog(
             title = "Finalizar Sesión",
             text = if (hasLoggedSets) {
                 "Los datos registrados se guardarán en tu historial"
@@ -195,7 +195,7 @@ fun ActiveWorkout(
     }
 
     if (showCancelWorkoutDialog) {
-        ConfirmDialog(
+        OverloadConfirmDialog(
             title = "Cancelar Sesión",
             text = "Se perderán todas las series registradas en este momento y nada se guardará en tu historial",
             confirmText = "Cancelar",

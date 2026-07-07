@@ -2,19 +2,14 @@ package com.pdm0126.overload.ui.components
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 
-private val CardDark = Color(0xFF1A1A1A)
-private val GoldAccent = Color(0xFFE8A317)
-private val TextGray = Color(0xFFA0A0A0)
-private val ErrorRed = Color(0xFFE53935)
-
 @Composable
-fun ConfirmDialog(
+fun OverloadConfirmDialog(
     title: String,
     text: String,
     confirmText: String,
@@ -24,26 +19,29 @@ fun ConfirmDialog(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
+    val accentColor =
+        if (isDestructive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+
     AlertDialog(
         onDismissRequest = onDismiss,
-        containerColor = CardDark,
+        containerColor = MaterialTheme.colorScheme.surface,
         icon = {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = if (isDestructive) ErrorRed else GoldAccent
+                tint = accentColor
             )
         },
-        title = { Text(text = title, color = Color.White) },
-        text = { Text(text = text, color = TextGray) },
+        title = { Text(text = title, color = MaterialTheme.colorScheme.onSurface) },
+        text = { Text(text = text, color = MaterialTheme.colorScheme.onSurfaceVariant) },
         confirmButton = {
             TextButton(onClick = onConfirm) {
-                Text(text = confirmText, color = if (isDestructive) ErrorRed else GoldAccent)
+                Text(text = confirmText, color = accentColor)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(text = dismissText, color = TextGray)
+                Text(text = dismissText, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
     )
