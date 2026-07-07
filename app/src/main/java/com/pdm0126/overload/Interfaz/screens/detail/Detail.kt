@@ -100,7 +100,9 @@ fun Detail(
         when {
             uiState.isLoading -> {
                 Box(
-                    modifier = Modifier.fillMaxSize().padding(innerPadding),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator(color = GoldAccent)
@@ -109,7 +111,10 @@ fun Detail(
 
             uiState.errorMessage != null -> {
                 Box(
-                    modifier = Modifier.fillMaxSize().padding(innerPadding).padding(24.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .padding(24.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(text = uiState.errorMessage ?: "", color = TextGray, fontSize = 14.sp)
@@ -285,7 +290,12 @@ private fun InstructionStep(number: Int, text: String) {
                 .background(GoldAccent),
             contentAlignment = Alignment.Center
         ) {
-            Text(text = "$number", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+            Text(
+                text = "$number",
+                color = Color.Black,
+                fontWeight = FontWeight.Bold,
+                fontSize = 12.sp
+            )
         }
         Spacer(modifier = Modifier.width(12.dp))
         Text(
