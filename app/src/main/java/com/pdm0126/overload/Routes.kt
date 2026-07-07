@@ -33,6 +33,9 @@ sealed class Routes : NavKey {
     data object Library : Routes()
 
     @Serializable
+    data class Detail(val exerciseId: String) : Routes()
+
+    @Serializable
     data object LibraryAnalysisSelection : Routes()
 
     @Serializable
