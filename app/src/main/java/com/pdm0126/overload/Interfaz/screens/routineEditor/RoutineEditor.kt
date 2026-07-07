@@ -42,9 +42,14 @@ fun RoutineEditor(
 
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
+    var dayToDelete by remember { mutableStateOf<RoutineDay?>(null) }
 
     val microcycle = uiState.microcycle
-    val isEditorBlocked = microcycle?.isActive == true && uiState.isWorkoutSessionActive
+    LaunchedEffect(uiState.isLoading, microcycle) {
+        if (!uiState.isLoading && microcycle == null) {
+            onBack()
+        }
+    }
 
     Scaffold(
         containerColor = BackgroundDark,
@@ -66,7 +71,7 @@ fun RoutineEditor(
                             expanded = showMenu,
                             onDismissRequest = { showMenu = false }
                         ) {
-                            if (microcycle != null && !microcycle.isActive) {
+                            if (microcycle != null && !microcycle.isActive && !uiState.isWorkoutSessionActive) {
                                 DropdownMenuItem(
                                     text = { Text("Marcar como activa") },
                                     leadingIcon = {
@@ -143,10 +148,10 @@ fun RoutineEditor(
                         )
                     }
 
-                    if (isEditorBlocked) {
+                    if (microcycle.isActive && uiState.isWorkoutSessionActive) {
                         item {
                             Text(
-                                text = "No puedes editar los días mientras hay un entrenamiento en curso.",
+                                text = "Tienes un entrenamiento en curso con esta rutina.",
                                 color = TextGray,
                                 fontSize = 13.sp
                             )
@@ -156,16 +161,16 @@ fun RoutineEditor(
                     items(microcycle.days, key = { it.dayId }) { day ->
                         DayRow(
                             day = day,
-                            enabled = !isEditorBlocked,
+                            enabled = true,
                             onClick = { onOpenDay(day.dayId) },
-                            onDelete = { viewModel.deleteDay(day.dayId) }
+                            onDelete = { dayToDelete = day }
                         )
                     }
 
                     item {
                         OutlinedButton(
                             onClick = viewModel::addDay,
-                            enabled = !isEditorBlocked && microcycle.days.size < 9,
+                            enabled = microcycle.days.size < 9,
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(12.dp)
                         ) {
@@ -197,6 +202,22 @@ fun RoutineEditor(
                 onRoutineDeleted()
             },
             onDismiss = { showDeleteDialog = false }
+        )
+    }
+
+    dayToDelete?.let { day ->
+        ConfirmDialog(
+            title = "Eliminar día",
+            text = "Esta acción borrará todos los ejercicios asignados a \"${day.focus}\". No se puede deshacer.",
+            confirmText = "Eliminar",
+            dismissText = "Cancelar",
+            isDestructive = true,
+            icon = Icons.Default.DeleteOutline,
+            onConfirm = {
+                viewModel.deleteDay(day.dayId)
+                dayToDelete = null
+            },
+            onDismiss = { dayToDelete = null }
         )
     }
 }
