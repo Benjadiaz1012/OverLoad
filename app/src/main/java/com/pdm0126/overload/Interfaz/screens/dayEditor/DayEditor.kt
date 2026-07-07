@@ -1,5 +1,6 @@
 package com.pdm0126.overload.Interfaz.screens.dayEditor
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -26,11 +27,14 @@ private val TextGray = Color(0xFFA0A0A0)
 private val DividerGray = Color(0xFF2A2A2A)
 private val ErrorRed = Color(0xFFE53935)
 
+private const val MAX_SLOTS_PER_DAY = 12
+
 @Composable
 fun DayEditor(
     dayId: Long,
     onBack: () -> Unit = {},
     onNavigateToLibrarySelection: () -> Unit = {},
+    onNavigateToExerciseDetail: (String) -> Unit = {},
     onDayDeleted: () -> Unit = {}
 ) {
     val viewModel: DayEditorViewModel = viewModel(
@@ -40,7 +44,14 @@ fun DayEditor(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     var showDeleteDialog by remember { mutableStateOf(false) }
+    var slotToRemove by remember { mutableStateOf<RoutineSlot?>(null) }
     val day = uiState.day
+
+    LaunchedEffect(uiState.isLoading, day) {
+        if (!uiState.isLoading && day == null) {
+            onBack()
+        }
+    }
 
     Scaffold(
         containerColor = BackgroundDark,
@@ -113,6 +124,7 @@ fun DayEditor(
                         day.slots.forEach { slot ->
                             SlotEditorRow(
                                 slot = slot,
+                                onExerciseClick = { onNavigateToExerciseDetail(slot.exercise.id) },
                                 onTargetSetsChange = { newValue ->
                                     viewModel.updateTargetSets(
                                         slot.slotId,
@@ -125,7 +137,7 @@ fun DayEditor(
                                         newValue
                                     )
                                 },
-                                onRemove = { viewModel.removeSlot(slot.slotId) }
+                                onRemove = { slotToRemove = slot }
                             )
                             HorizontalDivider(color = DividerGray, thickness = 1.dp)
                         }
@@ -133,14 +145,22 @@ fun DayEditor(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    TextButton(onClick = onNavigateToLibrarySelection) {
-                        Icon(Icons.Default.Add, contentDescription = null, tint = GoldAccent)
-                        Spacer(modifier = Modifier.width(4.dp))
+                    if (day.slots.size < MAX_SLOTS_PER_DAY) {
+                        TextButton(onClick = onNavigateToLibrarySelection) {
+                            Icon(Icons.Default.Add, contentDescription = null, tint = GoldAccent)
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "Agregar ejercicio",
+                                color = GoldAccent,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp
+                            )
+                        }
+                    } else {
                         Text(
-                            text = "Agregar ejercicio",
-                            color = GoldAccent,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp
+                            text = "Alcanzaste el máximo de $MAX_SLOTS_PER_DAY ejercicios por día.",
+                            color = TextGray,
+                            fontSize = 12.sp
                         )
                     }
                 }
@@ -164,11 +184,28 @@ fun DayEditor(
             onDismiss = { showDeleteDialog = false }
         )
     }
+
+    slotToRemove?.let { slot ->
+        ConfirmDialog(
+            title = "Quitar ejercicio",
+            text = "¿Seguro que quieres quitar \"${slot.exercise.name}\" de este día?",
+            confirmText = "Quitar",
+            dismissText = "Cancelar",
+            isDestructive = true,
+            icon = Icons.Default.Close,
+            onConfirm = {
+                viewModel.removeSlot(slot.slotId)
+                slotToRemove = null
+            },
+            onDismiss = { slotToRemove = null }
+        )
+    }
 }
 
 @Composable
 private fun SlotEditorRow(
     slot: RoutineSlot,
+    onExerciseClick: () -> Unit,
     onTargetSetsChange: (Int) -> Unit,
     onTargetRepsChange: (Int?) -> Unit,
     onRemove: () -> Unit
@@ -183,7 +220,9 @@ private fun SlotEditorRow(
                 color = Color.White,
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable { onExerciseClick() }
             )
             IconButton(onClick = onRemove, modifier = Modifier.size(28.dp)) {
                 Icon(
