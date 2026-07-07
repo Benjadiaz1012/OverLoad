@@ -51,7 +51,6 @@ class DetailViewModel(
                 var exercise = exerciseRepository.getExerciseById(exerciseId)
                 val isBookmarked = exercise != null
 
-                // Si no está guardado localmente, buscamos si viene de una búsqueda remota reciente.
                 if (exercise == null) {
                     val remoteCache = exerciseRepository.getRemoteExercises("").getOrNull()
                     exercise = remoteCache?.find { it.id == exerciseId }

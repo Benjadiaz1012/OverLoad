@@ -21,9 +21,12 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
+import com.pdm0126.overload.Interfaz.components.ConfirmDialog
+import com.pdm0126.overload.Interfaz.components.InfoDialog
 import com.pdm0126.overload.Interfaz.components.TopBar
 import com.pdm0126.overload.domain.model.Exercise
 import com.pdm0126.overload.domain.model.RoutineDay
+import kotlinx.coroutines.launch
 
 private val BackgroundDark = Color(0xFF0E0E0E)
 private val CardDark = Color(0xFF1A1A1A)
@@ -34,111 +37,159 @@ private val DividerGray = Color(0xFF2E2E2E)
 @Composable
 fun Training(
     viewModel: TrainingViewModel = viewModel(factory = TrainingViewModel.Factory),
-    onMenuClick: () -> Unit = {},
     onCalendarClick: () -> Unit = {},
     onExerciseClick: (ExerciseDisplayItem) -> Unit = {},
-    onSessionStarted: () -> Unit = {}
+    onSessionStarted: () -> Unit = {},
+    onNavigateToProfile: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var showDaySelector by remember { mutableStateOf(false) }
+    var showStartConfirmDialog by remember { mutableStateOf(false) }
+    var showEmptyWorkoutDialog by remember { mutableStateOf(false) }
 
-    val isSessionActiveForThisDay = uiState.activeSessionDayId != null &&
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val coroutineScope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    val hasAnyActiveSession = uiState.activeSessionDayId != null
+    val isSessionActiveForThisDay = hasAnyActiveSession &&
             uiState.activeSessionDayId == uiState.day?.dayId
 
-    Scaffold(
-        containerColor = BackgroundDark,
-        topBar = {
-            TopBar(
-                title = "Entrenamiento",
-                leadingIcon = Icons.Default.Menu,
-                onLeadingClick = onMenuClick,
-                leadingContentDescription = "Menú",
-                trailingIcon = Icons.Default.CalendarMonth,
-                onTrailingClick = onCalendarClick,
-                trailingContentDescription = "Calendario"
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            TrainingDrawerContent(
+                onProfileClick = {
+                    coroutineScope.launch { drawerState.close() }
+                    onNavigateToProfile()
+                }
             )
-        },
-        bottomBar = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 24.dp)
-            ) {
-                Button(
-                    onClick = { viewModel.startWorkout(onSessionStarted) },
-                    enabled = uiState.day != null && uiState.exercises.isNotEmpty() && !isSessionActiveForThisDay,
+        }
+    ) {
+        Scaffold(
+            containerColor = BackgroundDark,
+            topBar = {
+                TopBar(
+                    title = "Entrenamiento",
+                    leadingIcon = Icons.Default.Menu,
+                    onLeadingClick = { coroutineScope.launch { drawerState.open() } },
+                    leadingContentDescription = "Menú",
+                    trailingIcon = Icons.Default.CalendarMonth,
+                    onTrailingClick = onCalendarClick,
+                    trailingContentDescription = "Calendario"
+                )
+            },
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+            bottomBar = {
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = GoldAccent,
-                        contentColor = Color.Black
-                    )
+                        .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 24.dp)
                 ) {
-                    Icon(imageVector = Icons.Default.PlayArrow, contentDescription = null)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = if (isSessionActiveForThisDay) "Sesión en curso" else "Iniciar Sesión de entrenamiento",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
-                    )
-                }
-            }
-        }
-    ) { innerPadding ->
-        when {
-            uiState.isLoading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(color = GoldAccent)
-                }
-            }
+                    Button(
+                        onClick = {
+                            when {
+                                isSessionActiveForThisDay -> {
+                                    onSessionStarted()
+                                }
 
-            uiState.day == null -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)
-                        .padding(24.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "No tienes una rutina activa. Crea una desde el tab \"Rutinas\".",
-                        color = TextGray,
-                        fontSize = 14.sp
-                    )
-                }
-            }
+                                hasAnyActiveSession -> {
+                                    coroutineScope.launch {
+                                        snackbarHostState.currentSnackbarData?.dismiss()
+                                        snackbarHostState.showSnackbar(
+                                            message = "Ya tienes otro entrenamiento en curso",
+                                            duration = SnackbarDuration.Short
+                                        )
+                                    }
+                                }
 
-            else -> {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)
-                        .padding(horizontal = 20.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    item {
-                        DaySelectorSection(
-                            dayTitle = uiState.day?.focus.orEmpty(),
-                            exerciseCount = uiState.exercises.size,
-                            onClick = { showDaySelector = true }
+                                uiState.exercises.isEmpty() -> {
+                                    showEmptyWorkoutDialog = true
+                                }
+
+                                else -> {
+                                    showStartConfirmDialog = true
+                                }
+                            }
+                        },
+                        enabled = uiState.day != null,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = GoldAccent,
+                            contentColor = Color.Black
+                        )
+                    ) {
+                        Icon(imageVector = Icons.Default.PlayArrow, contentDescription = null)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = when {
+                                isSessionActiveForThisDay -> "Reanudar sesión"
+                                hasAnyActiveSession -> "Otro entrenamiento en curso"
+                                else -> "Iniciar Sesión de entrenamiento"
+                            },
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp
                         )
                     }
+                }
+            }
+        ) { innerPadding ->
+            when {
+                uiState.isLoading -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = GoldAccent)
+                    }
+                }
 
-                    items(uiState.exercises, key = { it.slot.slotId }) { item ->
-                        ExerciseCard(
-                            item = item,
-                            onClick = { onExerciseClick(item) }
+                uiState.day == null -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
+                            .padding(24.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "No tienes una rutina activa. Crea una desde el tab \"Rutinas\".",
+                            color = TextGray,
+                            fontSize = 14.sp
                         )
                     }
+                }
 
-                    item { Spacer(modifier = Modifier.height(8.dp)) }
+                else -> {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
+                            .padding(horizontal = 20.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        item {
+                            DaySelectorSection(
+                                dayTitle = uiState.day?.focus.orEmpty(),
+                                exerciseCount = uiState.exercises.size,
+                                onClick = { showDaySelector = true }
+                            )
+                        }
+
+                        items(uiState.exercises, key = { it.slot.slotId }) { item ->
+                            ExerciseCard(
+                                item = item,
+                                onClick = { onExerciseClick(item) }
+                            )
+                        }
+
+                        item { Spacer(modifier = Modifier.height(8.dp)) }
+                    }
                 }
             }
         }
@@ -153,6 +204,61 @@ fun Training(
                 showDaySelector = false
             },
             onDismiss = { showDaySelector = false }
+        )
+    }
+
+    if (showStartConfirmDialog) {
+        ConfirmDialog(
+            title = "Iniciar Rutina",
+            text = "¿Estás seguro de que deseas iniciar este entrenamiento?",
+            confirmText = "Iniciar",
+            dismissText = "Cancelar",
+            icon = Icons.Default.FitnessCenter,
+            onConfirm = {
+                viewModel.startWorkout(onSessionStarted)
+                showStartConfirmDialog = false
+            },
+            onDismiss = { showStartConfirmDialog = false }
+        )
+    }
+
+    if (showEmptyWorkoutDialog) {
+        InfoDialog(
+            title = "Rutina sin ejercicios",
+            text = "Esta rutina no tiene ejercicios programados. Debes añadir ejercicios desde el editor de rutinas.",
+            icon = Icons.Default.FitnessCenter,
+            onDismiss = { showEmptyWorkoutDialog = false }
+        )
+    }
+}
+
+@Composable
+private fun TrainingDrawerContent(
+    onProfileClick: () -> Unit
+) {
+    ModalDrawerSheet(
+        drawerContainerColor = CardDark
+    ) {
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(
+            text = "OVERLOAD",
+            color = GoldAccent,
+            fontWeight = FontWeight.Bold,
+            fontSize = 20.sp,
+            modifier = Modifier.padding(horizontal = 24.dp)
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+        HorizontalDivider(color = DividerGray, thickness = 1.dp)
+        Spacer(modifier = Modifier.height(8.dp))
+
+        NavigationDrawerItem(
+            label = { Text(text = "Perfil", color = Color.White) },
+            icon = { Icon(Icons.Default.Person, contentDescription = null, tint = TextGray) },
+            selected = false,
+            onClick = onProfileClick,
+            colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent)
         )
     }
 }
