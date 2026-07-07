@@ -88,8 +88,7 @@ class LibraryViewModel(
         val matchesMuscles = muscles.isEmpty() || muscles.any { muscle ->
             exercise.muscleGroup.equals(muscle, ignoreCase = true)
         }
-        val matchesMechanic =
-            mechanic == null || exercise.mechanic.equals(mechanic, ignoreCase = true)
+        val matchesMechanic = mechanic == null || exercise.mechanic.equals(mechanic, ignoreCase = true)
         val matchesQuery = query.isBlank() || exercise.name.contains(query, ignoreCase = true)
         return matchesMuscles && matchesMechanic && matchesQuery
     }
@@ -139,8 +138,12 @@ class LibraryViewModel(
                     }
                 }
                 .onFailure { error ->
-                    _remoteState.value =
-                        RemoteState(errorMessage = error.message ?: "Error desconocido")
+                    val friendlyMessage = if (error is java.io.IOException) {
+                        "Sin conexión a internet. Revisa tu red e intenta de nuevo."
+                    } else {
+                        "Ocurrió un error al buscar. Intenta de nuevo."
+                    }
+                    _remoteState.value = RemoteState(errorMessage = friendlyMessage)
                 }
         }
     }

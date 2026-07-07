@@ -2,6 +2,7 @@ package com.pdm0126.overload.Interfaz.screens.dayEditor
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -66,6 +67,31 @@ fun DayEditor(
                 onTrailingClick = { showDeleteDialog = true },
                 trailingContentDescription = "Eliminar día"
             )
+        },
+        bottomBar = {
+            if (day != null) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 24.dp)
+                ) {
+                    Button(
+                        onClick = onBack,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(52.dp),
+                        shape = RoundedCornerShape(14.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = GoldAccent,
+                            contentColor = Color.Black
+                        )
+                    ) {
+                        Icon(imageVector = Icons.Default.Check, contentDescription = null)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(text = "Listo", fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
         }
     ) { innerPadding ->
         when {

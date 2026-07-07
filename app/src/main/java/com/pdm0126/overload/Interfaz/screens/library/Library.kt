@@ -6,15 +6,18 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.automirrored.filled.ShowChart
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +27,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -362,6 +366,7 @@ private fun SavedExercisesContent(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ExploreContent(
     remoteState: RemoteState,
@@ -372,61 +377,84 @@ private fun ExploreContent(
     onExerciseAnalysisSelect: (Exercise) -> Unit,
     onRetry: () -> Unit
 ) {
-    when {
-        remoteState.isLoading -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = GoldAccent)
+    PullToRefreshBox(
+        isRefreshing = remoteState.isLoading,
+        onRefresh = onRetry,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        when {
+            remoteState.isLoading && remoteState.results.isEmpty() -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = GoldAccent)
+                }
             }
-        }
 
-        remoteState.errorMessage != null -> {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = remoteState.errorMessage, color = TextGray, fontSize = 14.sp)
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    text = "Reintentar",
-                    color = GoldAccent,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 13.sp,
-                    modifier = Modifier.clickable { onRetry() }
+            remoteState.errorMessage != null -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.WifiOff,
+                        contentDescription = null,
+                        tint = TextGray,
+                        modifier = Modifier.size(48.dp)
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = remoteState.errorMessage,
+                        color = TextGray,
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(horizontal = 32.dp)
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = "Reintentar",
+                        color = GoldAccent,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 13.sp,
+                        modifier = Modifier.clickable { onRetry() }
+                    )
+                }
+            }
+
+            remoteState.results.isEmpty() && query.isBlank() -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.TravelExplore,
+                        contentDescription = null,
+                        tint = TextGray,
+                        modifier = Modifier.size(56.dp)
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = "Busca un ejercicio",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 15.sp
+                    )
+                }
+            }
+
+            else -> {
+                ExerciseList(
+                    exercises = remoteState.results,
+                    cardMode = cardMode,
+                    onExerciseClick = onExerciseClick,
+                    onExerciseSelect = onExerciseSelect,
+                    onExerciseAnalysisSelect = onExerciseAnalysisSelect
                 )
             }
-        }
-
-        remoteState.results.isEmpty() && query.isBlank() -> {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Icon(
-                    imageVector = Icons.Default.TravelExplore,
-                    contentDescription = null,
-                    tint = TextGray,
-                    modifier = Modifier.size(56.dp)
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    text = "Busca un ejercicio",
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 15.sp
-                )
-            }
-        }
-
-        else -> {
-            ExerciseList(
-                exercises = remoteState.results,
-                cardMode = cardMode,
-                onExerciseClick = onExerciseClick,
-                onExerciseSelect = onExerciseSelect,
-                onExerciseAnalysisSelect = onExerciseAnalysisSelect
-            )
         }
     }
 }
