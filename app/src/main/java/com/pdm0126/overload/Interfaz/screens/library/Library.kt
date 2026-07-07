@@ -30,6 +30,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.pdm0126.overload.Interfaz.components.TopBar
+import com.pdm0126.overload.Interfaz.components.ExerciseNavCache
+import com.pdm0126.overload.domain.TechnicalDictionary
 import com.pdm0126.overload.domain.model.Exercise
 
 private val BackgroundDark = Color(0xFF0E0E0E)
@@ -40,8 +42,7 @@ private val TextGray = Color(0xFFA0A0A0)
 
 enum class ExerciseCardMode { DEFAULT, SELECTION, ANALYSIS }
 
-private val muscleGroupOptions =
-    listOf("Pecho", "Espalda", "Piernas", "Hombros", "Bíceps", "Tríceps")
+private val muscleGroupOptions = TechnicalDictionary.mainMuscleGroupsList
 private val mechanicOptions = listOf("Compuesto", "Aislamiento")
 
 @Composable
@@ -74,7 +75,10 @@ fun Library(
         onDismissFilterSheet = { showFilterSheet = false },
         onMuscleFilterToggle = viewModel::onMuscleFilterSelected,
         onMechanicFilterToggle = viewModel::onMechanicFilterSelected,
-        onExerciseClick = onExerciseClick,
+        onExerciseClick = { exercise ->
+            ExerciseNavCache.put(exercise)
+            onExerciseClick(exercise)
+        },
         onExerciseSelect = { exercise ->
             if (uiState.selectedTabIndex == 1) viewModel.addExercise(exercise)
             onExerciseSelect(exercise)
