@@ -1,6 +1,5 @@
 package com.pdm0126.overload.ui.screens.system
 
-
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -16,22 +15,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pdm0126.overload.R
 import com.pdm0126.overload.domain.model.Blueprint
 import com.pdm0126.overload.domain.model.BlueprintCatalog
-
-private val BackgroundDark = Color(0xFF0E0E0E)
-private val CardDark = Color(0xFF1A1A1A)
-private val GoldAccent = Color(0xFFE8A317)
-private val TextGray = Color(0xFFA0A0A0)
-
 
 private fun iconForBlueprint(id: String): ImageVector = when (id) {
     "ppl" -> Icons.Default.FitnessCenter
@@ -52,13 +43,12 @@ fun TrainingSystem(
     systems: List<Blueprint> = BlueprintCatalog.systems,
     onSystemSelected: (Blueprint) -> Unit = {},
     onConfirm: (Blueprint?) -> Unit = {},
-    onNext: () -> Unit,
-
-    ) {
+    onNext: () -> Unit
+) {
     var selectedId by remember { mutableStateOf(systems.firstOrNull()?.id) }
 
     Scaffold(
-        containerColor = BackgroundDark,
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             Box(
                 modifier = Modifier
@@ -75,11 +65,14 @@ fun TrainingSystem(
                         .height(56.dp),
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = GoldAccent,
-                        contentColor = Color.Black
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
                     )
                 ) {
-                    Text("Seleccionar sistema", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                    Text(
+                        "Seleccionar sistema",
+                        style = MaterialTheme.typography.labelLarge
+                    )
                     Spacer(modifier = Modifier.width(8.dp))
                     Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null)
                 }
@@ -136,17 +129,24 @@ private fun HeaderSection() {
         Spacer(modifier = Modifier.height(8.dp))
 
         Row {
-            Text("OVER", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 24.sp)
-            Text("LOAD", color = GoldAccent, fontWeight = FontWeight.Bold, fontSize = 24.sp)
+            Text(
+                "OVER",
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.titleMedium.copy(fontSize = 24.sp)
+            )
+            Text(
+                "LOAD",
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleMedium.copy(fontSize = 24.sp)
+            )
         }
 
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(
             text = "Selecciona tu sistema",
-            color = Color.White,
-            fontWeight = FontWeight.Bold,
-            fontSize = 26.sp,
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.titleLarge.copy(fontSize = 26.sp),
             textAlign = TextAlign.Center
         )
 
@@ -154,8 +154,8 @@ private fun HeaderSection() {
 
         Text(
             text = "Elige la estructura que mejor\nse adapte a ti.",
-            color = TextGray,
-            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center
         )
     }
@@ -170,10 +170,10 @@ private fun SystemCard(
     Card(
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = CardDark),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         border = BorderStroke(
             width = if (isSelected) 2.dp else 1.dp,
-            color = if (isSelected) GoldAccent else Color(0xFF2E2E2E)
+            color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant
         ),
         modifier = Modifier
             .fillMaxWidth()
@@ -189,7 +189,7 @@ private fun SystemCard(
             Icon(
                 imageVector = iconForBlueprint(blueprint.id),
                 contentDescription = blueprint.name,
-                tint = GoldAccent,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(36.dp)
             )
 
@@ -197,9 +197,8 @@ private fun SystemCard(
 
             Text(
                 text = blueprint.name,
-                color = Color.White,
-                fontWeight = FontWeight.Bold,
-                fontSize = 17.sp,
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.titleSmall.copy(fontSize = 17.sp),
                 textAlign = TextAlign.Center
             )
 
@@ -207,8 +206,8 @@ private fun SystemCard(
 
             Text(
                 text = subtitleForBlueprint(blueprint),
-                color = TextGray,
-                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodySmall,
                 textAlign = TextAlign.Center,
                 lineHeight = 16.sp
             )
@@ -219,14 +218,14 @@ private fun SystemCard(
                 Icon(
                     imageVector = Icons.Default.CalendarToday,
                     contentDescription = null,
-                    tint = GoldAccent,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(14.dp)
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
                     text = blueprint.formattedMicrocycle,
-                    color = TextGray,
-                    fontSize = 12.sp
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodySmall
                 )
             }
         }
