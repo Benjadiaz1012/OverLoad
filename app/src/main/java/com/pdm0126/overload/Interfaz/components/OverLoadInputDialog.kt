@@ -15,6 +15,10 @@ import androidx.compose.ui.graphics.Color
 private val CardDark = Color(0xFF1A1A1A)
 private val GoldAccent = Color(0xFFE8A317)
 private val TextGray = Color(0xFFA0A0A0)
+private val ErrorRed = Color(0xFFE53935)
+
+private val NAME_INPUT_REGEX = Regex("^[\\p{L}\\p{N} .,'()/-]*$")
+private const val DEFAULT_MAX_LENGTH = 30
 
 @Composable
 fun OverloadInputDialog(
@@ -23,6 +27,7 @@ fun OverloadInputDialog(
     label: String,
     confirmText: String = "Guardar",
     dismissText: String = "Cancelar",
+    maxLength: Int = DEFAULT_MAX_LENGTH,
     onConfirm: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -35,8 +40,18 @@ fun OverloadInputDialog(
         text = {
             OutlinedTextField(
                 value = text,
-                onValueChange = { text = it },
+                onValueChange = { newValue ->
+                    if (newValue.length <= maxLength && newValue.matches(NAME_INPUT_REGEX)) {
+                        text = newValue
+                    }
+                },
                 label = { Text(label, color = TextGray) },
+                supportingText = {
+                    Text(
+                        text = "${text.length}/$maxLength",
+                        color = TextGray
+                    )
+                },
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = Color.White,
@@ -49,7 +64,7 @@ fun OverloadInputDialog(
         },
         confirmButton = {
             TextButton(
-                onClick = { onConfirm(text) },
+                onClick = { onConfirm(text.trim()) },
                 enabled = text.isNotBlank()
             ) {
                 Text(text = confirmText, color = GoldAccent)
