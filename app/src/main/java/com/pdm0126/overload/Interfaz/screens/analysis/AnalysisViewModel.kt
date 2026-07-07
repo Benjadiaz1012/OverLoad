@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.pdm0126.overload.OverloadApplication
+import com.pdm0126.overload.domain.TechnicalDictionary
 import com.pdm0126.overload.domain.model.Exercise
 import com.pdm0126.overload.domain.model.MuscleDistribution
 import com.pdm0126.overload.domain.repository.AnalysisRepository
@@ -102,7 +103,7 @@ class AnalysisViewModel(
                 muscleDistribution = data.distribution,
                 evolutionMode = data.evolutionMode,
                 availableExercises = data.exercises,
-                availableMuscleGroups = data.distribution.map { it.muscleGroup }.distinct(),
+                availableMuscleGroups = TechnicalDictionary.mainMuscleGroupsList,
                 selectedExerciseId = data.selectedExerciseId,
                 selectedMuscleGroup = data.selectedMuscleGroup,
                 evolutionProgression = progression
