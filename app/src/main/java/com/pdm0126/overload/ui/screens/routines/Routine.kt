@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.pdm0126.overload.ui.components.TopBar
+import com.pdm0126.overload.ui.components.OverloadTopBar
 import com.pdm0126.overload.domain.model.RoutineMicrocycle
 import kotlinx.coroutines.launch
 
@@ -42,7 +42,7 @@ fun Routines(
     Scaffold(
         containerColor = BackgroundDark,
         topBar = {
-            TopBar(title = "Mis Rutinas")
+            OverloadTopBar(title = "Mis Rutinas")
         },
         floatingActionButton = {
             FloatingActionButton(

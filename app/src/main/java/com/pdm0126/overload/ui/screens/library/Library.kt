@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
-import com.pdm0126.overload.ui.components.TopBar
+import com.pdm0126.overload.ui.components.OverloadTopBar
 import com.pdm0126.overload.ui.components.ExerciseNavCache
 import com.pdm0126.overload.domain.TechnicalDictionary
 import com.pdm0126.overload.domain.model.Exercise
@@ -124,7 +124,7 @@ private fun LibraryContent(
     Scaffold(
         containerColor = BackgroundDark,
         topBar = {
-            TopBar(
+            OverloadTopBar(
                 title = "Ejercicios",
                 showBackButton = isSelectionMode || isAnalysisMode,
                 onBackClick = onBackClick

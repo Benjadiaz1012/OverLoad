@@ -23,7 +23,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.pdm0126.overload.ui.components.ConfirmDialog
 import com.pdm0126.overload.ui.components.OverloadInfoDialog
-import com.pdm0126.overload.ui.components.TopBar
+import com.pdm0126.overload.ui.components.OverloadTopBar
 import com.pdm0126.overload.domain.model.Exercise
 import com.pdm0126.overload.domain.model.RoutineDay
 import kotlinx.coroutines.launch
@@ -69,7 +69,7 @@ fun Training(
         Scaffold(
             containerColor = BackgroundDark,
             topBar = {
-                TopBar(
+                OverloadTopBar(
                     title = "Entrenamiento",
                     leadingIcon = Icons.Default.Menu,
                     onLeadingClick = { coroutineScope.launch { drawerState.open() } },

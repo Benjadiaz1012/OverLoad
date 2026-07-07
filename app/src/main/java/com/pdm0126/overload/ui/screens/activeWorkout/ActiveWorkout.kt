@@ -20,7 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pdm0126.overload.ui.components.ConfirmDialog
-import com.pdm0126.overload.ui.components.TopBar
+import com.pdm0126.overload.ui.components.OverloadTopBar
 import com.pdm0126.overload.domain.model.RoutineDay
 import com.pdm0126.overload.domain.model.RoutineSlot
 import com.pdm0126.overload.domain.model.WorkoutSet
@@ -75,7 +75,7 @@ fun ActiveWorkout(
         containerColor = BackgroundDark,
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
-            TopBar(
+            OverloadTopBar(
                 title = if (day != null) "Entrenando: ${day.focus}" else "Cargando sesión...",
                 trailingContent = {
                     Box {

@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.pdm0126.overload.ui.components.TopBar
+import com.pdm0126.overload.ui.components.OverloadTopBar
 import com.pdm0126.overload.domain.TechnicalDictionary
 import com.pdm0126.overload.domain.model.Exercise
 import com.pdm0126.overload.domain.model.MuscleDistribution
@@ -55,7 +55,7 @@ fun Analysis(
 
     Scaffold(
         containerColor = BackgroundDark,
-        topBar = { TopBar(title = "Análisis") }
+        topBar = { OverloadTopBar(title = "Análisis") }
     ) { innerPadding ->
         Column(
             modifier = Modifier

@@ -3,24 +3,19 @@ package com.pdm0126.overload.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-
-private val BackgroundDark = Color(0xFF0E0E0E)
-private val TitleSize = 22.sp
 
 @Composable
-fun TopBar(
+fun OverloadTopBar(
     title: String,
     modifier: Modifier = Modifier,
     showBackButton: Boolean = false,
@@ -36,7 +31,7 @@ fun TopBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(BackgroundDark)
+            .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .defaultMinSize(minHeight = 48.dp),
@@ -46,20 +41,19 @@ fun TopBar(
             showBackButton -> {
                 IconButton(onClick = onBackClick) {
                     Icon(
-                        Icons.AutoMirrored.Filled.ArrowBack,
+                        Icons.Default.ArrowBack,
                         contentDescription = "Atrás",
-                        tint = Color.White
+                        tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
                 Spacer(modifier = Modifier.width(4.dp))
             }
-
             leadingIcon != null -> {
                 IconButton(onClick = onLeadingClick) {
                     Icon(
                         leadingIcon,
                         contentDescription = leadingContentDescription,
-                        tint = Color.White
+                        tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
                 Spacer(modifier = Modifier.width(4.dp))
@@ -68,9 +62,8 @@ fun TopBar(
 
         Text(
             text = title,
-            color = Color.White,
-            fontWeight = FontWeight.Bold,
-            fontSize = TitleSize,
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.weight(1f)
         )
 
@@ -81,7 +74,7 @@ fun TopBar(
                     Icon(
                         trailingIcon,
                         contentDescription = trailingContentDescription,
-                        tint = Color.White
+                        tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
             }

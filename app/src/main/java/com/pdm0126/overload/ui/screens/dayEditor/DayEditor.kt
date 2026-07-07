@@ -19,7 +19,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pdm0126.overload.ui.components.ConfirmDialog
 import com.pdm0126.overload.ui.components.OverloadInputDialog
-import com.pdm0126.overload.ui.components.TopBar
+import com.pdm0126.overload.ui.components.OverloadTopBar
 import com.pdm0126.overload.domain.model.RoutineSlot
 
 private val BackgroundDark = Color(0xFF0E0E0E)
@@ -59,7 +59,7 @@ fun DayEditor(
     Scaffold(
         containerColor = BackgroundDark,
         topBar = {
-            TopBar(
+            OverloadTopBar(
                 title = day?.focus ?: "Editar día",
                 showBackButton = true,
                 onBackClick = onBack,

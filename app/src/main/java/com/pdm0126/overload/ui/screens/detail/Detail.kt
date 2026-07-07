@@ -24,7 +24,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.pdm0126.overload.ui.components.ConfirmDialog
-import com.pdm0126.overload.ui.components.TopBar
+import com.pdm0126.overload.ui.components.OverloadTopBar
 import com.pdm0126.overload.domain.model.Exercise
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -54,7 +54,7 @@ fun Detail(
     Scaffold(
         containerColor = BackgroundDark,
         topBar = {
-            TopBar(
+            OverloadTopBar(
                 title = exercise?.name ?: "Detalle",
                 showBackButton = true,
                 onBackClick = onBack,
