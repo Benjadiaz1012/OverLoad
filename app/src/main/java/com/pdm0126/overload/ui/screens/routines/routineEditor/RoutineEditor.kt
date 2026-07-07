@@ -1,4 +1,4 @@
-package com.pdm0126.overload.ui.screens.routineEditor
+package com.pdm0126.overload.ui.screens.routines.routineEditor
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn

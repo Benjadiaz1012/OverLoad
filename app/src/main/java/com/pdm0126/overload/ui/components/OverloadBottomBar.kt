@@ -12,7 +12,7 @@ import androidx.compose.material.icons.outlined.FitnessCenter
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.pdm0126.overload.Routes
+import com.pdm0126.overload.ui.navigation.Routes
 
 data class TopLevelDestination(
     val title: String,

@@ -1,4 +1,4 @@
-package com.pdm0126.overload
+package com.pdm0126.overload.ui.navigation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -12,7 +12,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             OverloadTheme {
-               MainNavigation()
+                OverloadApp()
             }
         }
     }

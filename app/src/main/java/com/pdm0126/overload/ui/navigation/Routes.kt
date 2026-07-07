@@ -1,4 +1,4 @@
-package com.pdm0126.overload
+package com.pdm0126.overload.ui.navigation
 
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable

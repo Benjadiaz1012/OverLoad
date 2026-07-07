@@ -1,4 +1,4 @@
-package com.pdm0126.overload
+package com.pdm0126.overload.ui.navigation
 
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -25,16 +25,16 @@ import com.pdm0126.overload.ui.screens.analysis.AnalysisViewModel
 import com.pdm0126.overload.ui.screens.detail.Detail
 import com.pdm0126.overload.ui.screens.library.Library
 import com.pdm0126.overload.ui.screens.routines.Routines
-import com.pdm0126.overload.ui.screens.dayEditor.DayEditor
-import com.pdm0126.overload.ui.screens.dayEditor.DayEditorViewModel
-import com.pdm0126.overload.ui.screens.routineEditor.RoutineEditor
+import com.pdm0126.overload.ui.screens.routines.dayEditor.DayEditor
+import com.pdm0126.overload.ui.screens.routines.dayEditor.DayEditorViewModel
+import com.pdm0126.overload.ui.screens.routines.routineEditor.RoutineEditor
 import com.pdm0126.overload.ui.screens.signin.SignIn
 import com.pdm0126.overload.ui.screens.system.SystemViewModel
 import com.pdm0126.overload.ui.screens.system.TrainingSystem
 import com.pdm0126.overload.ui.screens.training.Training
 
 @Composable
-fun MainNavigation() {
+fun OverloadApp() {
     val backStack = rememberNavBackStack(Routes.SignIn)
     val currentDestination = backStack.lastOrNull()
 
