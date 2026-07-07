@@ -176,20 +176,22 @@ private fun BarChart(
     val maxValue = (data.maxOfOrNull { it.totalEffectiveVolume } ?: 1f).coerceAtLeast(1f)
 
     Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.SpaceEvenly,
+        modifier = modifier.horizontalScroll(rememberScrollState()),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalAlignment = Alignment.Bottom
     ) {
         data.forEachIndexed { index, item ->
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.width(56.dp)
             ) {
                 Text(
-                    text = "%,.0f".format(item.totalEffectiveVolume),
+                    text = "%,.0f kg".format(item.totalEffectiveVolume),
                     color = Color.White,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    textAlign = TextAlign.Center
                 )
 
                 Spacer(modifier = Modifier.height(6.dp))
@@ -209,8 +211,10 @@ private fun BarChart(
                 Text(
                     text = item.muscleGroup.replaceFirstChar { it.uppercase() },
                     color = TextGray,
-                    fontSize = 11.sp,
-                    textAlign = TextAlign.Center
+                    fontSize = 10.sp,
+                    textAlign = TextAlign.Center,
+                    maxLines = 2,
+                    lineHeight = 12.sp
                 )
             }
         }
