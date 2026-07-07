@@ -11,14 +11,8 @@ import androidx.compose.material.icons.outlined.Analytics
 import androidx.compose.material.icons.outlined.FitnessCenter
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.pdm0126.overload.Routes
-
-// ---------- Colores base (ajusta a tu Theme.kt) ----------
-private val BarBackground = Color(0xFF161616)
-private val GoldAccent = Color(0xFFE8A317)
-private val TextGray = Color(0xFFA0A0A0)
 
 data class TopLevelDestination(
     val title: String,
@@ -28,23 +22,44 @@ data class TopLevelDestination(
 )
 
 val topLevelDestinations = listOf(
-    TopLevelDestination("Entrenar", Icons.Filled.FitnessCenter, Icons.Outlined.FitnessCenter, Routes.Training),
-    TopLevelDestination("Rutinas", Icons.AutoMirrored.Filled.List, Icons.AutoMirrored.Outlined.List, Routes.Routines),
-    TopLevelDestination("Biblioteca", Icons.AutoMirrored.Filled.MenuBook, Icons.AutoMirrored.Outlined.MenuBook, Routes.Library),
-    TopLevelDestination("Análisis", Icons.Filled.Analytics, Icons.Outlined.Analytics, Routes.Analysis)
+    TopLevelDestination(
+        "Entrenar",
+        Icons.Filled.FitnessCenter,
+        Icons.Outlined.FitnessCenter,
+        Routes.Training
+    ),
+    TopLevelDestination(
+        "Rutinas",
+        Icons.AutoMirrored.Filled.List,
+        Icons.AutoMirrored.Outlined.List,
+        Routes.Routines
+    ),
+    TopLevelDestination(
+        "Biblioteca",
+        Icons.AutoMirrored.Filled.MenuBook,
+        Icons.AutoMirrored.Outlined.MenuBook,
+        Routes.Library
+    ),
+    TopLevelDestination(
+        "Análisis",
+        Icons.Filled.Analytics,
+        Icons.Outlined.Analytics,
+        Routes.Analysis
+    )
 )
 
 @Composable
-fun BottomBar(
+fun OverloadBottomBar(
     currentDestination: Any?,
     onNavigate: (Routes) -> Unit
 ) {
-    val isTopLevel = topLevelDestinations.any { destination -> destination.route == currentDestination }
+    val isTopLevel =
+        topLevelDestinations.any { destination -> destination.route == currentDestination }
     if (!isTopLevel) return
 
     NavigationBar(
-        containerColor = BarBackground,
-        contentColor = Color.White
+        containerColor = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurface
     ) {
         topLevelDestinations.forEach { destination ->
             val selected = currentDestination == destination.route
@@ -60,11 +75,11 @@ fun BottomBar(
                 },
                 label = { Text(destination.title) },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = Color.Black,
-                    selectedTextColor = GoldAccent,
-                    indicatorColor = GoldAccent,
-                    unselectedIconColor = TextGray,
-                    unselectedTextColor = TextGray
+                    selectedIconColor = MaterialTheme.colorScheme.onPrimary,
+                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                    indicatorColor = MaterialTheme.colorScheme.primary,
+                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             )
         }

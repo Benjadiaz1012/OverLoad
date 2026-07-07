@@ -17,7 +17,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
-import com.pdm0126.overload.ui.components.BottomBar
+import com.pdm0126.overload.ui.components.OverloadBottomBar
 import com.pdm0126.overload.ui.screens.activeWorkout.ActiveWorkout
 import com.pdm0126.overload.ui.screens.activeWorkout.ActiveWorkoutViewModel
 import com.pdm0126.overload.ui.screens.analysis.Analysis
@@ -40,7 +40,7 @@ fun MainNavigation() {
 
     Scaffold(
         bottomBar = {
-            BottomBar(
+            OverloadBottomBar(
                 currentDestination = currentDestination,
                 onNavigate = { route ->
                     if (currentDestination != route) {
