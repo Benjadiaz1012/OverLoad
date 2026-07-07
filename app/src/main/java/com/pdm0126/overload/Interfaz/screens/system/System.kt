@@ -69,7 +69,7 @@ fun TrainingSystem(
                 Button(
                     onClick = {
                         onConfirm(systems.find { it.id == selectedId })
-
+                        onNext()
                     },
                     modifier = Modifier
                         .fillMaxWidth()
