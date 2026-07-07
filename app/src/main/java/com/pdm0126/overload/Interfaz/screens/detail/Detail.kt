@@ -12,6 +12,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,6 +21,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.pdm0126.overload.Interfaz.components.TopBar
 import com.pdm0126.overload.domain.model.Exercise
@@ -30,29 +33,19 @@ private val FieldDark = Color(0xFF222222)
 private val GoldAccent = Color(0xFFE8A317)
 private val TextGray = Color(0xFFA0A0A0)
 
-private val previewExercise = Exercise(
-    id = "press_banca",
-    name = "Press de Banca Plano",
-    muscleGroup = "Pecho",
-    mechanic = "Compuesto",
-    targetMuscles = listOf("Pectoral"),
-    secondaryMuscles = listOf("Tríceps", "Deltoide anterior"),
-    equipment = "Barra",
-    instructions = listOf(
-        "Recuéstate en el banco con los pies firmes en el suelo.",
-        "Toma la barra con un agarre un poco más ancho que los hombros.",
-        "Baja la barra de forma controlada hasta rozar el pecho.",
-        "Empuja la barra hacia arriba hasta extender los brazos por completo."
-    ),
-    remoteImages = emptyList()
-)
-
 @Composable
 fun Detail(
-    exercise: Exercise? = previewExercise,
-    isLoading: Boolean = false,
+    exerciseId: String,
     onBack: () -> Unit = {}
 ) {
+    val viewModel: DetailViewModel = viewModel(
+        factory = DetailViewModel.provideFactory(exerciseId),
+        key = exerciseId
+    )
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val exercise = uiState.exercise
+    val isLoading = uiState.isLoading
+
     Scaffold(
         containerColor = BackgroundDark,
         topBar = {
