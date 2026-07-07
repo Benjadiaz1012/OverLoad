@@ -176,9 +176,14 @@ fun ActiveWorkout(
     }
 
     if (showEndWorkoutDialog) {
+        val hasLoggedSets = sessionSets.isNotEmpty()
         ConfirmDialog(
             title = "Finalizar Sesión",
-            text = "Los datos registrados se guardarán en tu historial",
+            text = if (hasLoggedSets) {
+                "Los datos registrados se guardarán en tu historial"
+            } else {
+                "No registraste ninguna serie. Esta sesión se descartará y no aparecerá en tu historial."
+            },
             confirmText = "Finalizar",
             icon = Icons.Default.DoneAll,
             onConfirm = {
