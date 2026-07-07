@@ -1,5 +1,9 @@
 package com.pdm0126.overload
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
@@ -129,8 +133,9 @@ fun MainNavigation() {
                     DayEditor(
                         dayId = route.dayId,
                         onBack = { backStack.removeLastOrNull() },
-                        onNavigateToLibrarySelection = { backStack.add(Routes.LibrarySelection(route.dayId)) },
-                        onNavigateToExerciseDetail = { exerciseId -> backStack.add(Routes.Detail(exerciseId)) },
+                        onNavigateToLibrarySelection = {
+                            backStack.add(Routes.LibrarySelection(route.dayId))
+                        },
                         onDayDeleted = { backStack.removeLastOrNull() }
                     )
                 }
@@ -188,6 +193,9 @@ fun MainNavigation() {
                         }
                     )
                 }
+            },
+            transitionSpec = {
+                fadeIn(animationSpec = tween(300)) togetherWith fadeOut(animationSpec = tween(300))
             }
         )
     }
