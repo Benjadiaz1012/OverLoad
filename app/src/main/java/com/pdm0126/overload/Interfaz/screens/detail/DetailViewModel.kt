@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import com.pdm0126.overload.Interfaz.components.ExerciseNavCache
 
 data class DetailUiState(
     val isLoading: Boolean = true,
@@ -52,8 +53,7 @@ class DetailViewModel(
                 val isBookmarked = exercise != null
 
                 if (exercise == null) {
-                    val remoteCache = exerciseRepository.getRemoteExercises("").getOrNull()
-                    exercise = remoteCache?.find { it.id == exerciseId }
+                    exercise = ExerciseNavCache.get(exerciseId)
                 }
 
                 if (exercise != null) {
