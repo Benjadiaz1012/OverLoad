@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pdm0126.overload.Interfaz.components.ConfirmDialog
+import com.pdm0126.overload.Interfaz.components.OverloadInputDialog
 import com.pdm0126.overload.Interfaz.components.TopBar
 import com.pdm0126.overload.domain.model.RoutineDay
 
@@ -42,9 +43,11 @@ fun RoutineEditor(
 
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
+    var showRenameDialog by remember { mutableStateOf(false) }
     var dayToDelete by remember { mutableStateOf<RoutineDay?>(null) }
 
     val microcycle = uiState.microcycle
+
     LaunchedEffect(uiState.isLoading, microcycle) {
         if (!uiState.isLoading && microcycle == null) {
             onBack()
@@ -71,6 +74,20 @@ fun RoutineEditor(
                             expanded = showMenu,
                             onDismissRequest = { showMenu = false }
                         ) {
+                            DropdownMenuItem(
+                                text = { Text("Renombrar rutina") },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Default.Edit,
+                                        contentDescription = null,
+                                        tint = GoldAccent
+                                    )
+                                },
+                                onClick = {
+                                    showMenu = false
+                                    showRenameDialog = true
+                                }
+                            )
                             if (microcycle != null && !microcycle.isActive && !uiState.isWorkoutSessionActive) {
                                 DropdownMenuItem(
                                     text = { Text("Marcar como activa") },
@@ -143,8 +160,7 @@ fun RoutineEditor(
                     item {
                         RoutineNameField(
                             name = microcycle.name,
-                            isActive = microcycle.isActive,
-                            onNameChange = viewModel::renameRoutine
+                            isActive = microcycle.isActive
                         )
                     }
 
@@ -188,6 +204,19 @@ fun RoutineEditor(
         }
     }
 
+    if (showRenameDialog) {
+        OverloadInputDialog(
+            title = "Renombrar rutina",
+            initialValue = microcycle?.name ?: "",
+            label = "Nombre",
+            onConfirm = { newName ->
+                viewModel.renameRoutine(newName)
+                showRenameDialog = false
+            },
+            onDismiss = { showRenameDialog = false }
+        )
+    }
+
     if (showDeleteDialog) {
         ConfirmDialog(
             title = "Eliminar rutina",
@@ -225,35 +254,23 @@ fun RoutineEditor(
 @Composable
 private fun RoutineNameField(
     name: String,
-    isActive: Boolean,
-    onNameChange: (String) -> Unit
+    isActive: Boolean
 ) {
-    Column {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            if (isActive) {
-                Icon(
-                    imageVector = Icons.Default.Star,
-                    contentDescription = "Rutina activa",
-                    tint = GoldAccent,
-                    modifier = Modifier.size(18.dp)
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-            }
-            Text(text = "Nombre de la rutina", color = TextGray, fontSize = 13.sp)
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        if (isActive) {
+            Icon(
+                imageVector = Icons.Default.Star,
+                contentDescription = "Rutina activa",
+                tint = GoldAccent,
+                modifier = Modifier.size(20.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
         }
-        Spacer(modifier = Modifier.height(6.dp))
-        OutlinedTextField(
-            value = name,
-            onValueChange = onNameChange,
-            singleLine = true,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White,
-                focusedBorderColor = GoldAccent,
-                unfocusedBorderColor = TextGray,
-                cursorColor = GoldAccent
-            ),
-            modifier = Modifier.fillMaxWidth()
+        Text(
+            text = name,
+            color = Color.White,
+            fontWeight = FontWeight.Bold,
+            fontSize = 22.sp
         )
     }
 }
