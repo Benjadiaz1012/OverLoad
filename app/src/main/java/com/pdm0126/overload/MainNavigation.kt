@@ -18,6 +18,7 @@ import com.pdm0126.overload.Interfaz.screens.activeWorkout.ActiveWorkout
 import com.pdm0126.overload.Interfaz.screens.activeWorkout.ActiveWorkoutViewModel
 import com.pdm0126.overload.Interfaz.screens.analysis.Analysis
 import com.pdm0126.overload.Interfaz.screens.analysis.AnalysisViewModel
+import com.pdm0126.overload.Interfaz.screens.detail.Detail
 import com.pdm0126.overload.Interfaz.screens.library.Library
 import com.pdm0126.overload.Interfaz.screens.routines.Routines
 import com.pdm0126.overload.Interfaz.screens.dayEditor.DayEditor
@@ -154,7 +155,15 @@ fun MainNavigation() {
                 entry<Routes.Library> {
                     Library(
                         onExerciseClick = { exercise ->
+                            backStack.add(Routes.Detail(exercise.id))
                         }
+                    )
+                }
+
+                entry<Routes.Detail> { route ->
+                    Detail(
+                        exerciseId = route.exerciseId,
+                        onBack = { backStack.removeLastOrNull() }
                     )
                 }
 
@@ -172,6 +181,7 @@ fun MainNavigation() {
                         isAnalysisMode = true,
                         onBackClick = { backStack.removeLastOrNull() },
                         onExerciseClick = { exercise ->
+                            backStack.add(Routes.Detail(exercise.id))
                         },
                         onExerciseAnalysisSelect = { exercise ->
                             analysisViewModel.selectExercise(exercise.id)
@@ -183,4 +193,3 @@ fun MainNavigation() {
         )
     }
 }
-
