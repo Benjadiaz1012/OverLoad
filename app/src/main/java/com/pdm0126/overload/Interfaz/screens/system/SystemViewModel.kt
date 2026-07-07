@@ -24,18 +24,23 @@ data class SystemUiState(
 class SystemViewModel(
     private val routineRepository: RoutineRepository
 ) : ViewModel() {
+
     private val _uiState = MutableStateFlow(SystemUiState())
+
     val uiState: StateFlow<SystemUiState> = _uiState.asStateFlow()
+
     fun createMicrocycleFromBlueprint(blueprint: Blueprint) {
         viewModelScope.launch {
+
             _uiState.update { it.copy(isCreating = true, error = null) }
 
             try {
                 val newMicrocycleId = routineRepository.createMicrocycle(
                     name = blueprint.name,
                     blueprintType = blueprint.id,
-                    isActive = true
+                    isActive = false
                 )
+
                 blueprint.defaultDays.forEachIndexed { index, dayName ->
                     routineRepository.addDayToMicrocycle(
                         microcycleId = newMicrocycleId,
@@ -43,6 +48,9 @@ class SystemViewModel(
                         focus = dayName
                     )
                 }
+
+                routineRepository.updateActiveMicrocycle(newMicrocycleId)
+
                 _uiState.update {
                     it.copy(
                         isCreating = false,
