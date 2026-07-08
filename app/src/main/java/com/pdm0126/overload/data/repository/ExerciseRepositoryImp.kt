@@ -7,9 +7,6 @@ import com.pdm0126.overload.data.remote.ExerciseApiClient
 import com.pdm0126.overload.data.remote.dto.ExerciseDto
 import com.pdm0126.overload.domain.model.Exercise
 import com.pdm0126.overload.domain.repository.ExerciseRepository
-import io.ktor.client.call.body
-import io.ktor.client.request.get
-import io.ktor.client.request.parameter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -31,12 +28,12 @@ class ExerciseRepositoryImp(
     }
     override suspend fun saveRemoteExerciseToLocal(exercise: Exercise) {
         val entity = exercise.toEntity()
-        exerciseDao.insertExercise(entity)
+        exerciseDao.saveExerciseSafely(entity)
     }
 
     override suspend fun deleteLocalExercise(exercise: Exercise) {
         val entity = exercise.toEntity()
-        exerciseDao.deleteExercise(entity)
+        exerciseDao.softDeleteExercise(entity.exerciseId)
     }
 
     override suspend fun getExerciseById(id: String): Exercise? {

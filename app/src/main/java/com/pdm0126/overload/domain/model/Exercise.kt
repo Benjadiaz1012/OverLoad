@@ -9,5 +9,6 @@ data class Exercise(
     val secondaryMuscles : List<String>,
     val equipment : String,
     val instructions : List<String>,
-    val remoteImages : List<String>
+    val remoteImages : List<String>,
+    val isHidden : Boolean = false
 )

@@ -16,6 +16,7 @@ data class ExerciseEntity(
     val secondaryMuscles: List<String>,
     val equipment: String,
     val instructions: List<String>,
-    val remoteImagesUrls: List<String>
+    val remoteImagesUrls: List<String>,
+    val isHidden: Boolean = false
 )
 

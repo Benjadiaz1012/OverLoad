@@ -41,7 +41,6 @@ fun Detail(
 
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
-    var showUnbookmarkDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -64,7 +63,14 @@ fun Detail(
                                             )
                                         }
                                     } else {
-                                        showUnbookmarkDialog = true
+                                        viewModel.toggleBookmark()
+                                        coroutineScope.launch {
+                                            snackbarHostState.currentSnackbarData?.dismiss()
+                                            snackbarHostState.showSnackbar(
+                                                message = "Eliminado de tu biblioteca",
+                                                duration = SnackbarDuration.Short
+                                            )
+                                        }
                                     }
                                 } else {
                                     viewModel.toggleBookmark()
@@ -165,25 +171,6 @@ fun Detail(
                 }
             }
         }
-    }
-
-    if (showUnbookmarkDialog) {
-        OverloadConfirmDialog(
-            title = "Eliminar de la biblioteca",
-            text = "Si eliminas este ejercicio de tu biblioteca, desaparecerá de tus rutinas. ¿Quieres continuar?",
-            confirmText = "Eliminar",
-            dismissText = "Cancelar",
-            isDestructive = true,
-            icon = Icons.Default.DeleteOutline,
-            onConfirm = {
-                viewModel.toggleBookmark()
-                showUnbookmarkDialog = false
-                coroutineScope.launch {
-                    snackbarHostState.showSnackbar("Eliminado de tu biblioteca")
-                }
-            },
-            onDismiss = { showUnbookmarkDialog = false }
-        )
     }
 }
 

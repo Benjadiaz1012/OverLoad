@@ -15,7 +15,8 @@ fun ExerciseEntity.toDomainModel() : Exercise {
         secondaryMuscles = secondaryMuscles,
         equipment = equipment,
         instructions = instructions,
-        remoteImages = remoteImagesUrls
+        remoteImages = remoteImagesUrls,
+        isHidden = isHidden
     )
 }
 
@@ -29,7 +30,8 @@ fun Exercise.toEntity() : ExerciseEntity {
         secondaryMuscles = secondaryMuscles,
         equipment = equipment,
         instructions = instructions,
-        remoteImagesUrls = remoteImages
+        remoteImagesUrls = remoteImages,
+        isHidden = isHidden
     )
 }
 
@@ -43,6 +45,7 @@ fun ExerciseDto.toDomainModel(): Exercise {
         secondaryMuscles = secondaryMuscles.map {muscle -> TechnicalDictionary.getSpecificMuscle(muscle) },
         equipment = TechnicalDictionary.getEquipment(equipment),
         instructions = instructions,
-        remoteImages = images
+        remoteImages = images,
+        isHidden = false
     )
 }
