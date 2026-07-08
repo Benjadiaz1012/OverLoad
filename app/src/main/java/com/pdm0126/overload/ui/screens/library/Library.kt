@@ -42,6 +42,8 @@ enum class ExerciseCardMode { DEFAULT, SELECTION, ANALYSIS }
 private val muscleGroupOptions = TechnicalDictionary.mainMuscleGroupsList
 private val mechanicOptions = listOf("Compuesto", "Aislamiento")
 
+private const val MAX_SEARCH_QUERY_LENGTH = 40
+
 @Composable
 fun Library(
     viewModel: LibraryViewModel = viewModel(factory = LibraryViewModel.Factory),
@@ -240,7 +242,11 @@ private fun SearchField(
 ) {
     TextField(
         value = query,
-        onValueChange = onQueryChange,
+        onValueChange = { newValue ->
+            if (newValue.length <= MAX_SEARCH_QUERY_LENGTH) {
+                onQueryChange(newValue)
+            }
+        },
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp, vertical = 12.dp)
@@ -387,14 +393,19 @@ private fun ExploreContent(
     onRetry: () -> Unit
 ) {
     PullToRefreshBox(
-        isRefreshing = remoteState.isLoading,
+        isRefreshing = false,
         onRefresh = onRetry,
         modifier = Modifier.fillMaxSize()
     ) {
         when {
             remoteState.isLoading && remoteState.results.isEmpty() -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.primary
+                    )
                 }
             }
 
@@ -412,7 +423,9 @@ private fun ExploreContent(
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(48.dp)
                     )
+
                     Spacer(modifier = Modifier.height(12.dp))
+
                     Text(
                         text = remoteState.errorMessage,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -420,7 +433,9 @@ private fun ExploreContent(
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(horizontal = 32.dp)
                     )
+
                     Spacer(modifier = Modifier.height(12.dp))
+
                     Text(
                         text = "Reintentar",
                         color = MaterialTheme.colorScheme.primary,
@@ -444,7 +459,9 @@ private fun ExploreContent(
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(56.dp)
                     )
+
                     Spacer(modifier = Modifier.height(12.dp))
+
                     Text(
                         text = "Busca un ejercicio",
                         color = MaterialTheme.colorScheme.onBackground,

@@ -13,10 +13,6 @@ sealed class Routes : NavKey {
 
     @Serializable
     data object Training : Routes()
-
-    @Serializable
-    data object Profile : Routes()
-
     @Serializable
     data object ActiveWorkout : Routes()
 

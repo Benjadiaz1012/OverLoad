@@ -13,34 +13,33 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
+import com.pdm0126.overload.domain.model.Exercise
+import com.pdm0126.overload.domain.model.RoutineDay
 import com.pdm0126.overload.ui.components.OverloadConfirmDialog
 import com.pdm0126.overload.ui.components.OverloadInfoDialog
 import com.pdm0126.overload.ui.components.OverloadTopBar
-import com.pdm0126.overload.domain.model.Exercise
-import com.pdm0126.overload.domain.model.RoutineDay
 import kotlinx.coroutines.launch
 
 @Composable
 fun Training(
     viewModel: TrainingViewModel = viewModel(factory = TrainingViewModel.Factory),
-    onCalendarClick: () -> Unit = {},
     onExerciseClick: (ExerciseDisplayItem) -> Unit = {},
     onSessionStarted: () -> Unit = {},
-    onNavigateToProfile: () -> Unit = {}
+    onLogout: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
     var showDaySelector by remember { mutableStateOf(false) }
     var showStartConfirmDialog by remember { mutableStateOf(false) }
     var showEmptyWorkoutDialog by remember { mutableStateOf(false) }
+    var showLogoutDialog by remember { mutableStateOf(false) }
 
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -48,139 +47,133 @@ fun Training(
     val isSessionActiveForThisDay = hasAnyActiveSession &&
             uiState.activeSessionDayId == uiState.day?.dayId
 
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            TrainingDrawerContent(
-                onProfileClick = {
-                    coroutineScope.launch { drawerState.close() }
-                    onNavigateToProfile()
-                }
+    Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
+        topBar = {
+            OverloadTopBar(
+                title = "Entrenamiento",
+                trailingIcon = Icons.Default.Logout,
+                onTrailingClick = { showLogoutDialog = true },
+                trailingContentDescription = "Cerrar sesión"
             )
-        }
-    ) {
-        Scaffold(
-            containerColor = MaterialTheme.colorScheme.background,
-            topBar = {
-                OverloadTopBar(
-                    title = "Entrenamiento",
-                    leadingIcon = Icons.Default.Menu,
-                    onLeadingClick = { coroutineScope.launch { drawerState.open() } },
-                    leadingContentDescription = "Menú",
-                    trailingIcon = Icons.Default.CalendarMonth,
-                    onTrailingClick = onCalendarClick,
-                    trailingContentDescription = "Calendario"
-                )
-            },
-            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-            bottomBar = {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 24.dp)
-                ) {
-                    Button(
-                        onClick = {
-                            when {
-                                isSessionActiveForThisDay -> {
-                                    onSessionStarted()
-                                }
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        bottomBar = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 24.dp)
+            ) {
+                Button(
+                    onClick = {
+                        when {
+                            isSessionActiveForThisDay -> {
+                                onSessionStarted()
+                            }
 
-                                hasAnyActiveSession -> {
-                                    coroutineScope.launch {
-                                        snackbarHostState.currentSnackbarData?.dismiss()
-                                        snackbarHostState.showSnackbar(
-                                            message = "Ya tienes otro entrenamiento en curso",
-                                            duration = SnackbarDuration.Short
-                                        )
-                                    }
-                                }
-
-                                uiState.exercises.isEmpty() -> {
-                                    showEmptyWorkoutDialog = true
-                                }
-
-                                else -> {
-                                    showStartConfirmDialog = true
+                            hasAnyActiveSession -> {
+                                coroutineScope.launch {
+                                    snackbarHostState.currentSnackbarData?.dismiss()
+                                    snackbarHostState.showSnackbar(
+                                        message = "Ya tienes otro entrenamiento en curso",
+                                        duration = SnackbarDuration.Short
+                                    )
                                 }
                             }
+
+                            uiState.exercises.isEmpty() -> {
+                                showEmptyWorkoutDialog = true
+                            }
+
+                            else -> {
+                                showStartConfirmDialog = true
+                            }
+                        }
+                    },
+                    enabled = uiState.day != null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.PlayArrow,
+                        contentDescription = null
+                    )
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Text(
+                        text = when {
+                            isSessionActiveForThisDay -> "Reanudar sesión"
+                            hasAnyActiveSession -> "Otro entrenamiento en curso"
+                            else -> "Iniciar Sesión de entrenamiento"
                         },
-                        enabled = uiState.day != null,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
-                        )
-                    ) {
-                        Icon(imageVector = Icons.Default.PlayArrow, contentDescription = null)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = when {
-                                isSessionActiveForThisDay -> "Reanudar sesión"
-                                hasAnyActiveSession -> "Otro entrenamiento en curso"
-                                else -> "Iniciar Sesión de entrenamiento"
-                            },
-                            style = MaterialTheme.typography.labelLarge
-                        )
-                    }
+                        style = MaterialTheme.typography.labelLarge
+                    )
                 }
             }
-        ) { innerPadding ->
-            when {
-                uiState.isLoading -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
-                    }
+        }
+    ) { innerPadding ->
+        when {
+            uiState.isLoading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.primary
+                    )
                 }
+            }
 
-                uiState.day == null -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding)
-                            .padding(24.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "No tienes una rutina activa. Crea una desde el tab \"Rutinas\".",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodyMedium
+            uiState.day == null -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .padding(24.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "No tienes una rutina activa. Crea una desde el tab \"Rutinas\".",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
+
+            else -> {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .padding(horizontal = 20.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    item {
+                        DaySelectorSection(
+                            dayTitle = uiState.day?.focus.orEmpty(),
+                            exerciseCount = uiState.exercises.size,
+                            onClick = { showDaySelector = true }
                         )
                     }
-                }
 
-                else -> {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding)
-                            .padding(horizontal = 20.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        item {
-                            DaySelectorSection(
-                                dayTitle = uiState.day?.focus.orEmpty(),
-                                exerciseCount = uiState.exercises.size,
-                                onClick = { showDaySelector = true }
-                            )
-                        }
+                    items(uiState.exercises, key = { it.slot.slotId }) { item ->
+                        ExerciseCard(
+                            item = item,
+                            onClick = { onExerciseClick(item) }
+                        )
+                    }
 
-                        items(uiState.exercises, key = { it.slot.slotId }) { item ->
-                            ExerciseCard(
-                                item = item,
-                                onClick = { onExerciseClick(item) }
-                            )
-                        }
-
-                        item { Spacer(modifier = Modifier.height(8.dp)) }
+                    item {
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
             }
@@ -195,7 +188,9 @@ fun Training(
                 viewModel.selectDay(dayId)
                 showDaySelector = false
             },
-            onDismiss = { showDaySelector = false }
+            onDismiss = {
+                showDaySelector = false
+            }
         )
     }
 
@@ -210,7 +205,9 @@ fun Training(
                 viewModel.startWorkout(onSessionStarted)
                 showStartConfirmDialog = false
             },
-            onDismiss = { showStartConfirmDialog = false }
+            onDismiss = {
+                showStartConfirmDialog = false
+            }
         )
     }
 
@@ -219,43 +216,26 @@ fun Training(
             title = "Rutina sin ejercicios",
             text = "Esta rutina no tiene ejercicios programados. Debes añadir ejercicios desde el editor de rutinas.",
             icon = Icons.Default.FitnessCenter,
-            onDismiss = { showEmptyWorkoutDialog = false }
+            onDismiss = {
+                showEmptyWorkoutDialog = false
+            }
         )
     }
-}
 
-@Composable
-private fun TrainingDrawerContent(
-    onProfileClick: () -> Unit
-) {
-    ModalDrawerSheet(
-        drawerContainerColor = MaterialTheme.colorScheme.surface
-    ) {
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text(
-            text = "OVERLOAD",
-            color = MaterialTheme.colorScheme.primary,
-            style = MaterialTheme.typography.titleMedium.copy(fontSize = 20.sp),
-            modifier = Modifier.padding(horizontal = 24.dp)
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
-        Spacer(modifier = Modifier.height(8.dp))
-
-        NavigationDrawerItem(
-            label = { Text(text = "Perfil", color = MaterialTheme.colorScheme.onSurface) },
-            icon = {
-                Icon(
-                    Icons.Default.Person,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+    if (showLogoutDialog) {
+        OverloadConfirmDialog(
+            title = "Cerrar sesión",
+            text = "¿Seguro que quieres cerrar sesión?",
+            confirmText = "Cerrar sesión",
+            dismissText = "Cancelar",
+            icon = Icons.Default.Logout,
+            onConfirm = {
+                showLogoutDialog = false
+                onLogout()
             },
-            selected = false,
-            onClick = onProfileClick,
-            colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent)
+            onDismiss = {
+                showLogoutDialog = false
+            }
         )
     }
 }
@@ -276,7 +256,9 @@ private fun DaySelectorSection(
                 color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.titleLarge.copy(fontSize = 26.sp)
             )
+
             Spacer(modifier = Modifier.width(4.dp))
+
             Icon(
                 imageVector = Icons.Default.KeyboardArrowDown,
                 contentDescription = "Cambiar día",
@@ -334,15 +316,21 @@ private fun DaySelectorSheet(
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = day.focus,
-                            color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                            color = if (isSelected) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.onSurface
+                            },
                             style = MaterialTheme.typography.titleSmall
                         )
+
                         Text(
                             text = "${day.slots.size} ejercicios",
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp)
                         )
                     }
+
                     if (isSelected) {
                         Icon(
                             imageVector = Icons.Default.Check,
@@ -374,11 +362,12 @@ private fun ExerciseCard(
     Card(
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-
             Row(verticalAlignment = Alignment.CenterVertically) {
                 ExerciseThumbnail(exercise = exercise)
 
@@ -390,6 +379,7 @@ private fun ExerciseCard(
                         color = MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.titleSmall
                     )
+
                     Text(
                         text = exercise.muscleGroup,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -405,7 +395,12 @@ private fun ExerciseCard(
             }
 
             Spacer(modifier = Modifier.height(12.dp))
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
+
+            HorizontalDivider(
+                color = MaterialTheme.colorScheme.outlineVariant,
+                thickness = 1.dp
+            )
+
             Spacer(modifier = Modifier.height(12.dp))
 
             if (lastSet != null) {
@@ -414,7 +409,9 @@ private fun ExerciseCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodySmall
                 )
+
                 Spacer(modifier = Modifier.height(10.dp))
+
                 Row(modifier = Modifier.fillMaxWidth()) {
                     ExerciseStat(
                         icon = Icons.Default.FitnessCenter,
@@ -422,6 +419,7 @@ private fun ExerciseCard(
                         label = "Peso",
                         modifier = Modifier.weight(1f)
                     )
+
                     ExerciseStat(
                         icon = Icons.Default.Repeat,
                         value = "${lastSet.reps} reps",
@@ -435,7 +433,9 @@ private fun ExerciseCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodySmall
                 )
+
                 Spacer(modifier = Modifier.height(10.dp))
+
                 Row(modifier = Modifier.fillMaxWidth()) {
                     ExerciseStat(
                         icon = Icons.Default.Repeat,
@@ -443,6 +443,7 @@ private fun ExerciseCard(
                         label = "Series objetivo",
                         modifier = Modifier.weight(1f)
                     )
+
                     ExerciseStat(
                         icon = Icons.Default.FitnessCenter,
                         value = item.slot.targetReps?.let { "$it reps" } ?: "Al fallo",
@@ -499,14 +500,18 @@ private fun ExerciseStat(
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(16.dp)
             )
+
             Spacer(modifier = Modifier.width(6.dp))
+
             Text(
                 text = value,
                 color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.labelLarge.copy(fontSize = 15.sp)
             )
         }
+
         Spacer(modifier = Modifier.height(2.dp))
+
         Text(
             text = label,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
