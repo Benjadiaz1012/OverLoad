@@ -1,40 +1,21 @@
 package com.pdm0126.overload.ui.screens.signin
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -48,12 +29,68 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.credentials.CredentialManager
+import androidx.credentials.CustomCredential
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.exceptions.GetCredentialException
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.pdm0126.overload.R
+import kotlinx.coroutines.launch
+
+private const val GOOGLE_WEB_CLIENT_ID =
+    "795455757265-8ctdhuqrelnm0gspp4k1fgbfr40lnupv.apps.googleusercontent.com"
 
 @Composable
-fun SignIn(onNext: () -> Unit) {
+fun SignIn(
+    viewModel: SignInViewModel = viewModel(factory = SignInViewModel.Factory),
+    onNext: () -> Unit
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
     var password by rememberSaveable { mutableStateOf("") }
     var email by rememberSaveable { mutableStateOf("") }
+    var isRegisterMode by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(uiState.isSignedIn) {
+        if (uiState.isSignedIn) onNext()
+    }
+
+    fun signInWithGoogle() {
+        coroutineScope.launch {
+            try {
+                val credentialManager = CredentialManager.create(context)
+                val googleIdOption = GetGoogleIdOption.Builder()
+                    .setFilterByAuthorizedAccounts(false)
+                    .setServerClientId(GOOGLE_WEB_CLIENT_ID)
+                    .build()
+                val request = GetCredentialRequest.Builder()
+                    .addCredentialOption(googleIdOption)
+                    .build()
+
+                val result = credentialManager.getCredential(context, request)
+                val credential = result.credential
+
+                if (credential is CustomCredential &&
+                    credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
+                ) {
+                    val googleIdTokenCredential =
+                        GoogleIdTokenCredential.createFrom(credential.data)
+                    viewModel.signInWithGoogleIdToken(googleIdTokenCredential.idToken)
+                } else {
+                    viewModel.onGoogleSignInFailed()
+                }
+            } catch (e: GetCredentialException) {
+                Log.e("SignIn", "Google Sign-In falló", e)
+                viewModel.onGoogleSignInCancelled()
+            }
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -99,7 +136,7 @@ fun SignIn(onNext: () -> Unit) {
             SignInTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = "Correo electronico",
+                label = "Correo electrónico",
                 placeholder = "Ejemplo@gmail.com",
                 keyboardType = KeyboardType.Email
             )
@@ -114,24 +151,28 @@ fun SignIn(onNext: () -> Unit) {
                 isPassword = true
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            TextButton(
-                onClick = { null },
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            ) {
+            if (uiState.errorMessage != null) {
+                Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "¿Olvidaste tu contraseña?",
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.bodySmall.copy(fontSize = 13.sp),
-                    textDecoration = TextDecoration.Underline
+                    text = uiState.errorMessage ?: "",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
-                onClick = { onNext() },
+                onClick = {
+                    if (isRegisterMode) {
+                        viewModel.signUpWithEmail(email, password)
+                    } else {
+                        viewModel.signInWithEmail(email, password)
+                    }
+                },
+                enabled = !uiState.isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp),
@@ -141,8 +182,53 @@ fun SignIn(onNext: () -> Unit) {
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 )
             ) {
+                if (uiState.isLoading) {
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                } else {
+                    Text(
+                        text = if (isRegisterMode) "Crear cuenta" else "Iniciar Sesión",
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                HorizontalDivider(
+                    modifier = Modifier.weight(1f),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
                 Text(
-                    text = "Iniciar Sesion",
+                    text = "  o  ",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodySmall
+                )
+                HorizontalDivider(
+                    modifier = Modifier.weight(1f),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedButton(
+                onClick = { signInWithGoogle() },
+                enabled = !uiState.isLoading,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
+                shape = RoundedCornerShape(50)
+            ) {
+                Text(
+                    text = "Continuar con Google",
+                    color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.labelLarge
                 )
             }
@@ -154,16 +240,19 @@ fun SignIn(onNext: () -> Unit) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "¿No tienes cuenta?  ",
+                    text = if (isRegisterMode) "¿Ya tienes cuenta?  " else "¿No tienes cuenta?  ",
                     color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.bodyMedium
                 )
                 TextButton(
-                    onClick = { null },
+                    onClick = {
+                        isRegisterMode = !isRegisterMode
+                        viewModel.consumeError()
+                    },
                     contentPadding = PaddingValues(0.dp)
                 ) {
                     Text(
-                        text = "Registrate",
+                        text = if (isRegisterMode) "Inicia sesión" else "Regístrate",
                         color = MaterialTheme.colorScheme.primary,
                         style = MaterialTheme.typography.labelMedium.copy(fontSize = 14.sp),
                         textDecoration = TextDecoration.Underline

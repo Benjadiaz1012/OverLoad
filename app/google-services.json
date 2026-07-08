@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "795455757265",
+    "project_id": "overload-d3d39",
+    "storage_bucket": "overload-d3d39.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:795455757265:android:892985d0dbd55e990e1ef0",
+        "android_client_info": {
+          "package_name": "com.pdm0126.overload"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "795455757265-dqclh1kfhno8s1lgqi3uisdqk6rgnann.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pdm0126.overload",
+            "certificate_hash": "50c8c427eb9efee9fe6a526ee0664bdffa904305"
+          }
+        },
+        {
+          "client_id": "795455757265-8ctdhuqrelnm0gspp4k1fgbfr40lnupv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUDTyWgVPGXinAgsul5gQlqIBEgyNhTpU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "795455757265-8ctdhuqrelnm0gspp4k1fgbfr40lnupv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
