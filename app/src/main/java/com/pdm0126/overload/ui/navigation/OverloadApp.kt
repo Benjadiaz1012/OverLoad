@@ -11,12 +11,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
+import com.google.firebase.auth.FirebaseAuth
 import com.pdm0126.overload.ui.components.OverloadBottomBar
 import com.pdm0126.overload.ui.screens.activeWorkout.ActiveWorkout
 import com.pdm0126.overload.ui.screens.activeWorkout.ActiveWorkoutViewModel
@@ -24,6 +26,7 @@ import com.pdm0126.overload.ui.screens.analysis.Analysis
 import com.pdm0126.overload.ui.screens.analysis.AnalysisViewModel
 import com.pdm0126.overload.ui.screens.detail.Detail
 import com.pdm0126.overload.ui.screens.library.Library
+import com.pdm0126.overload.ui.screens.profile.Profile
 import com.pdm0126.overload.ui.screens.routines.Routines
 import com.pdm0126.overload.ui.screens.routines.dayEditor.DayEditor
 import com.pdm0126.overload.ui.screens.routines.dayEditor.DayEditorViewModel
@@ -35,7 +38,10 @@ import com.pdm0126.overload.ui.screens.training.Training
 
 @Composable
 fun OverloadApp() {
-    val backStack = rememberNavBackStack(Routes.SignIn)
+    val startDestination = remember {
+        if (FirebaseAuth.getInstance().currentUser != null) Routes.Training else Routes.SignIn
+    }
+    val backStack = rememberNavBackStack(startDestination)
     val currentDestination = backStack.lastOrNull()
 
     Scaffold(
@@ -82,7 +88,24 @@ fun OverloadApp() {
 
                 entry<Routes.Training> {
                     Training(
-                        onSessionStarted = { backStack.add(Routes.ActiveWorkout) }
+                        onSessionStarted = { backStack.add(Routes.ActiveWorkout) },
+                        onNavigateToProfile = { backStack.add(Routes.Profile) }
+                    )
+                }
+
+                entry<Routes.Profile> {
+                    val currentUser = FirebaseAuth.getInstance().currentUser
+                    Profile(
+                        userName = currentUser?.displayName?.takeIf { it.isNotBlank() }
+                            ?: currentUser?.email
+                            ?: "Usuario",
+                        userEmail = currentUser?.email ?: "",
+                        onBack = { backStack.removeLastOrNull() },
+                        onLogout = {
+                            FirebaseAuth.getInstance().signOut()
+                            backStack.clear()
+                            backStack.add(Routes.SignIn)
+                        }
                     )
                 }
 
@@ -135,6 +158,9 @@ fun OverloadApp() {
                         onBack = { backStack.removeLastOrNull() },
                         onNavigateToLibrarySelection = {
                             backStack.add(Routes.LibrarySelection(route.dayId))
+                        },
+                        onNavigateToExerciseDetail = { exerciseId ->
+                            backStack.add(Routes.Detail(exerciseId))
                         },
                         onDayDeleted = { backStack.removeLastOrNull() }
                     )
