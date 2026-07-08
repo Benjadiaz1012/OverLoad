@@ -19,6 +19,7 @@ firebaseBom = "33.7.0"
 googleServices = "4.4.2"
 gson = "2.10.1"
 vico = "3.2.3"
+runtimeSaveable = "1.11.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -70,6 +71,7 @@ vico-compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", ve
 vico-compose-glance = { group = "com.patrykandpatrick.vico", name = "compose-glance", version.ref = "vico" }
 
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
+androidx-compose-runtime-saveable = { group = "androidx.compose.runtime", name = "runtime-saveable", version.ref = "runtimeSaveable" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -1,12 +1,16 @@
 package com.pdm0126.overload.ui.screens.signin
 
+import android.app.Activity
 import android.util.Log
+import androidx.activity.compose.BackHandler
+import com.pdm0126.overload.BuildConfig
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
@@ -37,11 +41,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.pdm0126.overload.ui.components.OverloadConfirmDialog
 import com.pdm0126.overload.R
 import kotlinx.coroutines.launch
 
-private const val GOOGLE_WEB_CLIENT_ID =
-    "795455757265-8ctdhuqrelnm0gspp4k1fgbfr40lnupv.apps.googleusercontent.com"
 
 @Composable
 fun SignIn(
@@ -55,6 +58,11 @@ fun SignIn(
     var password by rememberSaveable { mutableStateOf("") }
     var email by rememberSaveable { mutableStateOf("") }
     var isRegisterMode by rememberSaveable { mutableStateOf(false) }
+    var showExitDialog by remember { mutableStateOf(false) }
+
+    BackHandler(enabled = true) {
+        showExitDialog = true
+    }
 
     LaunchedEffect(uiState.isSignedIn) {
         if (uiState.isSignedIn) onNext()
@@ -66,7 +74,7 @@ fun SignIn(
                 val credentialManager = CredentialManager.create(context)
                 val googleIdOption = GetGoogleIdOption.Builder()
                     .setFilterByAuthorizedAccounts(false)
-                    .setServerClientId(GOOGLE_WEB_CLIENT_ID)
+                    .setServerClientId(BuildConfig.GOOGLE_WEB_CLIENT_ID)
                     .build()
                 val request = GetCredentialRequest.Builder()
                     .addCredentialOption(googleIdOption)
@@ -78,8 +86,7 @@ fun SignIn(
                 if (credential is CustomCredential &&
                     credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
                 ) {
-                    val googleIdTokenCredential =
-                        GoogleIdTokenCredential.createFrom(credential.data)
+                    val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
                     viewModel.signInWithGoogleIdToken(googleIdTokenCredential.idToken)
                 } else {
                     viewModel.onGoogleSignInFailed()
@@ -201,19 +208,13 @@ fun SignIn(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                HorizontalDivider(
-                    modifier = Modifier.weight(1f),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                HorizontalDivider(modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Text(
                     text = "  o  ",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodySmall
                 )
-                HorizontalDivider(
-                    modifier = Modifier.weight(1f),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                HorizontalDivider(modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -260,6 +261,22 @@ fun SignIn(
                 }
             }
         }
+    }
+
+    if (showExitDialog) {
+        val activity = context as? Activity
+        OverloadConfirmDialog(
+            title = "Salir de Overload",
+            text = "¿Seguro que quieres salir de la app?",
+            confirmText = "Salir",
+            dismissText = "Cancelar",
+            icon = Icons.AutoMirrored.Filled.ExitToApp,
+            onConfirm = {
+                showExitDialog = false
+                activity?.finish()
+            },
+            onDismiss = { showExitDialog = false }
+        )
     }
 }
 
