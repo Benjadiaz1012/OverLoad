@@ -24,40 +24,6 @@ class SignInViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(SignInUiState())
     val uiState: StateFlow<SignInUiState> = _uiState.asStateFlow()
 
-    fun signInWithEmail(email: String, password: String) {
-        if (email.isBlank() || password.isBlank()) {
-            _uiState.update { it.copy(errorMessage = "Completa correo y contraseña") }
-            return
-        }
-        _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-        auth.signInWithEmailAndPassword(email.trim(), password)
-            .addOnSuccessListener {
-                _uiState.update { it.copy(isLoading = false, isSignedIn = true) }
-            }
-            .addOnFailureListener { e ->
-                _uiState.update { it.copy(isLoading = false, errorMessage = friendlyError(e)) }
-            }
-    }
-
-    fun signUpWithEmail(email: String, password: String) {
-        if (email.isBlank() || password.isBlank()) {
-            _uiState.update { it.copy(errorMessage = "Completa correo y contraseña") }
-            return
-        }
-        if (password.length < 6) {
-            _uiState.update { it.copy(errorMessage = "La contraseña debe tener al menos 6 caracteres") }
-            return
-        }
-        _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-        auth.createUserWithEmailAndPassword(email.trim(), password)
-            .addOnSuccessListener {
-                _uiState.update { it.copy(isLoading = false, isSignedIn = true) }
-            }
-            .addOnFailureListener { e ->
-                _uiState.update { it.copy(isLoading = false, errorMessage = friendlyError(e)) }
-            }
-    }
-
     fun signInWithGoogleIdToken(idToken: String) {
         _uiState.update { it.copy(isLoading = true, errorMessage = null) }
         val credential = GoogleAuthProvider.getCredential(idToken, null)
@@ -86,6 +52,14 @@ class SignInViewModel : ViewModel() {
                 errorMessage = "No se pudo iniciar sesión con Google"
             )
         }
+    }
+
+    // Se llama justo después de navegar en el LaunchedEffect de SignIn, para que
+    // isSignedIn no quede "pegado" en true. Esta misma instancia de ViewModel sobrevive
+    // entre pantallas (no hay ViewModelStore por entry), así que sin este reset, un
+    // logout posterior volvería a disparar onNext() solo, sin acción del usuario.
+    fun resetSignedInState() {
+        _uiState.update { it.copy(isSignedIn = false) }
     }
 
     fun consumeError() {

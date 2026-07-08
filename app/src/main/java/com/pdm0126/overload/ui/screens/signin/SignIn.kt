@@ -53,6 +53,7 @@ fun SignIn(
     LaunchedEffect(uiState.isSignedIn) {
         if (uiState.isSignedIn) {
             onNext()
+            viewModel.resetSignedInState()
         }
     }
 
@@ -104,9 +105,9 @@ fun SignIn(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                painter = painterResource(R.drawable.ic_logo_yellow),
-                contentDescription = "Logo",
-                modifier = Modifier.size(110.dp)
+                painter = painterResource(R.drawable.overload_logo_signin),
+                contentDescription = "Overload logo",
+                modifier = Modifier.size(120.dp)
             )
 
             Spacer(modifier = Modifier.height(12.dp))
