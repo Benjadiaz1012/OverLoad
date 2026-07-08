@@ -35,9 +35,9 @@ class DayEditorViewModel(
     fun addExerciseToSlot(exerciseId: String) {
         viewModelScope.launch {
             val currentDay = routineRepository.getRoutineDay(dayId).firstOrNull()
-            val nextOrder = (currentDay?.slots?.maxOfOrNull { it.order } ?: 0) + 1
+            val nextOrder = (currentDay?.plannedExercises?.maxOfOrNull { it.order } ?: 0) + 1
 
-            routineRepository.addExerciseSlot(
+            routineRepository.addPlannedExercise(
                 dayId = dayId,
                 exerciseId = exerciseId,
                 order = nextOrder,
@@ -50,7 +50,7 @@ class DayEditorViewModel(
     fun updateTargetSets(slotId: Long, newSets: Int) {
         if (newSets in 1..10) {
             viewModelScope.launch {
-                routineRepository.updateSlotTargetSets(slotId, newSets)
+                routineRepository.updateTargetSets(slotId, newSets)
             }
         }
     }
@@ -58,13 +58,13 @@ class DayEditorViewModel(
     fun updateTargetReps(slotId: Long, newReps: Int?) {
         if (newReps == null || newReps in 1..20) {
             viewModelScope.launch {
-                routineRepository.updateSlotTargetReps(slotId, newReps)
+                routineRepository.updateTargetReps(slotId, newReps)
             }
         }
     }
 
-    fun removeSlot(slotId: Long?) {
-        viewModelScope.launch { routineRepository.removeExerciseSlot(slotId) }
+    fun removePlannedExercise(plannedExerciseId: Long?) {
+        viewModelScope.launch { routineRepository.removePlannedExercise(plannedExerciseId) }
     }
 
     fun updateDayName(newName: String) {
@@ -76,7 +76,7 @@ class DayEditorViewModel(
 
     fun deleteDay() {
         viewModelScope.launch {
-            routineRepository.deleteDay(dayId)
+            routineRepository.deleteRoutineDay(dayId)
         }
     }
 

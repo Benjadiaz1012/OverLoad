@@ -1,12 +1,12 @@
 package com.pdm0126.overload.data.repository
 
 import com.pdm0126.overload.data.local.dao.RoutineDao
-import com.pdm0126.overload.data.local.entity.DayEntity
-import com.pdm0126.overload.data.local.entity.MicrocycleEntity
-import com.pdm0126.overload.data.local.entity.SlotEntity
+import com.pdm0126.overload.data.local.entity.RoutineDayEntity
+import com.pdm0126.overload.data.local.entity.RoutineEntity
+import com.pdm0126.overload.data.local.entity.PlannedExerciseEntity
 import com.pdm0126.overload.data.mapper.toDomainModel
 import com.pdm0126.overload.domain.model.RoutineDay
-import com.pdm0126.overload.domain.model.RoutineMicrocycle
+import com.pdm0126.overload.domain.model.Routine
 import com.pdm0126.overload.domain.repository.RoutineRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -15,81 +15,81 @@ class RoutineRepositoryImp(
     private val routineDao: RoutineDao
 ) : RoutineRepository {
 
-    override fun getActiveMicrocycle(): Flow<RoutineMicrocycle?> {
-        return routineDao.getActiveMicrocycle().map { relation ->
+    override fun getActiveRoutine(): Flow<Routine?> {
+        return routineDao.getActiveRoutine().map { relation ->
             relation?.toDomainModel()
         }
     }
 
-    override fun getAllMicrocycles(): Flow<List<RoutineMicrocycle>> {
-        return routineDao.getAllMicrocycles().map { list ->
+    override fun getAllRoutines(): Flow<List<Routine>> {
+        return routineDao.getAllRoutines().map { list ->
             list.map { it.toDomainModel() }
         }
     }
 
-    override fun getMicrocycleById(microcycleId: Long): Flow<RoutineMicrocycle?> {
-        return routineDao.getMicrocycleById(microcycleId).map { it?.toDomainModel() }
+    override fun getRoutineById(routineId: Long): Flow<Routine?> {
+        return routineDao.getRoutineById(routineId).map { it?.toDomainModel() }
     }
 
     override fun getRoutineDay(dayId: Long?): Flow<RoutineDay?> {
-        return routineDao.getDayWithSlots(dayId).map { it?.toDomainModel() }
+        return routineDao.getDayWithPlannedExercises(dayId).map { it?.toDomainModel() }
     }
 
-    override suspend fun updateSlotTargetSets(slotId: Long, targetSets: Int) {
-        routineDao.updateSlotTargetSets(slotId, targetSets)
+    override suspend fun updateTargetSets(plannedExerciseId: Long, targetSets: Int) {
+        routineDao.updateTargetSets(plannedExerciseId, targetSets)
     }
 
-    override suspend fun updateSlotTargetReps(slotId: Long, targetReps: Int?) {
-        routineDao.updateSlotTargetReps(slotId, targetReps)
+    override suspend fun updateTargetReps(plannedExerciseId: Long, targetReps: Int?) {
+        routineDao.updateTargetReps(plannedExerciseId, targetReps)
     }
 
-    override suspend fun deleteMicrocycle(microcycleId: Long) {
-        routineDao.deleteMicrocycle(microcycleId)
+    override suspend fun deleteRoutine(routineId: Long) {
+        routineDao.deleteRoutine(routineId)
     }
 
-    override suspend fun deleteDay(dayId: Long) {
-        routineDao.deleteDay(dayId)
+    override suspend fun deleteRoutineDay(dayId: Long) {
+        routineDao.deleteRoutineDay(dayId)
     }
     override suspend fun updateDayFocus(dayId: Long, newFocus: String) {
         routineDao.updateDayFocus(dayId, newFocus)
     }
-    override suspend fun updateMicrocycleName(microcycleId: Long, newName: String) {
-        routineDao.updateMicrocycleName(microcycleId, newName)
+    override suspend fun updateRoutineName(routineId: Long, newName: String) {
+        routineDao.updateRoutineName(routineId, newName)
     }
 
-    override suspend fun createMicrocycle(name: String, blueprintType: String, isActive: Boolean): Long {
-        val newMicrocycle = MicrocycleEntity(
+    override suspend fun createRoutine(name: String, blueprintType: String, isActive: Boolean): Long {
+        val newRoutine = RoutineEntity(
             name = name,
             blueprintType = blueprintType,
             isActive = isActive
         )
-        return routineDao.insertMicrocycle(newMicrocycle) // Retorna el id generado
+        return routineDao.insertRoutine(newRoutine)
     }
 
-    override suspend fun addDayToMicrocycle(microcycleId: Long, order: Int, focus: String): Long {
-        val newDay = DayEntity(
-            microcycleId = microcycleId,
+    override suspend fun addDayToRoutine(routineId: Long, order: Int, focus: String): Long {
+        val newDay = RoutineDayEntity(
+            routineId = routineId,
             order = order,
             focus = focus
         )
-        return routineDao.insertDay(newDay) // Retorna el id del día
+        return routineDao.insertRoutineDay(newDay)
     }
 
-    override suspend fun addExerciseSlot(dayId: Long, exerciseId: String, order: Int, targetSets: Int, targetReps: Int?): Long {
-        val newSlot = SlotEntity(
+    override suspend fun addPlannedExercise(dayId: Long, exerciseId: String, order: Int, targetSets: Int, targetReps: Int?): Long {
+        val newPlannedExercise = PlannedExerciseEntity(
             dayId = dayId,
             exerciseId = exerciseId,
             order = order,
             targetSets = targetSets,
             targetReps = targetReps
         )
-        return routineDao.insertSlot(newSlot) // Retorna el id del slot
+        return routineDao.insertPlannedExercise(newPlannedExercise)
     }
 
-    override suspend fun removeExerciseSlot(slotId: Long?) {
-        routineDao.deleteSlotById(slotId)
+    override suspend fun removePlannedExercise(plannedExerciseId: Long?) {
+        routineDao.deletePlannedExercise(plannedExerciseId)
     }
-    override suspend fun updateActiveMicrocycle(microcycleId: Long) {
-        routineDao.updateActiveMicrocycle(microcycleId)
+    override suspend fun updateActiveRoutine(routineId: Long) {
+        routineDao.updateActiveRoutine(routineId)
     }
 }

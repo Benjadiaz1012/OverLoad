@@ -6,79 +6,75 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
-import com.pdm0126.overload.data.local.entity.DayEntity
-import com.pdm0126.overload.data.local.entity.MicrocycleEntity
-import com.pdm0126.overload.data.local.entity.SlotEntity
-import com.pdm0126.overload.data.local.relation.DayWithSlots
-import com.pdm0126.overload.data.local.relation.MicrocycleWithDays
+import com.pdm0126.overload.data.local.entity.RoutineDayEntity
+import com.pdm0126.overload.data.local.entity.RoutineEntity
+import com.pdm0126.overload.data.local.entity.PlannedExerciseEntity
+import com.pdm0126.overload.data.local.relation.RoutineDayWithExercises
+import com.pdm0126.overload.data.local.relation.RoutineWithDays
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RoutineDao {
 
-    // Inserciones
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMicrocycle(microcycle: MicrocycleEntity): Long
+    suspend fun insertRoutine(routine: RoutineEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertDay(day: DayEntity): Long
+    suspend fun insertRoutineDay(day: RoutineDayEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertSlot(slot: SlotEntity): Long
-
-    // Actualizaciones/Borrados
-    @Update
-    suspend fun updateMicrocycle(microcycle: MicrocycleEntity)
+    suspend fun insertPlannedExercise(exercise: PlannedExerciseEntity): Long
 
     @Update
-    suspend fun updateDay(day: DayEntity)
+    suspend fun updateRoutine(routine: RoutineEntity)
 
-    @Query("UPDATE slots_table SET targetReps = :targetReps WHERE slotId = :slotId")
-    suspend fun updateSlotTargetReps(slotId: Long, targetReps: Int?)
+    @Update
+    suspend fun updateRoutineDay(day: RoutineDayEntity)
 
-    @Query("DELETE FROM slots_table WHERE slotId = :slotId")
-    suspend fun deleteSlotById(slotId: Long?)
+    @Query("UPDATE planned_exercises_table SET targetReps = :targetReps WHERE plannedExerciseId = :plannedExerciseId")
+    suspend fun updateTargetReps(plannedExerciseId: Long, targetReps: Int?)
 
-    @Query("UPDATE slots_table SET targetSets = :targetSets WHERE slotId = :slotId")
-    suspend fun updateSlotTargetSets(slotId: Long, targetSets: Int)
+    @Query("DELETE FROM planned_exercises_table WHERE plannedExerciseId = :plannedExerciseId")
+    suspend fun deletePlannedExercise(plannedExerciseId: Long?)
 
-    @Query("DELETE FROM days_table WHERE dayId = :dayId")
-    suspend fun deleteDay(dayId: Long)
+    @Query("UPDATE planned_exercises_table SET targetSets = :targetSets WHERE plannedExerciseId = :plannedExerciseId")
+    suspend fun updateTargetSets(plannedExerciseId: Long, targetSets: Int)
 
-    @Query("UPDATE days_table SET focus = :newFocus WHERE dayId = :dayId")
+    @Query("DELETE FROM routine_days_table WHERE dayId = :dayId")
+    suspend fun deleteRoutineDay(dayId: Long)
+
+    @Query("UPDATE routine_days_table SET focus = :newFocus WHERE dayId = :dayId")
     suspend fun updateDayFocus(dayId: Long, newFocus: String)
-    @Query("UPDATE microcycles_table SET name = :newName WHERE microcycleId = :microcycleId")
-    suspend fun updateMicrocycleName(microcycleId: Long, newName: String)
-    @Query("DELETE FROM microcycles_table WHERE microcycleId = :microcycleId")
-    suspend fun deleteMicrocycle(microcycleId: Long)
-
-    // Consultas principales
-    // Con @Transaction room lee nuestras clases de relación y arma el arbol completo
-    @Transaction
-    @Query("SELECT * FROM microcycles_table WHERE isActive = 1 LIMIT 1")
-    fun getActiveMicrocycle(): Flow<MicrocycleWithDays?>
+    @Query("UPDATE routines_table SET name = :newName WHERE routineId = :routineId")
+    suspend fun updateRoutineName(routineId: Long, newName: String)
+    @Query("DELETE FROM routines_table WHERE routineId = :routineId")
+    suspend fun deleteRoutine(routineId: Long)
 
     @Transaction
-    @Query("SELECT * FROM microcycles_table")
-    fun getAllMicrocycles(): Flow<List<MicrocycleWithDays>>
+    @Query("SELECT * FROM routines_table WHERE isActive = 1 LIMIT 1")
+    fun getActiveRoutine(): Flow<RoutineWithDays?>
 
     @Transaction
-    @Query("SELECT * FROM microcycles_table WHERE microcycleId = :microcycleId")
-    fun getMicrocycleById(microcycleId: Long): Flow<MicrocycleWithDays?>
+    @Query("SELECT * FROM routines_table")
+    fun getAllRoutines(): Flow<List<RoutineWithDays>>
 
     @Transaction
-    @Query("SELECT * FROM days_table WHERE dayId = :dayId LIMIT 1")
-    fun getDayWithSlots(dayId: Long?): Flow<DayWithSlots?>
+    @Query("SELECT * FROM routines_table WHERE routineId = :routineId")
+    fun getRoutineById(routineId: Long): Flow<RoutineWithDays?>
 
     @Transaction
-    suspend fun updateActiveMicrocycle(microcycleId: Long) {
-        clearAllActiveMicrocycles()
-        setActiveMicrocycleById(microcycleId)
+    @Query("SELECT * FROM routine_days_table WHERE dayId = :dayId LIMIT 1")
+    fun getDayWithPlannedExercises(dayId: Long?): Flow<RoutineDayWithExercises?>
+
+    @Transaction
+    suspend fun updateActiveRoutine(routineId: Long) {
+        clearAllActiveRoutines()
+        setActiveRoutineById(routineId)
     }
 
-    @Query("UPDATE microcycles_table SET isActive = 0")
-    suspend fun clearAllActiveMicrocycles()
+    @Query("UPDATE routines_table SET isActive = 0")
+    suspend fun clearAllActiveRoutines()
 
-    @Query("UPDATE microcycles_table SET isActive = 1 WHERE microcycleId = :microcycleId")
-    suspend fun setActiveMicrocycleById(microcycleId: Long)
+    @Query("UPDATE routines_table SET isActive = 1 WHERE routineId = :routineId")
+    suspend fun setActiveRoutineById(routineId: Long)
 }

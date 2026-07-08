@@ -36,8 +36,8 @@ class WorkoutRepositoryImp(
         }
     }
 
-    override fun getSetsBySlotAndSession(slotId: Long, sessionId: Long): Flow<List<WorkoutSet>> {
-        return workoutDao.getSetsBySlotAndSession(slotId, sessionId).map { entities ->
+    override fun getSetsByExerciseAndSession(plannedExerciseId: Long, sessionId: Long): Flow<List<WorkoutSet>> {
+        return workoutDao.getSetsByExerciseAndSession(plannedExerciseId, sessionId).map { entities ->
             entities.map { it.toDomainModel() }
         }
     }
@@ -70,7 +70,7 @@ class WorkoutRepositoryImp(
 
     override suspend fun logSet(
         sessionId: Long,
-        slotId: Long?,
+        plannedExerciseId: Long?,
         exerciseId: String,
         setNumber: Int,
         weightKg: Float,
@@ -81,7 +81,7 @@ class WorkoutRepositoryImp(
         val factor = computeRirFactor(rir, isRirEnabled)
         val newSet = WorkoutSetEntity(
             sessionId = sessionId,
-            slotId = slotId,
+            plannedExerciseId = plannedExerciseId,
             exerciseId = exerciseId,
             setNumber = setNumber,
             weightKg = weightKg,

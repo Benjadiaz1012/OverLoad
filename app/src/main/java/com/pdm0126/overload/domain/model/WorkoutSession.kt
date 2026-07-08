@@ -5,5 +5,5 @@ data class WorkoutSession(
     val dayId: Long?,
     val startTimestamp: Long,
     val endTimestamp: Long?,    // null = sesión actualmente en curso
-    val sets: List<WorkoutSet>  // Todas las series registradas en esta sesión
+    val sets: List<WorkoutSet>
 )

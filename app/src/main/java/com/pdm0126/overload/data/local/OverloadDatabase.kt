@@ -13,9 +13,9 @@ import com.pdm0126.overload.data.local.dao.ExerciseDao
 import com.pdm0126.overload.data.local.dao.RoutineDao
 import com.pdm0126.overload.data.local.dao.WorkoutDao
 import com.pdm0126.overload.data.local.entity.ExerciseEntity
-import com.pdm0126.overload.data.local.entity.DayEntity
-import com.pdm0126.overload.data.local.entity.MicrocycleEntity
-import com.pdm0126.overload.data.local.entity.SlotEntity
+import com.pdm0126.overload.data.local.entity.RoutineDayEntity
+import com.pdm0126.overload.data.local.entity.RoutineEntity
+import com.pdm0126.overload.data.local.entity.PlannedExerciseEntity
 import com.pdm0126.overload.data.local.entity.WorkoutSessionEntity
 import com.pdm0126.overload.data.local.entity.WorkoutSetEntity
 import kotlinx.coroutines.CoroutineScope
@@ -26,9 +26,9 @@ import kotlinx.serialization.json.Json
 @Database(
     entities = [
         ExerciseEntity::class,
-        MicrocycleEntity::class,
-        DayEntity::class,
-        SlotEntity::class,
+        RoutineEntity::class,
+        RoutineDayEntity::class,
+        PlannedExerciseEntity::class,
         WorkoutSessionEntity::class,
         WorkoutSetEntity::class
                ],

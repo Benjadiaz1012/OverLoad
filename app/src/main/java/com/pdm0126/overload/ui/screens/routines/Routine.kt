@@ -18,14 +18,14 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pdm0126.overload.ui.components.OverloadTopBar
-import com.pdm0126.overload.domain.model.RoutineMicrocycle
+import com.pdm0126.overload.domain.model.Routine
 import kotlinx.coroutines.launch
 
 @Composable
 fun Routines(
     viewModel: RoutinesViewModel = viewModel(factory = RoutinesViewModel.Factory),
     onCreateRoutine: () -> Unit = {},
-    onOpenRoutine: (RoutineMicrocycle) -> Unit = {}
+    onOpenRoutine: (Routine) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -63,7 +63,7 @@ fun Routines(
                     )
                 }
 
-                uiState.savedMicrocycles.isEmpty() -> {
+                uiState.savedRoutines.isEmpty() -> {
                     EmptyState(modifier = Modifier.align(Alignment.Center))
                 }
 
@@ -73,7 +73,7 @@ fun Routines(
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        items(uiState.savedMicrocycles, key = { it.microcycleId }) { microcycle ->
+                        items(uiState.savedRoutines, key = { it.routineId }) { microcycle ->
                             val isEditorBlocked =
                                 microcycle.isActive && uiState.isWorkoutSessionActive
 
@@ -133,7 +133,7 @@ private fun EmptyState(modifier: Modifier = Modifier) {
 
 @Composable
 private fun MicrocycleCard(
-    microcycle: RoutineMicrocycle,
+    microcycle: Routine,
     isEditorBlocked: Boolean,
     onClick: () -> Unit
 ) {

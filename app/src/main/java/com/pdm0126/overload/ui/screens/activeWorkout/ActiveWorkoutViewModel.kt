@@ -39,7 +39,7 @@ class ActiveWorkoutViewModel(
                     routineRepository.getRoutineDay(session.dayId),
                     workoutRepository.getSetsForSession(session.sessionId)
                 ) { day, sets ->
-                    val historicalSets = day?.slots?.associate { slot ->
+                    val historicalSets = day?.plannedExercises?.associate { slot ->
                         slot.exercise.id to workoutRepository.getLastSetsForExercise(slot.exercise.id)
                     } ?: emptyMap()
 
@@ -66,7 +66,7 @@ class ActiveWorkoutViewModel(
         viewModelScope.launch {
             workoutRepository.logSet(
                 sessionId = sessionId,
-                slotId = request.slotId,
+                plannedExerciseId = request.slotId,
                 exerciseId = request.exerciseId,
                 setNumber = request.setNumber,
                 weightKg = request.weightKg,

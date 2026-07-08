@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.pdm0126.overload.OverloadApplication
-import com.pdm0126.overload.domain.model.RoutineMicrocycle
+import com.pdm0126.overload.domain.model.Routine
 import com.pdm0126.overload.domain.repository.RoutineRepository
 import com.pdm0126.overload.domain.repository.WorkoutRepository
 import kotlinx.coroutines.flow.SharingStarted
@@ -17,8 +17,8 @@ import kotlinx.coroutines.flow.stateIn
 
 data class RoutinesUiState(
     val isLoading: Boolean = true,
-    val savedMicrocycles: List<RoutineMicrocycle> = emptyList(),
-    val activeMicrocycleId: Long? = null,
+    val savedRoutines: List<Routine> = emptyList(),
+    val activeRoutineId: Long? = null,
     val isWorkoutSessionActive: Boolean = false
 )
 
@@ -28,16 +28,16 @@ class RoutinesViewModel(
 ) : ViewModel() {
 
     val uiState: StateFlow<RoutinesUiState> = combine(
-        routineRepository.getAllMicrocycles(),
+        routineRepository.getAllRoutines(),
         workoutRepository.getActiveSession()
-    ) { microcycles, activeSession ->
-        val activeId = microcycles.find { it.isActive }?.microcycleId
-        val sortedMicrocycles = microcycles.sortedByDescending { it.isActive }
+    ) { routines, activeSession ->
+        val activeId = routines.find { it.isActive }?.routineId
+        val sortedMicrocycles = routines.sortedByDescending { it.isActive }
 
         RoutinesUiState(
             isLoading = false,
-            savedMicrocycles = sortedMicrocycles,
-            activeMicrocycleId = activeId,
+            savedRoutines = sortedMicrocycles,
+            activeRoutineId = activeId,
             isWorkoutSessionActive = activeSession != null
         )
     }.stateIn(

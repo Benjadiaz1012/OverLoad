@@ -2,14 +2,14 @@ package com.pdm0126.overload.data.local.relation
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import com.pdm0126.overload.data.local.entity.DayEntity
+import com.pdm0126.overload.data.local.entity.RoutineDayEntity
 import com.pdm0126.overload.data.local.entity.ExerciseEntity
-import com.pdm0126.overload.data.local.entity.MicrocycleEntity
-import com.pdm0126.overload.data.local.entity.SlotEntity
+import com.pdm0126.overload.data.local.entity.RoutineEntity
+import com.pdm0126.overload.data.local.entity.PlannedExerciseEntity
 
-// Un Slot con la metadata completa de su ejercicio
-data class SlotWithExercise(
-    @Embedded val slot: SlotEntity,
+// Un ejercicio planificado con la metadata completa de su ejercicio
+data class PlannedExerciseWithExercise(
+    @Embedded val plannedExercise: PlannedExerciseEntity,
     @Relation(
         parentColumn = "exerciseId",
         entityColumn = "exerciseId"
@@ -17,25 +17,24 @@ data class SlotWithExercise(
     val exercise: ExerciseEntity
 )
 
-// Un día con todos sus Slots para ejercicios ordenados
-data class DayWithSlots(
-    @Embedded val day: DayEntity,
+// Un día con todos sus ejercicios planificados ordenados
+data class RoutineDayWithExercises(
+    @Embedded val day: RoutineDayEntity,
     @Relation(
-        entity = SlotEntity::class,
+        entity = PlannedExerciseEntity::class,
         parentColumn = "dayId",
         entityColumn = "dayId"
     )
-    val slots: List<SlotWithExercise>
+    val plannedExercises: List<PlannedExerciseWithExercise>
 )
 
-// El microciclo final que contiene todos sus días ordenados
-data class MicrocycleWithDays(
-    @Embedded val microcycle: MicrocycleEntity,
+// La rutina final que contiene todos sus días ordenados
+data class RoutineWithDays(
+    @Embedded val routine: RoutineEntity,
     @Relation(
-        entity = DayEntity::class,
-        parentColumn = "microcycleId",
-        entityColumn = "microcycleId"
+        entity = RoutineDayEntity::class,
+        parentColumn = "routineId",
+        entityColumn = "routineId"
     )
-    val days: List<DayWithSlots>
+    val days: List<RoutineDayWithExercises>
 )
-

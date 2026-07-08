@@ -9,10 +9,10 @@ import androidx.room.PrimaryKey
     tableName = "workout_sessions_table",
     foreignKeys = [
         ForeignKey(
-            entity = DayEntity::class,
+            entity = RoutineDayEntity::class,
             parentColumns = ["dayId"],
             childColumns = ["dayId"],
-            onDelete = ForeignKey.SET_NULL // Queremos los registros historicos para las estadísticas
+            onDelete = ForeignKey.SET_NULL
         )
     ],
     indices = [Index("dayId")]
@@ -20,7 +20,7 @@ import androidx.room.PrimaryKey
 data class WorkoutSessionEntity(
     @PrimaryKey(autoGenerate = true)
     val sessionId: Long = 0,
-    val dayId: Long?,                // El día del microciclo que se está ejecutando
-    val startTimestamp: Long,       // Momento de inicio de la sesión (epoch ms)
-    val endTimestamp: Long? = null  // Momento de fin; null si la sesión sigue activa
+    val dayId: Long?,
+    val startTimestamp: Long,
+    val endTimestamp: Long? = null
 )

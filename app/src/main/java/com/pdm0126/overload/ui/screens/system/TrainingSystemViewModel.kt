@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 data class SystemUiState(
     val isCreating: Boolean = false,
     val error: String? = null,
-    val createdMicrocycleId: Long? = null
+    val createdRoutineId: Long? = null
 )
 
 class SystemViewModel(
@@ -29,32 +29,32 @@ class SystemViewModel(
 
     val uiState: StateFlow<SystemUiState> = _uiState.asStateFlow()
 
-    fun createMicrocycleFromBlueprint(blueprint: Blueprint) {
+    fun createRoutineFromBlueprint(blueprint: Blueprint) {
         viewModelScope.launch {
 
             _uiState.update { it.copy(isCreating = true, error = null) }
 
             try {
-                val newMicrocycleId = routineRepository.createMicrocycle(
+                val newRoutineId = routineRepository.createRoutine(
                     name = blueprint.name,
                     blueprintType = blueprint.id,
                     isActive = false
                 )
 
                 blueprint.defaultDays.forEachIndexed { index, dayName ->
-                    routineRepository.addDayToMicrocycle(
-                        microcycleId = newMicrocycleId,
+                    routineRepository.addDayToRoutine(
+                        routineId = newRoutineId,
                         order = index + 1,
                         focus = dayName
                     )
                 }
 
-                routineRepository.updateActiveMicrocycle(newMicrocycleId)
+                routineRepository.updateActiveRoutine(newRoutineId)
 
                 _uiState.update {
                     it.copy(
                         isCreating = false,
-                        createdMicrocycleId = newMicrocycleId
+                        createdRoutineId = newRoutineId
                     )
                 }
 

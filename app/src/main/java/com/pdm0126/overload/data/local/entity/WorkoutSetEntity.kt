@@ -12,33 +12,33 @@ import androidx.room.PrimaryKey
             entity = WorkoutSessionEntity::class,
             parentColumns = ["sessionId"],
             childColumns = ["sessionId"],
-            onDelete = ForeignKey.CASCADE // Si borras la sesión, sí se borran sus series
+            onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
-            entity = SlotEntity::class,
-            parentColumns = ["slotId"],
-            childColumns = ["slotId"],
-            onDelete = ForeignKey.SET_NULL // Si borran el slot, la serie sobrevive
+            entity = PlannedExerciseEntity::class,
+            parentColumns = ["plannedExerciseId"],
+            childColumns = ["plannedExerciseId"],
+            onDelete = ForeignKey.SET_NULL
         ),
         ForeignKey(
             entity = ExerciseEntity::class,
             parentColumns = ["exerciseId"],
             childColumns = ["exerciseId"],
-            onDelete = ForeignKey.CASCADE // Protege la integridad del ejercicio
+            onDelete = ForeignKey.CASCADE
         )
     ],
-    indices = [Index("sessionId"), Index("slotId"), Index("exerciseId")]
+    indices = [Index("sessionId"), Index("plannedExerciseId"), Index("exerciseId")]
 )
 data class WorkoutSetEntity(
     @PrimaryKey(autoGenerate = true)
     val setId: Long = 0,
-    val sessionId: Long,        // Sesión a la que pertenece esta serie
-    val slotId: Long?,          // Slot de rutina que se está ejecutando
-    val exerciseId: String,       // Ejercicio único al que pertenece esta serie
-    val setNumber: Int,         // Número ordinal de la serie dentro del slot (1, 2, 3…)
-    val weightKg: Float,        // Peso utilizado en kilogramos
-    val reps: Int,              // Repeticiones completadas
-    val rir: Int? = null,       // Repeticiones en reserva (0–5); null si RIR está desactivado
-    val isRirEnabled: Boolean,  // true = el usuario midió el RIR; false = reps fijas
-    val rirFactor: Float        // Factor calculado y persistido para uso directo en el Módulo 4
+    val sessionId: Long,
+    val plannedExerciseId: Long?,
+    val exerciseId: String,
+    val setNumber: Int,
+    val weightKg: Float,
+    val reps: Int,
+    val rir: Int? = null,
+    val isRirEnabled: Boolean,
+    val rirFactor: Float
 )

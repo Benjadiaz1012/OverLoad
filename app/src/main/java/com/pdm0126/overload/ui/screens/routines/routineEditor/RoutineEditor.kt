@@ -38,7 +38,7 @@ fun RoutineEditor(
     var showRenameDialog by remember { mutableStateOf(false) }
     var dayToDelete by remember { mutableStateOf<RoutineDay?>(null) }
 
-    val microcycle = uiState.microcycle
+    val microcycle = uiState.routine
 
     LaunchedEffect(uiState.isLoading, microcycle) {
         if (!uiState.isLoading && microcycle == null) {
@@ -301,7 +301,7 @@ private fun DayRow(
                     style = MaterialTheme.typography.titleSmall
                 )
                 Text(
-                    text = "${day.slots.size} ejercicios",
+                    text = "${day.plannedExercises.size} ejercicios",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp)
                 )

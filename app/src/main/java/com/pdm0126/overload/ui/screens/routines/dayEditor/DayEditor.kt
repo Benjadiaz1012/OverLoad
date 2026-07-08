@@ -20,7 +20,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pdm0126.overload.ui.components.OverloadConfirmDialog
 import com.pdm0126.overload.ui.components.OverloadInputDialog
 import com.pdm0126.overload.ui.components.OverloadTopBar
-import com.pdm0126.overload.domain.model.RoutineSlot
+import com.pdm0126.overload.domain.model.PlannedExercise
 
 private const val MAX_SLOTS_PER_DAY = 12
 
@@ -40,7 +40,7 @@ fun DayEditor(
 
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showRenameDialog by remember { mutableStateOf(false) }
-    var slotToRemove by remember { mutableStateOf<RoutineSlot?>(null) }
+    var slotToRemove by remember { mutableStateOf<PlannedExercise?>(null) }
     val day = uiState.day
 
     LaunchedEffect(uiState.isLoading, day) {
@@ -141,26 +141,26 @@ fun DayEditor(
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    if (day.slots.isEmpty()) {
+                    if (day.plannedExercises.isEmpty()) {
                         Text(
                             text = "Sin ejercicios en este día",
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.bodySmall
                         )
                     } else {
-                        day.slots.forEach { slot ->
+                        day.plannedExercises.forEach { slot ->
                             SlotEditorRow(
                                 slot = slot,
                                 onExerciseClick = { onNavigateToExerciseDetail(slot.exercise.id) },
                                 onTargetSetsChange = { newValue ->
                                     viewModel.updateTargetSets(
-                                        slot.slotId,
+                                        slot.plannedExerciseId,
                                         newValue
                                     )
                                 },
                                 onTargetRepsChange = { newValue ->
                                     viewModel.updateTargetReps(
-                                        slot.slotId,
+                                        slot.plannedExerciseId,
                                         newValue
                                     )
                                 },
@@ -175,7 +175,7 @@ fun DayEditor(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    if (day.slots.size < MAX_SLOTS_PER_DAY) {
+                    if (day.plannedExercises.size < MAX_SLOTS_PER_DAY) {
                         TextButton(onClick = onNavigateToLibrarySelection) {
                             Icon(
                                 Icons.Default.Add,
@@ -240,7 +240,7 @@ fun DayEditor(
             isDestructive = true,
             icon = Icons.Default.Close,
             onConfirm = {
-                viewModel.removeSlot(slot.slotId)
+                viewModel.removePlannedExercise(slot.plannedExerciseId)
                 slotToRemove = null
             },
             onDismiss = { slotToRemove = null }
@@ -250,14 +250,14 @@ fun DayEditor(
 
 @Composable
 private fun SlotEditorRow(
-    slot: RoutineSlot,
+    slot: PlannedExercise,
     onExerciseClick: () -> Unit,
     onTargetSetsChange: (Int) -> Unit,
     onTargetRepsChange: (Int?) -> Unit,
     onRemove: () -> Unit
 ) {
-    var setsInput by remember(slot.slotId) { mutableStateOf(slot.targetSets.toString()) }
-    var repsInput by remember(slot.slotId) { mutableStateOf(slot.targetReps?.toString() ?: "") }
+    var setsInput by remember(slot.plannedExerciseId) { mutableStateOf(slot.targetSets.toString()) }
+    var repsInput by remember(slot.plannedExerciseId) { mutableStateOf(slot.targetReps?.toString() ?: "") }
 
     Column(modifier = Modifier.padding(vertical = 10.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {

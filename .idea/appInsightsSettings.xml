@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.pdm0126.overload" />
+                  <option name="mobileSdkAppId" value="1:795455757265:android:892985d0dbd55e990e1ef0" />
+                  <option name="projectId" value="overload-d3d39" />
+                  <option name="projectNumber" value="795455757265" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

@@ -2,7 +2,7 @@ package com.pdm0126.overload.data.mapper
 
 import com.pdm0126.overload.data.local.entity.WorkoutSessionEntity
 import com.pdm0126.overload.data.local.entity.WorkoutSetEntity
-import com.pdm0126.overload.data.local.relation.SessionWithSets
+import com.pdm0126.overload.data.local.relation.WorkoutSessionWithSets
 import com.pdm0126.overload.domain.model.WorkoutSession
 import com.pdm0126.overload.domain.model.WorkoutSet
 
@@ -10,7 +10,7 @@ fun WorkoutSetEntity.toDomainModel(): WorkoutSet {
     return WorkoutSet(
         setId = setId,
         sessionId = sessionId,
-        slotId = slotId,
+        plannedExerciseId = plannedExerciseId,
         exerciseId = exerciseId,
         setNumber = setNumber,
         weightKg = weightKg,
@@ -31,13 +31,12 @@ fun WorkoutSessionEntity.toDomainModel(sets: List<WorkoutSet> = emptyList()): Wo
     )
 }
 
-fun SessionWithSets.toDomainModel(): WorkoutSession {
+fun WorkoutSessionWithSets.toDomainModel(): WorkoutSession {
     return WorkoutSession(
         sessionId = session.sessionId,
         dayId = session.dayId,
         startTimestamp = session.startTimestamp,
         endTimestamp = session.endTimestamp,
-        // Ordenamos por slot y luego por número de serie para una lectura lógica
-        sets = sets.map { it.toDomainModel() }.sortedWith(compareBy({ it.slotId }, { it.setNumber }))
+        sets = sets.map { it.toDomainModel() }.sortedWith(compareBy({ it.plannedExerciseId }, { it.setNumber }))
     )
 }

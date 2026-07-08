@@ -165,7 +165,7 @@ fun Training(
                         )
                     }
 
-                    items(uiState.exercises, key = { it.slot.slotId }) { item ->
+                    items(uiState.exercises, key = { it.plannedExercise.plannedExerciseId }) { item ->
                         ExerciseCard(
                             item = item,
                             onClick = { onExerciseClick(item) }
@@ -182,7 +182,7 @@ fun Training(
 
     if (showDaySelector) {
         DaySelectorSheet(
-            days = uiState.activeMicrocycle?.days ?: emptyList(),
+            days = uiState.activeRoutine?.days ?: emptyList(),
             selectedDayId = uiState.day?.dayId,
             onSelectDay = { dayId ->
                 viewModel.selectDay(dayId)
@@ -325,7 +325,7 @@ private fun DaySelectorSheet(
                         )
 
                         Text(
-                            text = "${day.slots.size} ejercicios",
+                            text = "${day.plannedExercises.size} ejercicios",
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp)
                         )
@@ -356,7 +356,7 @@ private fun ExerciseCard(
     item: ExerciseDisplayItem,
     onClick: () -> Unit
 ) {
-    val exercise = item.slot.exercise
+    val exercise = item.plannedExercise.exercise
     val lastSet = item.lastSets.lastOrNull()
 
     Card(
@@ -439,14 +439,14 @@ private fun ExerciseCard(
                 Row(modifier = Modifier.fillMaxWidth()) {
                     ExerciseStat(
                         icon = Icons.Default.Repeat,
-                        value = "${item.slot.targetSets} series",
+                        value = "${item.plannedExercise.targetSets} series",
                         label = "Series objetivo",
                         modifier = Modifier.weight(1f)
                     )
 
                     ExerciseStat(
                         icon = Icons.Default.FitnessCenter,
-                        value = item.slot.targetReps?.let { "$it reps" } ?: "Al fallo",
+                        value = item.plannedExercise.targetReps?.let { "$it reps" } ?: "Al fallo",
                         label = "Repeticiones objetivo",
                         modifier = Modifier.weight(1f)
                     )

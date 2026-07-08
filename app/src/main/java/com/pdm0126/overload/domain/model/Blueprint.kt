@@ -20,8 +20,8 @@ data class Blueprint(
     val description: String,
     val defaultDays: List<String>,
 
-    val minMicrocycleDays: Int,
-    val maxMicrocycleDays: Int,
+    val minRoutineDays: Int,
+    val maxRoutineDays: Int,
     val maxFrequencyPerMuscle: Int,
 
     val level: ExperienceLevel,
@@ -32,8 +32,8 @@ data class Blueprint(
     val considerations: List<String> = emptyList()
 ) {
     val formattedMicrocycle: String
-        get() = if (minMicrocycleDays == maxMicrocycleDays) "$minMicrocycleDays días"
-        else "De $minMicrocycleDays a $maxMicrocycleDays días"
+        get() = if (minRoutineDays == maxRoutineDays) "$minRoutineDays días"
+        else "De $minRoutineDays a $maxRoutineDays días"
 }
 
 object BlueprintCatalog {
@@ -44,8 +44,8 @@ object BlueprintCatalog {
             name = "Push / Pull / Legs",
             description = "Divide el cuerpo por patrones de movimiento: empujes (pecho, hombro, tríceps), tracciones (espalda, bíceps) y piernas. Es el estándar de oro actual para estética y fuerza.",
             defaultDays = listOf("Push", "Pull", "Legs"),
-            minMicrocycleDays = 3,
-            maxMicrocycleDays = 6,
+            minRoutineDays = 3,
+            maxRoutineDays = 6,
             maxFrequencyPerMuscle = 2,
             level = ExperienceLevel.INTERMEDIATE,
             goal = TrainingGoal.HYPERTROPHY,
@@ -66,8 +66,8 @@ object BlueprintCatalog {
             name = "Arnold Split",
             description = "La división legendaria de la era dorada. Agrupa músculos antagonistas (pecho y espalda juntos) para un bombeo masivo, dejando los brazos y hombros para su propio día.",
             defaultDays = listOf("Pecho & Espalda", "Hombros & Brazos", "Piernas"),
-            minMicrocycleDays = 3,
-            maxMicrocycleDays = 6,
+            minRoutineDays = 3,
+            maxRoutineDays = 6,
             maxFrequencyPerMuscle = 2,
             level = ExperienceLevel.ADVANCED,
             goal = TrainingGoal.HYPERTROPHY,
@@ -87,8 +87,8 @@ object BlueprintCatalog {
             name = "Torso / Pierna",
             description = "Alterna el cuerpo en dos mitades. Es matemáticamente una de las rutinas más eficientes para el atleta natural que busca ganar fuerza e hipertrofia.",
             defaultDays = listOf("Torso Fuerza", "Pierna Fuerza", "Torso Hipertrofia", "Pierna Hipertrofia"),
-            minMicrocycleDays = 2,
-            maxMicrocycleDays = 4,
+            minRoutineDays = 2,
+            maxRoutineDays = 4,
             maxFrequencyPerMuscle = 2,
             level = ExperienceLevel.INTERMEDIATE,
             goal = TrainingGoal.STRENGTH,
@@ -109,8 +109,8 @@ object BlueprintCatalog {
             name = "Full Body",
             description = "Entrena el cuerpo completo en cada sesión utilizando principalmente ejercicios multiarticulares (sentadillas, dominadas, press).",
             defaultDays = listOf("Full Body A", "Full Body B", "Full Body C"),
-            minMicrocycleDays = 2,
-            maxMicrocycleDays = 3,
+            minRoutineDays = 2,
+            maxRoutineDays = 3,
             maxFrequencyPerMuscle = 3,
             level = ExperienceLevel.BEGINNER,
             goal = TrainingGoal.CONDITIONING,
@@ -131,8 +131,8 @@ object BlueprintCatalog {
             name = "Heavy Duty (HIT)",
             description = "Sistema de alta intensidad llevado a la fama por Mike Mentzer. Volumen mínimo y descansos prolongados, llevando una única serie de trabajo al fallo absoluto y más allá.",
             defaultDays = listOf("Pecho & Espalda", "Piernas & Abs", "Hombros & Brazos"),
-            minMicrocycleDays = 3, // Se suele entrenar 1 día sí, 1 o 2 no.
-            maxMicrocycleDays = 4,
+            minRoutineDays = 3, // Se suele entrenar 1 día sí, 1 o 2 no.
+            maxRoutineDays = 4,
             maxFrequencyPerMuscle = 1,
             level = ExperienceLevel.ADVANCED,
             goal = TrainingGoal.HYPERTROPHY,
@@ -154,8 +154,8 @@ object BlueprintCatalog {
             name = "Lienzo en Blanco",
             description = "Construye tu propio microciclo desde cero, definiendo tus propios días y agrupaciones.",
             defaultDays = emptyList(),
-            minMicrocycleDays = 1,
-            maxMicrocycleDays = 9,
+            minRoutineDays = 1,
+            maxRoutineDays = 9,
             maxFrequencyPerMuscle = 0,
             level = ExperienceLevel.ANY,
             goal = TrainingGoal.CUSTOM,

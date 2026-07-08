@@ -8,8 +8,8 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.pdm0126.overload.OverloadApplication
 import com.pdm0126.overload.domain.model.RoutineDay
-import com.pdm0126.overload.domain.model.RoutineMicrocycle
-import com.pdm0126.overload.domain.model.RoutineSlot
+import com.pdm0126.overload.domain.model.Routine
+import com.pdm0126.overload.domain.model.PlannedExercise
 import com.pdm0126.overload.domain.model.WorkoutSet
 import com.pdm0126.overload.domain.repository.RoutineRepository
 import com.pdm0126.overload.domain.repository.WorkoutRepository
@@ -22,13 +22,13 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 data class ExerciseDisplayItem(
-    val slot: RoutineSlot,
+    val plannedExercise: PlannedExercise,
     val lastSets: List<WorkoutSet>
 )
 
 data class TrainingUiState(
     val isLoading: Boolean = true,
-    val activeMicrocycle: RoutineMicrocycle? = null,
+    val activeRoutine: Routine? = null,
     val day: RoutineDay? = null,
     val exercises: List<ExerciseDisplayItem> = emptyList(),
     val activeSessionDayId: Long? = null
@@ -42,23 +42,23 @@ class TrainingViewModel(
 
     val uiState: StateFlow<TrainingUiState> = combine(
         _selectedDayId,
-        routineRepository.getActiveMicrocycle(),
+        routineRepository.getActiveRoutine(),
         workoutRepository.getActiveSession()
-    ) { selectedDayId, microcycle, activeSession ->
-        Triple(selectedDayId, microcycle, activeSession)
-    }.map { (selectedDayId, microcycle, activeSession) ->
-        val day = microcycle?.days?.find { it.dayId == selectedDayId }
-            ?: microcycle?.days?.firstOrNull()
-        val exercises = day?.slots?.map { slot ->
+    ) { selectedDayId, routine, activeSession ->
+        Triple(selectedDayId, routine, activeSession)
+    }.map { (selectedDayId, routine, activeSession) ->
+        val day = routine?.days?.find { it.dayId == selectedDayId }
+            ?: routine?.days?.firstOrNull()
+        val exercises = day?.plannedExercises?.map { slot ->
             ExerciseDisplayItem(
-                slot = slot,
+                plannedExercise = slot,
                 lastSets = workoutRepository.getLastSetsForExercise(slot.exercise.id)
             )
         } ?: emptyList()
 
         TrainingUiState(
             isLoading = false,
-            activeMicrocycle = microcycle,
+            activeRoutine = routine,
             day = day,
             exercises = exercises,
             activeSessionDayId = activeSession?.dayId

@@ -1,7 +1,7 @@
 package com.pdm0126.overload.domain.model
 
-data class RoutineSlot(
-    val slotId: Long,
+data class PlannedExercise(
+    val plannedExerciseId: Long,
     val order: Int,
     val targetSets: Int,
     val targetReps: Int?,

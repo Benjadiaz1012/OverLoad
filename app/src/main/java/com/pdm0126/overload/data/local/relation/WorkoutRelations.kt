@@ -6,7 +6,7 @@ import com.pdm0126.overload.data.local.entity.WorkoutSessionEntity
 import com.pdm0126.overload.data.local.entity.WorkoutSetEntity
 
 // Una sesión de entrenamiento con todas sus series registradas
-data class SessionWithSets(
+data class WorkoutSessionWithSets(
     @Embedded val session: WorkoutSessionEntity,
     @Relation(
         parentColumn = "sessionId",

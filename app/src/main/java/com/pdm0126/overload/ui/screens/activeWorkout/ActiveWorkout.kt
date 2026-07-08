@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.sp
 import com.pdm0126.overload.ui.components.OverloadConfirmDialog
 import com.pdm0126.overload.ui.components.OverloadTopBar
 import com.pdm0126.overload.domain.model.RoutineDay
-import com.pdm0126.overload.domain.model.RoutineSlot
+import com.pdm0126.overload.domain.model.PlannedExercise
 import com.pdm0126.overload.domain.model.WorkoutSet
 import kotlinx.coroutines.launch
 
@@ -129,8 +129,8 @@ fun ActiveWorkout(
                     contentPadding = PaddingValues(16.dp),
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    itemsIndexed(day.slots, key = { _, slot -> slot.slotId }) { index, slot ->
-                        val slotSets = sessionSets.filter { it.slotId == slot.slotId }
+                    itemsIndexed(day.plannedExercises, key = { _, slot -> slot.plannedExerciseId }) { index, slot ->
+                        val slotSets = sessionSets.filter { it.plannedExerciseId == slot.plannedExerciseId }
                         val historicalSets = lastSets[slot.exercise.id] ?: emptyList()
 
                         ActiveSlotItem(
@@ -207,7 +207,7 @@ fun ActiveWorkout(
 @Composable
 private fun ActiveSlotItem(
     index: Int,
-    slot: RoutineSlot,
+    slot: PlannedExercise,
     loggedSets: List<WorkoutSet>,
     lastSets: List<WorkoutSet>,
     onLogSet: (LogSetRequest) -> Unit,
@@ -456,7 +456,7 @@ private fun ActiveSlotItem(
                                     val finalRir = if (isRirEnabled) rirInput else null
                                     onLogSet(
                                         LogSetRequest(
-                                            slotId = slot.slotId,
+                                            slotId = slot.plannedExerciseId,
                                             exerciseId = slot.exercise.id,
                                             setNumber = nextSetNumber,
                                             weightKg = weight,

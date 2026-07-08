@@ -53,7 +53,7 @@ fun OverloadApp() {
         }
     }
 
-    val backStack = rememberNavBackStack(startDestination)
+    val backStack = rememberNavBackStack(Routes.Training)
     val currentDestination = backStack.lastOrNull()
 
     val context = LocalContext.current
@@ -116,7 +116,7 @@ fun OverloadApp() {
                     TrainingSystem(
                         onConfirm = { blueprint ->
                             blueprint?.let {
-                                systemViewModel.createMicrocycleFromBlueprint(it)
+                                systemViewModel.createRoutineFromBlueprint(it)
                             }
                         },
                         onNext = {
@@ -169,8 +169,8 @@ fun OverloadApp() {
                         onCreateRoutine = {
                             backStack.add(Routes.System)
                         },
-                        onOpenRoutine = { microcycle ->
-                            backStack.add(Routes.RoutineEditor(microcycle.microcycleId))
+                        onOpenRoutine = { routine ->
+                            backStack.add(Routes.RoutineEditor(routine.routineId))
                         }
                     )
                 }
