@@ -53,7 +53,7 @@ fun OverloadApp() {
         }
     }
 
-    val backStack = rememberNavBackStack(Routes.Training)
+    val backStack = rememberNavBackStack(startDestination)
     val currentDestination = backStack.lastOrNull()
 
     val context = LocalContext.current
