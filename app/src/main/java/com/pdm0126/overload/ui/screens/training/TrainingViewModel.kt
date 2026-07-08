@@ -49,10 +49,10 @@ class TrainingViewModel(
     }.map { (selectedDayId, routine, activeSession) ->
         val day = routine?.days?.find { it.dayId == selectedDayId }
             ?: routine?.days?.firstOrNull()
-        val exercises = day?.plannedExercises?.map { slot ->
+        val exercises = day?.plannedExercises?.map { plannedExercise ->
             ExerciseDisplayItem(
-                plannedExercise = slot,
-                lastSets = workoutRepository.getLastSetsForExercise(slot.exercise.id)
+                plannedExercise = plannedExercise,
+                lastSets = workoutRepository.getLastSetsForExercise(plannedExercise.exercise.id)
             )
         } ?: emptyList()
 
